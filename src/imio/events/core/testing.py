@@ -21,11 +21,12 @@ class ImioEventsCoreLayer(PloneSandboxLayer):
         # The z3c.autoinclude feature is disabled in the Plone fixture base
         # layer.
         import plone.restapi
+
         self.loadZCML(package=plone.restapi)
         self.loadZCML(package=imio.events.core)
 
     def setUpPloneSite(self, portal):
-        applyProfile(portal, 'imio.events.core:default')
+        applyProfile(portal, "imio.events.core:default")
 
 
 IMIO_EVENTS_CORE_FIXTURE = ImioEventsCoreLayer()
@@ -33,13 +34,13 @@ IMIO_EVENTS_CORE_FIXTURE = ImioEventsCoreLayer()
 
 IMIO_EVENTS_CORE_INTEGRATION_TESTING = IntegrationTesting(
     bases=(IMIO_EVENTS_CORE_FIXTURE,),
-    name='ImioEventsCoreLayer:IntegrationTesting',
+    name="ImioEventsCoreLayer:IntegrationTesting",
 )
 
 
 IMIO_EVENTS_CORE_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(IMIO_EVENTS_CORE_FIXTURE,),
-    name='ImioEventsCoreLayer:FunctionalTesting',
+    name="ImioEventsCoreLayer:FunctionalTesting",
 )
 
 
@@ -49,5 +50,5 @@ IMIO_EVENTS_CORE_ACCEPTANCE_TESTING = FunctionalTesting(
         REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE,
     ),
-    name='ImioEventsCoreLayer:AcceptanceTesting',
+    name="ImioEventsCoreLayer:AcceptanceTesting",
 )

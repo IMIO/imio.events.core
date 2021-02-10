@@ -20,25 +20,22 @@ class TestSetup(unittest.TestCase):
 
     def setUp(self):
         """Custom shared utility setup for tests."""
-        self.portal = self.layer['portal']
+        self.portal = self.layer["portal"]
         if get_installer:
-            self.installer = get_installer(self.portal, self.layer['request'])
+            self.installer = get_installer(self.portal, self.layer["request"])
         else:
-            self.installer = api.portal.get_tool('portal_quickinstaller')
+            self.installer = api.portal.get_tool("portal_quickinstaller")
 
     def test_product_installed(self):
         """Test if imio.events.core is installed."""
-        self.assertTrue(self.installer.isProductInstalled(
-            'imio.events.core'))
+        self.assertTrue(self.installer.isProductInstalled("imio.events.core"))
 
     def test_browserlayer(self):
         """Test that IImioEventsCoreLayer is registered."""
-        from imio.events.core.interfaces import (
-            IImioEventsCoreLayer)
+        from imio.events.core.interfaces import IImioEventsCoreLayer
         from plone.browserlayer import utils
-        self.assertIn(
-            IImioEventsCoreLayer,
-            utils.registered_layers())
+
+        self.assertIn(IImioEventsCoreLayer, utils.registered_layers())
 
 
 class TestUninstall(unittest.TestCase):
@@ -46,26 +43,23 @@ class TestUninstall(unittest.TestCase):
     layer = IMIO_EVENTS_CORE_INTEGRATION_TESTING
 
     def setUp(self):
-        self.portal = self.layer['portal']
+        self.portal = self.layer["portal"]
         if get_installer:
-            self.installer = get_installer(self.portal, self.layer['request'])
+            self.installer = get_installer(self.portal, self.layer["request"])
         else:
-            self.installer = api.portal.get_tool('portal_quickinstaller')
+            self.installer = api.portal.get_tool("portal_quickinstaller")
         roles_before = api.user.get_roles(TEST_USER_ID)
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        self.installer.uninstallProducts(['imio.events.core'])
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        self.installer.uninstallProducts(["imio.events.core"])
         setRoles(self.portal, TEST_USER_ID, roles_before)
 
     def test_product_uninstalled(self):
         """Test if imio.events.core is cleanly uninstalled."""
-        self.assertFalse(self.installer.isProductInstalled(
-            'imio.events.core'))
+        self.assertFalse(self.installer.isProductInstalled("imio.events.core"))
 
     def test_browserlayer_removed(self):
         """Test that IImioEventsCoreLayer is removed."""
-        from imio.events.core.interfaces import \
-            IImioEventsCoreLayer
+        from imio.events.core.interfaces import IImioEventsCoreLayer
         from plone.browserlayer import utils
-        self.assertNotIn(
-            IImioEventsCoreLayer,
-            utils.registered_layers())
+
+        self.assertNotIn(IImioEventsCoreLayer, utils.registered_layers())
