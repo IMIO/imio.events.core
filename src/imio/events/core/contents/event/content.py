@@ -21,4 +21,4 @@ class IEvent(model.Schema):
 
 @implementer(IEvent)
 class Event(Container):
-    """"""
+    """Event class"""

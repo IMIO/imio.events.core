@@ -21,4 +21,4 @@ class IAgenda(model.Schema):
 
 @implementer(IAgenda)
 class Agenda(Container):
-    """"""
+    """Agenda class"""
