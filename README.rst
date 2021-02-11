@@ -35,7 +35,7 @@ Features
 --------
 
 This products contains:
-- Content types: event
+- Content types: Agenda, Folder, Event
 
 
 Examples
