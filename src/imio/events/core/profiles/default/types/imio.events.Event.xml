@@ -42,6 +42,7 @@
     <element value="plone.eventattendees"/>
     <element value="plone.eventcontact"/>
     <element value="plone.richtext"/>
+    <element value="imio.events.topics"/>
   </property>
 
 </object>

@@ -13,8 +13,11 @@
   -->
   <!--<includeDependencies package="." />-->
 
-  <include package=".browser" />
+  <include package="collective.taxonomy" />
+
   <include package=".contents" />  
+  <include package=".behaviors" />
+  <include package=".browser" />
   <include package=".faceted" />  
 
   <include file="permissions.zcml" />
