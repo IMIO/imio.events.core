@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<object
+    i18n:domain="plone"
+    name="Plone Site"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+  <property name="filter_content_types">True</property>
+  <property name="allowed_content_types">
+    <element value="imio.events.Agenda" />
+    <element value="imio.events.Page" />
+  </property>
+
+</object>
