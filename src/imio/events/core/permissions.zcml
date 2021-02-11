@@ -3,4 +3,19 @@
   xmlns:zcml="http://namespaces.zope.org/zcml"
   i18n_domain="imio.events.core">
 
+  <permission
+      id="imio.events.core.AddAgenda"
+      title="imio.events.core: Add Agenda"
+  />
+
+  <permission
+      id="imio.events.core.AddEvent"
+      title="imio.events.core: Add Event"
+  />
+
+  <permission
+      id="imio.events.core.AddFolder"
+      title="imio.events.core: Add Folder"
+  />
+
 </configure>

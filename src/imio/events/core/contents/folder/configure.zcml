@@ -4,9 +4,4 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="imio.events.core">
 
-    <permission
-        id="imio.events.core.AddFolder"
-        title="imio.events.core: Add Folder"
-    />
-
 </configure>
