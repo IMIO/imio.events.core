@@ -18,4 +18,9 @@
       title="imio.events.core: Add Folder"
   />
 
+  <permission
+      id="imio.events.core.AddPage"
+      title="imio.events.core: Add Page"
+  />
+
 </configure>
