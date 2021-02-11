@@ -10,7 +10,7 @@
       name="vocabulary">eea.faceted.vocabularies.FacetedPortalTypes</property>
    <property name="catalog"></property>
    <property name="default">
-    <element value="Item"/>
+    <element value="imio.events.Event"/>
    </property>
    <property name="position">right</property>
    <property name="section">default</property>
