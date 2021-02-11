@@ -6,8 +6,8 @@
     :target: https://github.com/IMIO/imio.events.core/actions?query=workflow%3ATests
     :alt: CI Status
 
-.. image:: https://coveralls.io/repos/github/collective/imio.events.core/badge.svg?branch=master
-    :target: https://coveralls.io/github/collective/imio.events.core?branch=master
+.. image:: https://coveralls.io/repos/github/IMIO/imio.events.core/badge.svg?branch=main
+    :target: https://coveralls.io/github/IMIO/imio.events.core?branch=main
     :alt: Coveralls
 
 .. image:: https://img.shields.io/pypi/v/imio.events.core.svg
