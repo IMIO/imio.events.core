@@ -14,6 +14,7 @@
   <!--<includeDependencies package="." />-->
 
   <include package="collective.taxonomy" />
+  <include package="eea.facetednavigation" />
 
   <include package=".contents" />  
   <include package=".behaviors" />
