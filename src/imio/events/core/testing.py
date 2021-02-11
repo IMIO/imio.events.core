@@ -7,9 +7,11 @@ from plone.app.testing import (
     IntegrationTesting,
     PloneSandboxLayer,
 )
+from plone.api import portal as portal_api
 from plone.testing import z2
 
 import imio.events.core
+import mock
 
 
 class ImioEventsCoreLayer(PloneSandboxLayer):
@@ -26,6 +28,7 @@ class ImioEventsCoreLayer(PloneSandboxLayer):
         self.loadZCML(package=imio.events.core)
 
     def setUpPloneSite(self, portal):
+        portal_api.get_current_language = mock.Mock(return_value="fr")
         applyProfile(portal, "imio.events.core:default")
 
 
