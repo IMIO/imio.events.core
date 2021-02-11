@@ -21,6 +21,11 @@ class IFolderIntegrationTest(unittest.TestCase):
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.parent = self.portal
+        self.agenda = api.content.create(
+            container=self.portal,
+            type="imio.events.Agenda",
+            id="imio.events.Agenda",
+        )
 
     def test_ct_folder_schema(self):
         fti = queryUtility(IDexterityFTI, name="imio.events.Folder")
@@ -46,7 +51,7 @@ class IFolderIntegrationTest(unittest.TestCase):
     def test_ct_folder_adding(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         obj = api.content.create(
-            container=self.portal,
+            container=self.agenda,
             type="imio.events.Folder",
             id="imio.events.Folder",
         )
@@ -68,7 +73,7 @@ class IFolderIntegrationTest(unittest.TestCase):
     def test_ct_folder_globally_addable(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="imio.events.Folder")
-        self.assertTrue(
+        self.assertFalse(
             fti.global_allow, u"{0} is not globally addable!".format(fti.id)
         )
 

@@ -21,6 +21,11 @@ class IEventIntegrationTest(unittest.TestCase):
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.parent = self.portal
+        self.agenda = api.content.create(
+            container=self.portal,
+            type="imio.events.Agenda",
+            id="imio.events.Agenda",
+        )
 
     def test_ct_event_schema(self):
         fti = queryUtility(IDexterityFTI, name="imio.events.Event")
@@ -35,7 +40,6 @@ class IEventIntegrationTest(unittest.TestCase):
         fti = queryUtility(IDexterityFTI, name="imio.events.Event")
         factory = fti.factory
         obj = createObject(factory)
-
         self.assertTrue(
             IEvent.providedBy(obj),
             u"IEvent not provided by {0}!".format(
@@ -46,7 +50,7 @@ class IEventIntegrationTest(unittest.TestCase):
     def test_ct_event_adding(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         obj = api.content.create(
-            container=self.portal,
+            container=self.agenda,
             type="imio.events.Event",
             id="imio.events.Event",
         )
@@ -68,7 +72,7 @@ class IEventIntegrationTest(unittest.TestCase):
     def test_ct_event_globally_addable(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="imio.events.Event")
-        self.assertTrue(
+        self.assertFalse(
             fti.global_allow, u"{0} is not globally addable!".format(fti.id)
         )
 
