@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<object name="faceted" meta_type="Dexterity Container">
+ <criteria>
+  <criterion name="type">
+   <property name="widget">checkbox</property>
+   <property name="title">Portal type</property>
+   <property name="index">portal_type</property>
+   <property name="operator">and</property>
+   <property
+      name="vocabulary">eea.faceted.vocabularies.FacetedPortalTypes</property>
+   <property name="catalog"></property>
+   <property name="default">
+    <element value="Item"/>
+   </property>
+   <property name="position">right</property>
+   <property name="section">default</property>
+   <property name="hidden">True</property>
+   <property name="count">True</property>
+   <property name="hidezerocount">False</property>
+   <property name="maxitems">5</property>
+   <property name="sortreversed">True</property>
+  </criterion>
+ </criteria>
+</object>
