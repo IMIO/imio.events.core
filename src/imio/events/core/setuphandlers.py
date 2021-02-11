@@ -28,9 +28,7 @@ def post_install(context):
     topics_taxonomy = "collective.taxonomy.topics"
     topics_taxonomy_data = {
         "taxonomy": "topics",
-        "field_title": translate(
-            _("Topics"), target_language=current_lang
-        ),
+        "field_title": translate(_("Topics"), target_language=current_lang),
         "field_description": "",
         "default_language": "fr",
         "filepath": "taxonomies/taxonomy-topics.xml",
