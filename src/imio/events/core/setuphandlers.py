@@ -2,8 +2,8 @@
 
 from Products.CMFPlone.interfaces import INonInstallable
 from collective.taxonomy.interfaces import ITaxonomy
-from imio.events.core import _
 from imio.events.core.utils import create_taxonomy_object
+from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
 from zope.i18n import translate
 from zope.interface import implementer

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from imio.events.core import _
+from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.supermodel import model
 from zope import schema

@@ -57,6 +57,7 @@ setup(
         "plone.app.dexterity",
         "collective.taxonomy",
         "eea.facetednavigation",
+        "imio.smartweb.locales",
     ],
     extras_require={
         "test": [
@@ -73,7 +74,5 @@ setup(
     entry_points="""
     [z3c.autoinclude.plugin]
     target = plone
-    [console_scripts]
-    update_locale = imio.events.core.locales.update:update_locale
     """,
 )
