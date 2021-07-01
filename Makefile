@@ -1,5 +1,6 @@
 #!/usr/bin/make
 .PHONY: buildout cleanall test instance
+all: buildout
 
 bin/pip:
 	python3 -m venv .
