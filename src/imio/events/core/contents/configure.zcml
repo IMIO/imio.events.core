@@ -5,6 +5,7 @@
     i18n_domain="imio.smartweb">
 
   <include package=".agenda" />
+  <include package=".entity" />
   <include package=".event" />
   <include package=".folder" />
   <include package=".page" />

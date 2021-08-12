@@ -6,8 +6,7 @@
 
   <property name="filter_content_types">True</property>
   <property name="allowed_content_types">
-    <element value="imio.events.Agenda" />
-    <element value="imio.events.Page" />
+    <element value="imio.events.Entity" />
   </property>
 
 </object>
