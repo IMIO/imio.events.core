@@ -12,7 +12,7 @@ class EventsCategoriesVocabularyFactory:
             (u"flea_market_market", _(u"Flea market & market")),
             (u"concert_festival", _(u"Concert & festival")),
             (u"conference_debate", _(u"Conference & debate")),
-            (u"exposure", _(u"Exposure")),
+            (u"exhibit", _(u"Exhibit")),
             (u"movie", _(u"Movie")),
             (u"party_folklore", _(u"Party & folklore")),
             (u"trade_fair_fair", _(u"Trade Fair & Fair")),
