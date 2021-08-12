@@ -4,4 +4,13 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="imio.smartweb">
 
+  <browser:page
+      name="view"
+      for="imio.events.core.contents.IEvent"
+      template="view.pt"
+      class="imio.events.core.contents.event.views.View"
+      permission="zope2.View"
+      layer="imio.events.core.interfaces.IImioEventsCoreLayer"
+      />
+
 </configure>

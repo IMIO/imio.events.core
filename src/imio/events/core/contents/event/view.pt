@@ -1,0 +1,117 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/@@main_template/macros/master"
+      i18n:domain="imio.smartweb">
+<body>
+
+<metal:main fill-slot="main">
+
+    <h1 class="documentFirstHeading" tal:content="context/Title" />
+
+    <p class="documentDescription" tal:content="structure view/description" />
+    <tal:check tal:condition="view/has_leadimage"
+               tal:define="scale_func context/@@images;
+                           scaled_image python: getattr(context.aq_explicit, 'image', False) and scale_func.scale('image', scale='large')">
+        <img tal:replace="structure python: scaled_image.tag(css_class='figure-img img-fluid')" />
+    </tal:check>
+
+    <tal:def tal:define="data nocall:view/data">
+        <div id="parent-fieldname-text" tal:condition="data/text">
+          <tal:text content="structure data/text" />
+        </div>
+
+        <div class="event clearfix" itemscope itemtype="https://schema.org/Event">
+            <ul class="hiddenStructure">
+              <li><a itemprop="url" class="url" href="" tal:attributes="href data/url" tal:content="data/url">url</a></li>
+              <li itemprop="name" class="summary" tal:content="data/title">title</li>
+              <li itemprop="startDate" class="dtstart" tal:content="data/start/isoformat">start</li>
+              <li itemprop="endDate" class="dtend" tal:content="data/end/isoformat">end</li>
+              <li itemprop="description" class="description" tal:content="data/description">description</li>
+            </ul>
+        </div>
+        <tal:eventsummary replace="structure context/@@event_summary"/>
+        <span itemprop="free-entry" class="free-entry" tal:content="context/free_entry">free entry</span>
+    </tal:def>
+
+    <!-- Carousel wrapper -->
+    <div
+        id="carouselMultiItemExample"
+        class="carousel slide carousel-dark text-center event-gallery"
+        data-mdb-ride="carousel"
+        tal:define="images view/images"
+        tal:condition="images">
+        <!-- Controls -->
+        <div class="d-flex justify-content-center mb-4">
+            <button
+              class="carousel-control-prev position-relative"
+              type="button"
+              data-mdb-target="#carouselMultiItemExample"
+              data-mdb-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next position-relative"
+                    type="button"
+                    data-mdb-target="#carouselMultiItemExample"
+                    data-mdb-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <!-- Inner -->
+        <div class="carousel-inner py-4">
+            <!-- Single item active-->
+            <div class="carousel-item"
+                 tal:repeat="row_images images">
+                <div class="container">
+                    <div class="row">
+                        <!--  d-none d-lg-block-->
+                        <div class="col-lg-4">
+                            <div class="card"
+                                 tal:repeat="image row_images">
+                                <img tal:attributes="src string:${image/absolute_url}/@@images/image/mini;
+                                                     alt image/title;
+                                                     title image/title" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END Inner -->
+    </div>
+    <!-- END Carousel wrapper -->
+
+    <div class="event-files"
+         tal:define="files view/files"
+         tal:condition="files">
+      <ul>
+        <li tal:repeat="item files">
+            <div tal:define="file_view nocall:item/@@file_view;
+                             item_has_image python:item.getIcon;
+                             thumb_scale view/get_thumb_scale_list;
+                             image_scale item/@@images;">
+              <a tal:attributes="href item/absolute_url;
+                                 alt item/title">
+                <span>
+                    <img class="mime-icon"
+                         tal:attributes="src file_view/get_mimetype_icon">
+                    <span tal:content="item/title">Item Title</span>
+                    <span class="discreet">&mdash; <span tal:replace="file_view/human_readable_size" /></span>
+                </span>
+                <p>
+                  <span tal:replace="item/description" />
+                </p>
+                <img tal:replace="structure python:image_scale.tag('image', scale=thumb_scale)" />
+              </a>
+            </div>
+        </li>
+      </ul>
+    </div>
+</metal:main>
+
+</body>
+</html>
