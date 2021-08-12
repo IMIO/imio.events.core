@@ -2,4 +2,4 @@
 """Init and utils."""
 from zope.i18nmessageid import MessageFactory
 
-_ = MessageFactory('imio.events.core')
+_ = MessageFactory("imio.events.core")
