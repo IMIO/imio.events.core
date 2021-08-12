@@ -57,6 +57,7 @@ setup(
         "plone.app.dexterity",
         "collective.taxonomy",
         "eea.facetednavigation",
+        "imio.smartweb.common",
         "imio.smartweb.locales",
     ],
     extras_require={
