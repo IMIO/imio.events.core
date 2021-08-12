@@ -21,6 +21,7 @@
   <include package=".faceted" />
 
   <include file="permissions.zcml" />
+  <include file="vocabularies.zcml" />
 
   <genericsetup:registerProfile
       name="default"
