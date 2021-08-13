@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from Products.CMFPlone.interfaces import INonInstallable
-from collective.taxonomy.interfaces import ITaxonomy
-from imio.events.core.utils import create_taxonomy_object
-from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
-from zope.i18n import translate
 from zope.interface import implementer
 import os
 
@@ -21,23 +17,6 @@ class HiddenProfiles(object):
 
 def post_install(context):
     """Post install script"""
-    portal = api.portal.get()
-    sm = portal.getSiteManager()
-
-    current_lang = api.portal.get_current_language()[:2]
-    topics_taxonomy = "collective.taxonomy.topics"
-    topics_taxonomy_data = {
-        "taxonomy": "topics",
-        "field_title": translate(_("Topics"), target_language=current_lang),
-        "field_description": "",
-        "default_language": "fr",
-        "filepath": "taxonomies/taxonomy-topics.xml",
-    }
-
-    utility_topics_taxonomy = sm.queryUtility(ITaxonomy, name=topics_taxonomy)
-    if not utility_topics_taxonomy:
-        create_taxonomy_object(topics_taxonomy_data, portal)
-
     portal = api.portal.get()
     default_entity = api.content.create(
         type="imio.events.Entity", title="Imio", container=portal
