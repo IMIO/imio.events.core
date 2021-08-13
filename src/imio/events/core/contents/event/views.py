@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from plone.dexterity.browser.view import DefaultView
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.event.browser.event_view import EventView
-from plone.event.interfaces import IEventAccessor
 
 
 class View(EventView, FolderView):
