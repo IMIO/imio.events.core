@@ -18,9 +18,25 @@ class IAgendaIntegrationTest(unittest.TestCase):
 
     def setUp(self):
         """Custom shared utility setup for tests."""
+        self.authorized_types_in_agenda = [
+            "imio.events.Folder",
+            "imio.events.Event",
+        ]
+        self.unauthorized_types_in_agenda = [
+            "imio.events.Agenda",
+            "Document",
+            "File",
+            "Image",
+        ]
+
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.parent = self.portal
+        self.entity = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            id="imio.events.Entity",
+        )
 
     def test_ct_agenda_schema(self):
         fti = queryUtility(IDexterityFTI, name="imio.events.Agenda")
@@ -46,7 +62,7 @@ class IAgendaIntegrationTest(unittest.TestCase):
     def test_ct_agenda_adding(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         obj = api.content.create(
-            container=self.portal,
+            container=self.entity,
             type="imio.events.Agenda",
             id="imio.events.Agenda",
         )
@@ -68,7 +84,7 @@ class IAgendaIntegrationTest(unittest.TestCase):
     def test_ct_agenda_globally_addable(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="imio.events.Agenda")
-        self.assertTrue(
+        self.assertFalse(
             fti.global_allow, u"{0} is not globally addable!".format(fti.id)
         )
 
@@ -78,14 +94,28 @@ class IAgendaIntegrationTest(unittest.TestCase):
         portal_types = self.portal.portal_types
         parent_id = portal_types.constructContent(
             fti.id,
-            self.portal,
+            self.entity,
             "imio.events.Agenda_id",
             title="imio.events.Agenda container",
         )
-        self.parent = self.portal[parent_id]
+        folder = self.entity[parent_id]
+        for t in self.unauthorized_types_in_agenda:
+            with self.assertRaises(InvalidParameterError):
+                api.content.create(
+                    container=folder,
+                    type=t,
+                    title="My {}".format(t),
+                )
+        for t in self.authorized_types_in_agenda:
+            api.content.create(
+                container=folder,
+                type=t,
+                title="My {}".format(t),
+            )
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
         with self.assertRaises(InvalidParameterError):
             api.content.create(
-                container=self.parent,
-                type="Document",
-                title="My Content",
+                container=folder,
+                type="imio.events.Entity",
+                title="My Entity",
             )

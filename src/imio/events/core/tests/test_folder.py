@@ -18,11 +18,27 @@ class IFolderIntegrationTest(unittest.TestCase):
 
     def setUp(self):
         """Custom shared utility setup for tests."""
+        self.authorized_types_in_folder = [
+            "imio.events.Folder",
+            "imio.events.Event",
+        ]
+        self.unauthorized_types_in_folder = [
+            "imio.events.Agenda",
+            "Document",
+            "File",
+            "Image",
+        ]
+
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.parent = self.portal
-        self.agenda = api.content.create(
+        self.entity = api.content.create(
             container=self.portal,
+            type="imio.events.Entity",
+            id="imio.events.Entity",
+        )
+        self.agenda = api.content.create(
+            container=self.entity,
             type="imio.events.Agenda",
             id="imio.events.Agenda",
         )
@@ -83,14 +99,28 @@ class IFolderIntegrationTest(unittest.TestCase):
         portal_types = self.portal.portal_types
         parent_id = portal_types.constructContent(
             fti.id,
-            self.portal,
+            self.agenda,
             "imio.events.Folder_id",
             title="imio.events.Folder container",
         )
-        self.parent = self.portal[parent_id]
+        folder = self.agenda[parent_id]
+        for t in self.unauthorized_types_in_folder:
+            with self.assertRaises(InvalidParameterError):
+                api.content.create(
+                    container=folder,
+                    type=t,
+                    title="My {}".format(t),
+                )
+        for t in self.authorized_types_in_folder:
+            api.content.create(
+                container=folder,
+                type=t,
+                title="My {}".format(t),
+            )
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
         with self.assertRaises(InvalidParameterError):
             api.content.create(
-                container=self.parent,
-                type="Document",
-                title="My Content",
+                container=folder,
+                type="imio.events.Entity",
+                title="My Entity",
             )

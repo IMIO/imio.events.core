@@ -5,12 +5,7 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="imio.smartweb">
 
-  <!--
-    Be careful if you use general includeDependencies, it can have side effects!
-    Better import explicit packages or configurations ;)
-  -->
-  <!--<includeDependencies package="." />-->
-
+  <include package="collective.geolocationbehavior" />
   <include package="eea.facetednavigation" />
   <include package="imio.smartweb.common" />
   <include package="imio.smartweb.locales" />

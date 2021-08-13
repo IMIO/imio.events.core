@@ -18,13 +18,34 @@ class IEventIntegrationTest(unittest.TestCase):
 
     def setUp(self):
         """Custom shared utility setup for tests."""
+        self.authorized_types_in_event = [
+            "File",
+            "Image",
+        ]
+        self.unauthorized_types_in_event = [
+            "imio.events.Agenda",
+            "imio.events.Folder",
+            "imio.events.Event",
+            "Document",
+        ]
+
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.parent = self.portal
-        self.agenda = api.content.create(
+        self.entity = api.content.create(
             container=self.portal,
+            type="imio.events.Entity",
+            id="imio.events.Entity",
+        )
+        self.agenda = api.content.create(
+            container=self.entity,
             type="imio.events.Agenda",
             id="imio.events.Agenda",
+        )
+        self.folder = api.content.create(
+            container=self.agenda,
+            type="imio.events.Folder",
+            id="imio.events.Folder",
         )
 
     def test_ct_event_schema(self):
@@ -50,7 +71,7 @@ class IEventIntegrationTest(unittest.TestCase):
     def test_ct_event_adding(self):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         obj = api.content.create(
-            container=self.agenda,
+            container=self.folder,
             type="imio.events.Event",
             id="imio.events.Event",
         )
@@ -82,14 +103,28 @@ class IEventIntegrationTest(unittest.TestCase):
         portal_types = self.portal.portal_types
         parent_id = portal_types.constructContent(
             fti.id,
-            self.portal,
+            self.folder,
             "imio.events.Event_id",
             title="imio.events.Event container",
         )
-        self.parent = self.portal[parent_id]
+        folder = self.folder[parent_id]
+        for t in self.unauthorized_types_in_event:
+            with self.assertRaises(InvalidParameterError):
+                api.content.create(
+                    container=folder,
+                    type=t,
+                    title="My {}".format(t),
+                )
+        for t in self.authorized_types_in_event:
+            api.content.create(
+                container=folder,
+                type=t,
+                title="My {}".format(t),
+            )
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
         with self.assertRaises(InvalidParameterError):
             api.content.create(
-                container=self.parent,
-                type="Document",
-                title="My Content",
+                container=folder,
+                type="imio.events.Entity",
+                title="My Entity",
             )
