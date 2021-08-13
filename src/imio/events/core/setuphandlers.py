@@ -39,10 +39,13 @@ def post_install(context):
         create_taxonomy_object(topics_taxonomy_data, portal)
 
     portal = api.portal.get()
+    default_entity = api.content.create(
+        type="imio.events.Entity", title="Imio", container=portal
+    )
     faceted_config = "/faceted/config/events.xml"
     # Create global faceted agenda
     faceted = api.content.create(
-        type="imio.events.Agenda", title="Agenda", container=portal
+        type="imio.events.Agenda", title="Agenda", container=default_entity
     )
     subtyper = faceted.restrictedTraverse("@@faceted_subtyper")
     subtyper.enable()
