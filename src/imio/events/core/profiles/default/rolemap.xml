@@ -2,6 +2,10 @@
 <rolemap>
   <permissions>
   <!-- -*- extra stuff goes here -*- -->
+    <permission name="imio.events.core: Add Entity" acquire="True">
+      <role name="Manager"/>
+    </permission>
+
 
     <permission name="imio.events.core: Add Agenda" acquire="True">
       <role name="Manager"/>
