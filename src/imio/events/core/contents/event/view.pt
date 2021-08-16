@@ -61,7 +61,9 @@
           <span itemprop="online-participation" class="online-participation"><a href="" tal:attributes="href context/online_participation" tal:content="context/online_participation">Online participation</a></span></li>
     </ul>
 
-    <div class="" tal:content="structure view/get_embed_video" />
+    <div class="" 
+         tal:condition="context/video_url"
+         tal:content="structure view/get_embed_video" />
 
     <div tal:define="images view/images;
                      thumb_scale string:preview"
