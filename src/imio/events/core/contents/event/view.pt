@@ -33,85 +33,75 @@
             </ul>
         </div>
         <tal:eventsummary replace="structure context/@@event_summary"/>
-        <span itemprop="free-entry" class="free-entry" tal:content="context/free_entry">free entry</span>
     </tal:def>
+    <ul>
+        <li>
+          <span i18n:translate="">Category</span>:
+          <span itemprop="category" class="category" tal:content="context/category">category</span></li>
+        <li>
+          <span i18n:translate="">Free entry</span>:
+          <span itemprop="free-entry" class="free-entry" tal:content="context/free_entry">free entry</span></li>
+        <li>
+          <span i18n:translate="">Facilities for person with reduced mobility</span>:
+          <span itemprop="reduced-mobility-facilities" class="reduced-mobility-facilities" tal:content="context/reduced_mobility_facilities">Facilities for person with reduced mobility</span></li>
+        <li>
+          <span i18n:translate="">Ticket url</span>:
+          <span itemprop="ticket-url" class="ticket-url"><a href="" tal:attributes="href context/ticket_url" tal:content="context/ticket_url">Ticket url</a></span></li>
+        <li>
+          <span i18n:translate="">Facebook</span>
+          <span itemprop="facebook" class="facebook"><a href="" tal:attributes="href context/facebook" tal:content="context/facebook">Facebook</a></span></li>
+        <li>
+          <span i18n:translate="">Twitter</span>:
+          <span itemprop="twitter" class="twitter"><a href="" tal:attributes="href context/twitter" tal:content="context/twitter">Twitter</a></span></li>
+        <li>
+          <span i18n:translate="">Instagram</span>:
+          <span itemprop="instagram" class="instagram"><a href="" tal:attributes="href context/instagram" tal:content="context/instagram">Instagram</a></span></li>
+        <li>
+          <span i18n:translate="">Online participation</span>:
+          <span itemprop="online-participation" class="online-participation"><a href="" tal:attributes="href context/online_participation" tal:content="context/online_participation">Online participation</a></span></li>
+    </ul>
 
-    <!-- Carousel wrapper -->
-    <div
-        id="carouselMultiItemExample"
-        class="carousel slide carousel-dark text-center event-gallery"
-        data-mdb-ride="carousel"
-        tal:define="images view/images"
-        tal:condition="images">
-        <!-- Controls -->
-        <div class="d-flex justify-content-center mb-4">
-            <button
-              class="carousel-control-prev position-relative"
-              type="button"
-              data-mdb-target="#carouselMultiItemExample"
-              data-mdb-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next position-relative"
-                    type="button"
-                    data-mdb-target="#carouselMultiItemExample"
-                    data-mdb-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-        <!-- Inner -->
-        <div class="carousel-inner py-4">
-            <!-- Single item active-->
-            <div class="carousel-item"
-                 tal:repeat="row_images images">
-                <div class="container">
-                    <div class="row">
-                        <!--  d-none d-lg-block-->
-                        <div class="col-lg-4">
-                            <div class="card"
-                                 tal:repeat="image row_images">
-                                <img tal:attributes="src string:${image/absolute_url}/@@images/image/mini;
-                                                     alt image/title;
-                                                     title image/title" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- END Inner -->
+    <div class="" tal:content="structure view/get_embed_video" />
+
+    <div tal:define="images view/images;
+                     thumb_scale string:preview"
+         tal:condition="images"
+         class="flexbin flexbin-margin">
+        <tal:images tal:repeat="item images">
+            <a class="spotlight gallery_item"
+               tal:attributes="href string:${item/absolute_url}/@@images/image/large;
+                               title item/title;
+                               data-description item/description">
+              <img tal:attributes="src string:${item/absolute_url}/@@images/image/${thumb_scale};
+                                   alt item/title;
+                                   title item/title" />
+            </a>
+        </tal:images>
     </div>
-    <!-- END Carousel wrapper -->
-
     <div class="event-files"
          tal:define="files view/files"
          tal:condition="files">
-      <ul>
-        <li tal:repeat="item files">
-            <div tal:define="file_view nocall:item/@@file_view;
-                             item_has_image python:item.getIcon;
-                             thumb_scale view/get_thumb_scale_list;
-                             image_scale item/@@images;">
-              <a tal:attributes="href item/absolute_url;
-                                 alt item/title">
-                <span>
-                    <img class="mime-icon"
-                         tal:attributes="src file_view/get_mimetype_icon">
-                    <span tal:content="item/title">Item Title</span>
-                    <span class="discreet">&mdash; <span tal:replace="file_view/human_readable_size" /></span>
-                </span>
-                <p>
-                  <span tal:replace="item/description" />
-                </p>
-                <img tal:replace="structure python:image_scale.tag('image', scale=thumb_scale)" />
-              </a>
-            </div>
-        </li>
-      </ul>
+        <ul>
+            <li tal:repeat="item files">
+                <div tal:define="file_view nocall:item/@@file_view;
+                                 item_has_image python:item.getIcon;
+                                 thumb_scale view/get_thumb_scale_list;
+                                 image_scale item/@@images;">
+                    <a tal:attributes="href item/absolute_url;
+                                       alt item/title">
+                        <span>
+                            <img class="mime-icon"
+                                 tal:attributes="src file_view/get_mimetype_icon">
+                            <span tal:content="item/title">Item Title</span>
+                            <span class="discreet">&mdash; <span tal:replace="file_view/human_readable_size" /></span>
+                        </span>
+                        <p><span tal:replace="item/description" /></p>
+                        <img tal:replace="structure python:image_scale.tag('image', scale=thumb_scale)" />
+                    </a>
+                </div>
+            </li>
+        </ul>
     </div>
 </metal:main>
-
 </body>
 </html>
