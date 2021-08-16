@@ -18,12 +18,7 @@ class View(EventView, FolderView):
         return self.context.listFolderContents(contentFilter={"portal_type": "File"})
 
     def images(self):
-        images = self.context.listFolderContents(contentFilter={"portal_type": "Image"})
-        rows = []
-        for i in range(0, len(images)):
-            if i % self.GALLERY_IMAGES_NUMBER == 0:
-                rows.append(images[i : i + self.GALLERY_IMAGES_NUMBER])  # NOQA
-        return rows
+        return self.context.listFolderContents(contentFilter={"portal_type": "Image"})
 
     def has_leadimage(self):
         if ILeadImage.providedBy(self.context) and getattr(
@@ -31,3 +26,7 @@ class View(EventView, FolderView):
         ):
             return True
         return False
+
+    def get_embed_video(self):
+        embedder = Embedder(width=800, height=600)
+        return embedder(self.context.video_url, params=dict(autoplay=False))
