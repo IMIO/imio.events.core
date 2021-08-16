@@ -73,7 +73,7 @@ class IEvent(IAddress):
 
     instagram = schema.URI(
         title=_(u"Instagram"),
-        description=_(u"Instgram url for this event"),
+        description=_(u"Instagram url for this event"),
         required=False,
     )
 
