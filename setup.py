@@ -58,6 +58,7 @@ setup(
         "collective.geolocationbehavior",
         "collective.taxonomy",
         "eea.facetednavigation",
+        "embeddify",
         "imio.smartweb.common",
         "imio.smartweb.locales",
     ],
