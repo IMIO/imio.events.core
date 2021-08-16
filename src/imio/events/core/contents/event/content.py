@@ -97,13 +97,22 @@ class IEvent(IAddress):
         default=False,
     )
 
-    model.fieldset("categorization", fields=["category"])
+    model.fieldset("categorization", fields=["category", "local_category"])
     category = schema.Choice(
         title=_(u"Category"),
         description=_(
             u"Important! These categories are used to supplement the information provided by the topics"
         ),
         source="imio.events.vocabulary.EventsCategories",
+        required=False,
+    )
+
+    local_category = schema.Choice(
+        title=_(u"Specific category"),
+        description=_(
+            u"Important! These categories allow you to use criteria that are specific to your organization"
+        ),
+        source="imio.events.vocabulary.EventsLocalCategories",
         required=False,
     )
 

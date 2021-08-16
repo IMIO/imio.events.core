@@ -22,6 +22,15 @@ class IEntity(model.Schema):
 
     logo = NamedBlobImage(title=_(u"Logo"), description=_(u""), required=False)
 
+    model.fieldset("categorization", fields=["local_categories"])
+    local_categories = schema.Text(
+        title=_(u"Specific events categories"),
+        description=_(
+            u"List of events categories values available for this entity (one per line)"
+        ),
+        required=False,
+    )
+
 
 @implementer(IEntity)
 class Entity(Container):

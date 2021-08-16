@@ -7,7 +7,9 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import createObject
+from zope.component import getUtility
 from zope.component import queryUtility
+from zope.schema.interfaces import IVocabularyFactory
 
 import unittest
 
@@ -128,3 +130,19 @@ class IEventIntegrationTest(unittest.TestCase):
                 type="imio.events.Entity",
                 title="My Entity",
             )
+
+    def test_event_local_category(self):
+        event = api.content.create(
+            container=self.folder,
+            type="imio.events.Event",
+            id="my-event",
+        )
+        factory = getUtility(
+            IVocabularyFactory, "imio.events.vocabulary.EventsLocalCategories"
+        )
+        vocabulary = factory(event)
+        self.assertEqual(len(vocabulary), 0)
+
+        self.entity.local_categories = "First\nSecond\nThird"
+        vocabulary = factory(event)
+        self.assertEqual(len(vocabulary), 3)
