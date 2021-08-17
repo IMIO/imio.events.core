@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <object name="portal_catalog">
 
-  <!--<column value="my_meta_column"/>-->
   <index name="category" meta_type="KeywordIndex">
     <indexed_attr value="category"/>
   </index>
