@@ -50,14 +50,13 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "setuptools",
-        # -*- Extra requirements: -*-
+        "embeddify",
         "z3c.jbot",
         "plone.api>=1.8.4",
         "plone.restapi",
         "plone.app.dexterity",
         "collective.geolocationbehavior",
         "eea.facetednavigation",
-        "embeddify",
         "imio.smartweb.common",
         "imio.smartweb.locales",
     ],
