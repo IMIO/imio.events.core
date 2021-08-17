@@ -68,5 +68,9 @@
    <property name="maxitems">5</property>
    <property name="sortreversed">True</property>
   </criterion>
+  <criterion name="c4">
+   <property name="widget">relative_path</property>
+   <property name="title">Relative path</property>
+  </criterion>
  </criteria>
 </object>
