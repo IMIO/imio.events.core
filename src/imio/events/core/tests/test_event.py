@@ -182,7 +182,5 @@ class IEventIntegrationTest(unittest.TestCase):
         )
         view = queryMultiAdapter((event, self.request), name="view")
         self.assertEqual(view.has_leadimage(), False)
-        event.image = NamedBlobFile(
-            "ploneLeadImage", filename=get_leadimage_filename()
-        )
+        event.image = NamedBlobFile("ploneLeadImage", filename=get_leadimage_filename())
         self.assertEqual(view.has_leadimage(), True)
