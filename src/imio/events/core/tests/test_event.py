@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
+from imio.events.core.contents import IEvent
 from imio.events.core.contents.event.content import IEvent  # NOQA E501
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING  # noqa
+from imio.events.core.tests.utils import get_leadimage_filename
 from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.namedfile.file import NamedBlobFile
 from zope.component import createObject
 from zope.component import getUtility
+from zope.component import queryMultiAdapter
 from zope.component import queryUtility
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -30,7 +34,7 @@ class IEventIntegrationTest(unittest.TestCase):
             "imio.events.Event",
             "Document",
         ]
-
+        self.request = self.layer["request"]
         self.portal = self.layer["portal"]
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.parent = self.portal
@@ -146,3 +150,39 @@ class IEventIntegrationTest(unittest.TestCase):
         self.entity.local_categories = "First\nSecond\nThird"
         vocabulary = factory(event)
         self.assertEqual(len(vocabulary), 3)
+
+    def test_view(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="My event item",
+        )
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertIn("My event item", view())
+
+    def test_embed_video(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="My event item",
+        )
+        event.video_url = "https://www.youtube.com/watch?v=_dOAthafoGQ"
+        view = queryMultiAdapter((event, self.request), name="view")
+        embedded_video = view.get_embed_video()
+        self.assertIn("iframe", embedded_video)
+        self.assertIn(
+            "https://www.youtube.com/embed/_dOAthafoGQ?feature=oembed", embedded_video
+        )
+
+    def test_has_leadimage(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="My event item",
+        )
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertEqual(view.has_leadimage(), False)
+        event.image = NamedBlobFile(
+            "ploneLeadImage", filename=get_leadimage_filename()
+        )
+        self.assertEqual(view.has_leadimage(), True)
