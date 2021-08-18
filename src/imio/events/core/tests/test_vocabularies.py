@@ -19,4 +19,4 @@ class TestVocabularies(unittest.TestCase):
             IVocabularyFactory, "imio.events.vocabulary.EventsCategories"
         )
         vocabulary = factory()
-        self.assertEqual(len(vocabulary), 4)
+        self.assertEqual(len(vocabulary), 10)
