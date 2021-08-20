@@ -10,5 +10,6 @@ def added_agenda(obj, event):
     )
     configure_faceted(obj, faceted_config_path)
 
+
 def added_entity(obj, event):
     added_agenda(obj, event)
