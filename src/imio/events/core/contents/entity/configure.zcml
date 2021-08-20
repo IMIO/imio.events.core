@@ -1,12 +1,4 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser">
-
-  <!--browser:page
-      name="view"
-      for="imio.events.core.contents.IEntity"
-      permission="zope2.View"
-      layer="imio.events.core.interfaces.IImioEventsCoreLayer"
-      /-->
+    xmlns="http://namespaces.zope.org/zope">
 
 </configure>

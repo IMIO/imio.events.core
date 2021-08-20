@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Setup tests for this package."""
+
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import setRoles, TEST_USER_ID

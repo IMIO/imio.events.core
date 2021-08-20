@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <rolemap>
   <permissions>
-  <!-- -*- extra stuff goes here -*- -->
+
     <permission name="imio.events.core: Add Entity" acquire="True">
       <role name="Manager"/>
     </permission>
-
 
     <permission name="imio.events.core: Add Agenda" acquire="True">
       <role name="Manager"/>
@@ -14,7 +13,6 @@
       <role name="Contributor"/>
     </permission>
 
-
     <permission name="imio.events.core: Add Folder" acquire="True">
       <role name="Manager"/>
       <role name="Site Administrator"/>
@@ -22,14 +20,12 @@
       <role name="Contributor"/>
     </permission>
 
-
     <permission name="imio.events.core: Add Event" acquire="True">
       <role name="Manager"/>
       <role name="Site Administrator"/>
       <role name="Owner"/>
       <role name="Contributor"/>
     </permission>
-
 
   </permissions>
 </rolemap>

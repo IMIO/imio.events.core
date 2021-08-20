@@ -2,7 +2,6 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="imio.smartweb">
 
   <include package="collective.geolocationbehavior" />
@@ -12,7 +11,6 @@
 
   <include package=".contents" />
   <include package=".browser" />
-  <include package=".faceted" />
 
   <include file="permissions.zcml" />
   <include file="subscribers.zcml" />
@@ -40,7 +38,5 @@
       factory=".setuphandlers.HiddenProfiles"
       name="imio.events.core-hiddenprofiles"
       />
-
-  <!-- -*- extra stuff goes here -*- -->
 
 </configure>

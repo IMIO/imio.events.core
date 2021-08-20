@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from embeddify import Embedder
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.browser.folder import FolderView

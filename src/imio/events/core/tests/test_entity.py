@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from imio.events.core.contents.entity.content import IEntity  # NOQA E501
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING  # noqa
 from plone import api
