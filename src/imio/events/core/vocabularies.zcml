@@ -19,4 +19,10 @@
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+  <utility
+    name="imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary"
+    component=".vocabularies.EventsCategoriesAndTopicsVocabulary"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
 </configure>

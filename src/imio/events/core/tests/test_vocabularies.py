@@ -86,3 +86,11 @@ class TestVocabularies(unittest.TestCase):
         vocabulary = factory(self.portal)
         ordered_agendas = [a.title for a in vocabulary]
         self.assertEqual(ordered_agendas, [agenda2.title, agenda1.title])
+        
+    def test_event_categories_topics(self):
+        factory = getUtility(
+            IVocabularyFactory,
+            "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
+        )
+        vocabulary = factory()
+        self.assertEqual(len(vocabulary), 26)

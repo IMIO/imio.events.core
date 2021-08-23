@@ -8,6 +8,8 @@ from plone import api
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 
 
 class EventsCategoriesVocabularyFactory:
@@ -68,3 +70,38 @@ class AgendasUIDsVocabularyFactory:
 
 
 AgendasUIDsVocabulary = AgendasUIDsVocabularyFactory()
+
+
+class EventsCategoriesAndTopicsVocabularyFactory:
+    def __call__(self, context=None):
+        events_categories_factory = getUtility(
+            IVocabularyFactory, "imio.events.vocabulary.EventsCategories"
+        )
+        topics_factory = getUtility(
+            IVocabularyFactory, "imio.smartweb.vocabulary.Topics"
+        )
+
+        terms = []
+
+        for term in events_categories_factory():
+            terms.append(
+                SimpleTerm(
+                    value=term.value,
+                    token=term.token,
+                    title=_("Category : ") + term.title,
+                )
+            )
+
+        for term in topics_factory():
+            terms.append(
+                SimpleTerm(
+                    value=term.value,
+                    token=term.token,
+                    title=_("Topics : ") + term.title,
+                )
+            )
+
+        return SimpleVocabulary(terms)
+
+
+EventsCategoriesAndTopicsVocabulary = EventsCategoriesAndTopicsVocabularyFactory()
