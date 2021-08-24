@@ -39,4 +39,6 @@
       name="imio.events.core-hiddenprofiles"
       />
 
+  <adapter factory=".indexers.category_and_topics_indexer" name="category_and_topics" />
+
 </configure>

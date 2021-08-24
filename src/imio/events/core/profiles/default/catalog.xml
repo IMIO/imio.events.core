@@ -16,8 +16,7 @@
   <column value="selected_agendas"/>
 
   <index name="category_and_topics" meta_type="KeywordIndex">
-    <indexed_attr value="topics"/>
-    <indexed_attr value="category"/>
+    <indexed_attr value="category_and_topics"/>
   </index>
   <column value="category_and_topics"/>
 
