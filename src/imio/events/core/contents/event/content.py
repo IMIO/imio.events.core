@@ -48,8 +48,8 @@ class IEvent(IAddress):
     )
 
     site_url = schema.URI(
-        title=_(u"Site"),
-        description=_(u"Event site url"),
+        title=_(u"Website"),
+        description=_(u"Event website url"),
         required=False,
     )
 
