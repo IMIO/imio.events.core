@@ -47,12 +47,6 @@ class IEvent(IAddress):
         required=False,
     )
 
-    site_url = schema.URI(
-        title=_(u"Website"),
-        description=_(u"Event website url"),
-        required=False,
-    )
-
     ticket_url = schema.URI(
         title=_(u"Ticket url"),
         description=_(u"Ticket url to subscribe to this event"),
@@ -97,22 +91,13 @@ class IEvent(IAddress):
         default=False,
     )
 
-    model.fieldset("categorization", fields=["category", "local_category"])
+    model.fieldset("categorization", fields=["category"])
     category = schema.Choice(
         title=_(u"Category"),
         description=_(
             u"Important! These categories are used to supplement the information provided by the topics"
         ),
         source="imio.events.vocabulary.EventsCategories",
-        required=False,
-    )
-
-    local_category = schema.Choice(
-        title=_(u"Specific category"),
-        description=_(
-            u"Important! These categories allow you to use criteria that are specific to your organization"
-        ),
-        source="imio.events.vocabulary.EventsLocalCategories",
         required=False,
     )
 
