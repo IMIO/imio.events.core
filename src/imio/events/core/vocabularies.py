@@ -4,6 +4,7 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from imio.events.core.contents import IEntity
 from imio.smartweb.locales import SmartwebMessageFactory as _
+from plone import api
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
@@ -43,3 +44,19 @@ class EventsLocalCategoriesVocabularyFactory:
 
 
 EventsLocalCategoriesVocabulary = EventsLocalCategoriesVocabularyFactory()
+
+
+class AgendasUIDsVocabularyFactory:
+    def __call__(self, context=None):
+        portal = api.portal.get()
+        brains = api.content.find(
+            portal,
+            portal_type="imio.events.Agenda",
+            sort_on="sortable_title",
+            review_state="published",
+        )
+        terms = [SimpleTerm(value=b.UID, token=b.UID, title=b.Title) for b in brains]
+        return SimpleVocabulary(terms)
+
+
+AgendasUIDsVocabulary = AgendasUIDsVocabularyFactory()

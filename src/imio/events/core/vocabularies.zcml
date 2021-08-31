@@ -13,4 +13,10 @@
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+  <utility
+    name="imio.events.vocabulary.AgendasUIDs"
+    component=".vocabularies.AgendasUIDsVocabulary"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
 </configure>
