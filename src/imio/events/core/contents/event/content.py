@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from Acquisition import aq_inner
-from Acquisition import aq_parent
 from collective.geolocationbehavior.geolocation import IGeolocatable
-from imio.events.core.contents import IAgenda
+from imio.events.core.utils import get_agenda_uid_for_event
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.app.z3cform.widget import SelectFieldWidget
 from plone.autoform import directives
@@ -47,12 +45,7 @@ IGeolocatable.setTaggedValue(FIELDSETS_KEY, [address_fieldset])
 
 @provider(IContextAwareDefaultFactory)
 def get_current_agenda_UID(context):
-    obj = context
-    while not IAgenda.providedBy(obj):
-        parent = aq_parent(aq_inner(obj))
-        obj = parent
-    agenda = obj
-    return [agenda.UID()]
+    return [get_agenda_uid_for_event(context)]
 
 
 class IEvent(IAddress):
@@ -121,10 +114,13 @@ class IEvent(IAddress):
     directives.widget(selected_agendas=SelectFieldWidget)
     selected_agendas = schema.List(
         title=_(u"Selected agendas"),
-        description=_(u"Select agendas where this event will be displayed. Current agenda where is always selected."),
+        description=_(
+            u"Select agendas where this event will be displayed. Current agenda where is always selected."
+        ),
         value_type=schema.Choice(vocabulary="imio.events.vocabulary.AgendasUIDs"),
         required=True,
-        defaultFactory=get_current_agenda_UID
+        default=[]
+        # defaultFactory=get_current_agenda_UID
     )
 
 
