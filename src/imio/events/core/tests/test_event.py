@@ -185,3 +185,53 @@ class IEventIntegrationTest(unittest.TestCase):
         self.assertEqual(view.has_leadimage(), False)
         event.image = NamedBlobFile("ploneLeadImage", filename=get_leadimage_filename())
         self.assertEqual(view.has_leadimage(), True)
+
+    def test_subscriber_to_select_current_agenda(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="My event item",
+        )
+        self.assertEqual(event.selected_agendas, [self.agenda.UID()])
+
+    def test_index(self):
+        event1 = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="Event1",
+        )
+        agenda2 = api.content.create(
+            container=self.entity,
+            type="imio.events.Agenda",
+            title="Agenda2",
+        )
+        event2 = api.content.create(
+            container=agenda2,
+            type="imio.events.Event",
+            title="Event2",
+        )
+        # On va requêter sur self.agenda et trouver les 2 événements car event2 vient de s'ajouter dedans aussi.
+        event2.selected_agendas = [self.agenda.UID()]
+        event2.reindexObject()
+        brains = api.content.find(selected_agendas=self.agenda.UID())
+        lst = [brain.UID for brain in brains]
+        self.assertEqual(lst, [event1.UID(), event2.UID()])
+
+        # On va requêter sur agenda2 et trouver uniquement event2 car event2 est dans les 2 agendas mais event1 n'est que dans self.agenda
+        event2.selected_agendas = [agenda2.UID(), self.agenda.UID()]
+        event2.reindexObject()
+        brains = api.content.find(selected_agendas=agenda2.UID())
+        lst = [brain.UID for brain in brains]
+        self.assertEqual(lst, [event2.UID()])
+
+        # Via une recherche catalog sur les agenda, on va trouver les 2 événements
+        brains = api.content.find(selected_agendas=[agenda2.UID(), self.agenda.UID()])
+        lst = [brain.UID for brain in brains]
+        self.assertEqual(lst, [event1.UID(), event2.UID()])
+
+        # On va requêter sur les 2 agendas et trouver les 2 événements car 1 dans chaque
+        event2.selected_agendas = [agenda2.UID()]
+        event2.reindexObject()
+        brains = api.content.find(selected_agendas=[agenda2.UID(), self.agenda.UID()])
+        lst = [brain.UID for brain in brains]
+        self.assertEqual(lst, [event1.UID(), event2.UID()])
