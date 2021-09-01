@@ -5,5 +5,8 @@
     <indexed_attr value="category"/>
   </index>
   <column value="category"/>
-
+  <index name="selected_agendas" meta_type="KeywordIndex">
+    <indexed_attr value="selected_agendas"/>
+  </index>
+  <column value="selected_agendas"/>
 </object>
