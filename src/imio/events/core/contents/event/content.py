@@ -101,6 +101,13 @@ class IEvent(IAddress):
         required=False,
     )
 
+    selected_agendas = schema.List(
+        title=_(u"Selected agendas"),
+        description=_(u"Select agendas to display"),
+        value_type=schema.Choice(vocabulary="imio.events.vocabulary.AgendasUIDs"),
+        required=True,
+    )
+
 
 @implementer(IEvent)
 class Event(Container):
