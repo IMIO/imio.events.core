@@ -4,9 +4,15 @@
   <index name="category" meta_type="KeywordIndex">
     <indexed_attr value="category"/>
   </index>
-  <column value="category"/>
+  <index name="facilities" meta_type="KeywordIndex">
+    <indexed_attr value="facilities"/>
+  </index>
   <index name="selected_agendas" meta_type="KeywordIndex">
     <indexed_attr value="selected_agendas"/>
   </index>
+
+  <column value="category"/>
+  <column value="facilities"/>
   <column value="selected_agendas"/>
+
 </object>
