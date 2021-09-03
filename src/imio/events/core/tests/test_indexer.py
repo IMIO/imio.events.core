@@ -84,7 +84,7 @@ class TestIndexer(unittest.TestCase):
         )
 
         # check if right number of result
-        self.assertEqual(len(search_result), 7)
+        self.assertEqual(len(search_result), 6)
 
         # check for good result number
         self.assertEqual(len(search_result["stroll_discovery"]), 1)

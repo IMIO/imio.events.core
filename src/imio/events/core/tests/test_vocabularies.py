@@ -91,11 +91,18 @@ class TestVocabularies(unittest.TestCase):
         self.assertEqual(ordered_agendas, [agenda2.title, agenda1.title])
 
     def test_event_categories_topics(self):
+        entity = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            id="imio.events.Entity",
+            local_categories="",
+        )
+
         factory = getUtility(
             IVocabularyFactory,
             "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
         )
-        vocabulary = factory(event_item)
+        vocabulary = factory(entity)
         self.assertEqual(len(vocabulary), 26)
 
     def test_news_categories_topics_local_cat(self):
