@@ -6,9 +6,6 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
-from plone import api
-from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
 
 import unittest
 
@@ -103,7 +100,7 @@ class TestVocabularies(unittest.TestCase):
             "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
         )
         vocabulary = factory(entity)
-        self.assertEqual(len(vocabulary), 26)
+        self.assertEqual(len(vocabulary), 27)  # must be updated if add new vocabulary
 
     def test_news_categories_topics_local_cat(self):
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
@@ -128,5 +125,6 @@ class TestVocabularies(unittest.TestCase):
             IVocabularyFactory,
             "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
         )
+        __import__("pdb").set_trace()
         vocabulary = factory(event_item)
-        self.assertEqual(len(vocabulary), 29)
+        self.assertEqual(len(vocabulary), 30)  # must be updated if add new vocabulary

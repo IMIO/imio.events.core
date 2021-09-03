@@ -72,7 +72,7 @@ class TestIndexer(unittest.TestCase):
             container=self.agenda,
             type="imio.events.Event",
             id="id_news2",
-            category=u"movie",
+            category=u"theater_show",
             local_category=u"baz",
             topics=[u"tourism", u"health"],
         )
@@ -91,7 +91,7 @@ class TestIndexer(unittest.TestCase):
         self.assertEqual(len(search_result["Foo"]), 1)
         self.assertEqual(len(search_result["culture"]), 1)
         self.assertEqual(len(search_result["health"]), 2)
-        self.assertEqual(len(search_result["movie"]), 1)
+        self.assertEqual(len(search_result["theater_show"]), 1)
         self.assertEqual(len(search_result["tourism"]), 1)
 
         # check for good return object
@@ -99,5 +99,5 @@ class TestIndexer(unittest.TestCase):
         self.assertEqual(search_result["Foo"], ["id_news"])
         self.assertEqual(search_result["culture"], ["id_news"])
         self.assertEqual(sorted(search_result["health"]), ["id_news", "id_news2"])
-        self.assertEqual(search_result["movie"], ["id_news2"])
+        self.assertEqual(search_result["theater_show"], ["id_news2"])
         self.assertEqual(search_result["tourism"], ["id_news2"])
