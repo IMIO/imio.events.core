@@ -77,13 +77,18 @@ class EventsCategoriesAndTopicsVocabularyFactory:
         events_categories_factory = getUtility(
             IVocabularyFactory, "imio.events.vocabulary.EventsCategories"
         )
+
+        events_local_categories_factory = getUtility(
+            IVocabularyFactory, "imio.events.vocabulary.EventsLocalCategories"
+        )
+
         topics_factory = getUtility(
             IVocabularyFactory, "imio.smartweb.vocabulary.Topics"
         )
 
         terms = []
 
-        for term in events_categories_factory():
+        for term in events_categories_factory(context):
             terms.append(
                 SimpleTerm(
                     value=term.value,
@@ -92,7 +97,16 @@ class EventsCategoriesAndTopicsVocabularyFactory:
                 )
             )
 
-        for term in topics_factory():
+        for term in events_local_categories_factory(context):
+            terms.append(
+                SimpleTerm(
+                    value=term.value,
+                    token=term.token,
+                    title=_("Category : ") + term.title,
+                )
+            )
+
+        for term in topics_factory(context):
             terms.append(
                 SimpleTerm(
                     value=term.value,

@@ -6,6 +6,9 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
+from plone import api
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
 
 import unittest
 
@@ -92,5 +95,31 @@ class TestVocabularies(unittest.TestCase):
             IVocabularyFactory,
             "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
         )
-        vocabulary = factory()
+        vocabulary = factory(event_item)
         self.assertEqual(len(vocabulary), 26)
+
+    def test_news_categories_topics_local_cat(self):
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        entity = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            id="imio.events.Entity",
+            local_categories="Foo\r\nbaz\r\nbar",
+        )
+        agenda = api.content.create(
+            container=entity,
+            type="imio.events.Agenda",
+            id="imio.events.Agenda",
+        )
+        event_item = api.content.create(
+            container=agenda,
+            type="imio.events.Event",
+            id="imio.events.Event",
+        )
+
+        factory = getUtility(
+            IVocabularyFactory,
+            "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
+        )
+        vocabulary = factory(event_item)
+        self.assertEqual(len(vocabulary), 29)

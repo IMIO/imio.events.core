@@ -1,13 +1,18 @@
 from plone.indexer import indexer
 from imio.events.core.contents.event.content import IEvent
+import copy
 
 
 @indexer(IEvent)
 def category_and_topics_indexer(obj):
-    list = []
+    values = []
     if obj.topics is not None:
-        list = obj.topics
+        values = copy.deepcopy(obj.topics)
 
-    list.append(obj.category)
+    if obj.category is not None:
+        values.append(obj.category)
 
-    return list
+    if obj.local_category is not None:
+        values.append(obj.local_category)
+
+    return values
