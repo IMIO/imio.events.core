@@ -84,11 +84,12 @@ class TestIndexer(unittest.TestCase):
         )
 
         # check if right number of result
-        self.assertEqual(len(search_result), 6)
+        self.assertEqual(len(search_result), 7)
 
         # check for good result number
         self.assertEqual(len(search_result["stroll_discovery"]), 1)
         self.assertEqual(len(search_result["Foo"]), 1)
+        self.assertEqual(len(search_result["baz"]), 1)
         self.assertEqual(len(search_result["culture"]), 1)
         self.assertEqual(len(search_result["health"]), 2)
         self.assertEqual(len(search_result["theater_show"]), 1)
@@ -97,6 +98,7 @@ class TestIndexer(unittest.TestCase):
         # check for good return object
         self.assertEqual(search_result["stroll_discovery"], ["id_news"])
         self.assertEqual(search_result["Foo"], ["id_news"])
+        self.assertEqual(search_result["baz"], ["id_news2"])
         self.assertEqual(search_result["culture"], ["id_news"])
         self.assertEqual(sorted(search_result["health"]), ["id_news", "id_news2"])
         self.assertEqual(search_result["theater_show"], ["id_news2"])

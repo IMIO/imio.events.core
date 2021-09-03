@@ -125,6 +125,5 @@ class TestVocabularies(unittest.TestCase):
             IVocabularyFactory,
             "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
         )
-        __import__("pdb").set_trace()
         vocabulary = factory(event_item)
         self.assertEqual(len(vocabulary), 30)  # must be updated if add new vocabulary
