@@ -41,7 +41,7 @@ class EventsLocalCategoriesVocabularyFactory:
         if not obj.local_categories:
             return SimpleVocabulary([])
 
-        values = obj.local_categories.split("\n")
+        values = obj.local_categories.splitlines()
         terms = [SimpleTerm(value=t, token=t, title=t) for t in values]
         return SimpleVocabulary(terms)
 
