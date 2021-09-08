@@ -118,9 +118,8 @@ class IEvent(IAddress):
             u"Select agendas where this event will be displayed. Current agenda is always selected."
         ),
         value_type=schema.Choice(vocabulary="imio.events.vocabulary.AgendasUIDs"),
-        required=True,
-        default=[]
-        # defaultFactory=get_current_agenda_UID
+        default=[],
+        required=False,
     )
 
 
