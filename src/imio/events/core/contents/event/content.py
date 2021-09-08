@@ -115,7 +115,7 @@ class IEvent(IAddress):
     selected_agendas = schema.List(
         title=_(u"Selected agendas"),
         description=_(
-            u"Select agendas where this event will be displayed. Current agenda where is always selected."
+            u"Select agendas where this event will be displayed. Current agenda is always selected."
         ),
         value_type=schema.Choice(vocabulary="imio.events.vocabulary.AgendasUIDs"),
         required=True,
