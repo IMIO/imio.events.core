@@ -5,7 +5,14 @@ from imio.smartweb.common.faceted.utils import configure_faceted
 import os
 
 
-def added_agenda(obj, event):
+def set_default_agenda_uid(event):
+    uid = get_agenda_uid_for_event(event)
+    if uid not in event.selected_agendas:
+        event.selected_agendas = event.selected_agendas + [uid]
+        event.reindexObject()
+
+
+def init_faceted(obj):
     faceted_config_path = "{}/faceted/config/events.xml".format(
         os.path.dirname(__file__)
     )
@@ -13,16 +20,16 @@ def added_agenda(obj, event):
 
 
 def added_entity(obj, event):
-    added_agenda(obj, event)
+    init_faceted(obj)
 
 
-def modified_event(obj, event):
-    uid = get_agenda_uid_for_event(obj)
-    if uid in obj.selected_agendas:
-        return
-    obj.selected_agendas = obj.selected_agendas + [uid]
-    obj.reindexObject()
+def added_agenda(obj, event):
+    init_faceted(obj)
 
 
 def added_event(obj, event):
-    modified_event(obj, event)
+    set_default_agenda_uid(obj)
+
+
+def modified_event(obj, event):
+    set_default_agenda_uid(obj)

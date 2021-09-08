@@ -1,20 +1,20 @@
 <configure
     xmlns="http://namespaces.zope.org/zope">
 
-  <subscriber for="imio.events.core.contents.IAgenda
-                   zope.lifecycleevent.interfaces.IObjectAddedEvent"
-              handler=".subscribers.added_agenda" />
-
   <subscriber for="imio.events.core.contents.IEntity
                    zope.lifecycleevent.interfaces.IObjectAddedEvent"
               handler=".subscribers.added_entity" />
 
-  <subscriber for="imio.events.core.contents.IEvent
-                   zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-              handler=".subscribers.modified_event" />
+  <subscriber for="imio.events.core.contents.IAgenda
+                   zope.lifecycleevent.interfaces.IObjectAddedEvent"
+              handler=".subscribers.added_agenda" />
 
   <subscriber for="imio.events.core.contents.IEvent
                    zope.lifecycleevent.interfaces.IObjectAddedEvent"
               handler=".subscribers.added_event" />
+
+  <subscriber for="imio.events.core.contents.IEvent
+                   zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+              handler=".subscribers.modified_event" />
 
 </configure>
