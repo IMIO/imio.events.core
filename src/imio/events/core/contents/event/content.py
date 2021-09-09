@@ -5,6 +5,8 @@ from imio.events.core.utils import get_agenda_uid_for_event
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.app.z3cform.widget import SelectFieldWidget
 from plone.autoform import directives
+from plone.autoform.directives import read_permission
+from plone.autoform.directives import write_permission
 from plone.dexterity.content import Container
 from plone.supermodel import model
 from plone.supermodel.interfaces import FIELDSETS_KEY
@@ -121,6 +123,9 @@ class IEvent(IAddress):
         source="imio.events.vocabulary.EventsCategories",
         required=False,
     )
+
+    read_permission(selected_agendas="imio.events.core.AddEntity")
+    write_permission(selected_agendas="imio.events.core.AddEntity")
 
 
 @implementer(IEvent)
