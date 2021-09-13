@@ -8,6 +8,8 @@ from plone import api
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 
 
 class EventsCategoriesVocabularyFactory:
@@ -39,7 +41,7 @@ class EventsLocalCategoriesVocabularyFactory:
         if not obj.local_categories:
             return SimpleVocabulary([])
 
-        values = obj.local_categories.split("\n")
+        values = obj.local_categories.splitlines()
         terms = [SimpleTerm(value=t, token=t, title=t) for t in values]
         return SimpleVocabulary(terms)
 
@@ -68,3 +70,52 @@ class AgendasUIDsVocabularyFactory:
 
 
 AgendasUIDsVocabulary = AgendasUIDsVocabularyFactory()
+
+
+class EventsCategoriesAndTopicsVocabularyFactory:
+    def __call__(self, context=None):
+        events_categories_factory = getUtility(
+            IVocabularyFactory, "imio.events.vocabulary.EventsCategories"
+        )
+
+        events_local_categories_factory = getUtility(
+            IVocabularyFactory, "imio.events.vocabulary.EventsLocalCategories"
+        )
+
+        topics_factory = getUtility(
+            IVocabularyFactory, "imio.smartweb.vocabulary.Topics"
+        )
+
+        terms = []
+
+        for term in events_categories_factory(context):
+            terms.append(
+                SimpleTerm(
+                    value=term.value,
+                    token=term.token,
+                    title=term.title,
+                )
+            )
+
+        for term in events_local_categories_factory(context):
+            terms.append(
+                SimpleTerm(
+                    value=term.value,
+                    token=term.token,
+                    title=term.title,
+                )
+            )
+
+        for term in topics_factory(context):
+            terms.append(
+                SimpleTerm(
+                    value=term.value,
+                    token=term.token,
+                    title=term.title,
+                )
+            )
+
+        return SimpleVocabulary(terms)
+
+
+EventsCategoriesAndTopicsVocabulary = EventsCategoriesAndTopicsVocabularyFactory()
