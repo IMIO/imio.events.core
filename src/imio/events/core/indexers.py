@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from plone.indexer import indexer
 from imio.events.core.contents.event.content import IEvent
 import copy

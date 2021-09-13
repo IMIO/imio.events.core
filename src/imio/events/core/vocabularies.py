@@ -93,7 +93,7 @@ class EventsCategoriesAndTopicsVocabularyFactory:
                 SimpleTerm(
                     value=term.value,
                     token=term.token,
-                    title=_("Category : ") + term.title,
+                    title=term.title,
                 )
             )
 
@@ -102,7 +102,7 @@ class EventsCategoriesAndTopicsVocabularyFactory:
                 SimpleTerm(
                     value=term.value,
                     token=term.token,
-                    title=_("Category : ") + term.title,
+                    title=term.title,
                 )
             )
 
@@ -111,7 +111,7 @@ class EventsCategoriesAndTopicsVocabularyFactory:
                 SimpleTerm(
                     value=term.value,
                     token=term.token,
-                    title=_("Topics : ") + term.title,
+                    title=term.title,
                 )
             )
 

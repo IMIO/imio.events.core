@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import setRoles
@@ -45,7 +47,7 @@ class TestIndexer(unittest.TestCase):
         return output
 
     def test_event_with_nothing(self):
-        _ = api.content.create(
+        api.content.create(
             container=self.agenda,
             type="imio.events.Event",
             id="imio.events.Event",
@@ -59,7 +61,7 @@ class TestIndexer(unittest.TestCase):
         self.assertEqual(len(search_result), 0)
 
     def test_event_with_one_of_each(self):
-        _ = api.content.create(
+        api.content.create(
             container=self.agenda,
             type="imio.events.Event",
             id="id_news",
@@ -68,7 +70,7 @@ class TestIndexer(unittest.TestCase):
             topics=[u"culture", u"health"],
         )
 
-        _ = api.content.create(
+        api.content.create(
             container=self.agenda,
             type="imio.events.Event",
             id="id_news2",
