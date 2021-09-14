@@ -49,28 +49,6 @@ class EventsLocalCategoriesVocabularyFactory:
 EventsLocalCategoriesVocabulary = EventsLocalCategoriesVocabularyFactory()
 
 
-class AgendasUIDsVocabularyFactory:
-    def __call__(self, context=None):
-        search_context = api.portal.get()
-        obj = context
-        while not INavigationRoot.providedBy(obj):
-            if IEntity.providedBy(obj):
-                search_context = obj
-                break
-            parent = aq_parent(aq_inner(obj))
-            obj = parent
-        brains = api.content.find(
-            search_context,
-            portal_type="imio.events.Agenda",
-            sort_on="sortable_title",
-        )
-        terms = [SimpleTerm(value=b.UID, token=b.UID, title=b.Title) for b in brains]
-        return SimpleVocabulary(terms)
-
-
-AgendasUIDsVocabulary = AgendasUIDsVocabularyFactory()
-
-
 class EventsCategoriesAndTopicsVocabularyFactory:
     def __call__(self, context=None):
         events_categories_factory = getUtility(
@@ -118,3 +96,25 @@ class EventsCategoriesAndTopicsVocabularyFactory:
 
 
 EventsCategoriesAndTopicsVocabulary = EventsCategoriesAndTopicsVocabularyFactory()
+
+
+class AgendasUIDsVocabularyFactory:
+    def __call__(self, context=None):
+        search_context = api.portal.get()
+        obj = context
+        while not INavigationRoot.providedBy(obj):
+            if IEntity.providedBy(obj):
+                search_context = obj
+                break
+            parent = aq_parent(aq_inner(obj))
+            obj = parent
+        brains = api.content.find(
+            search_context,
+            portal_type="imio.events.Agenda",
+            sort_on="sortable_title",
+        )
+        terms = [SimpleTerm(value=b.UID, token=b.UID, title=b.Title) for b in brains]
+        return SimpleVocabulary(terms)
+
+
+AgendasUIDsVocabulary = AgendasUIDsVocabularyFactory()

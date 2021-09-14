@@ -25,6 +25,47 @@ class TestVocabularies(unittest.TestCase):
         vocabulary = factory()
         self.assertEqual(len(vocabulary), 10)
 
+    def test_event_categories_topics(self):
+        entity = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            id="imio.events.Entity",
+            local_categories="",
+        )
+
+        factory = getUtility(
+            IVocabularyFactory,
+            "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
+        )
+        vocabulary = factory(entity)
+        self.assertEqual(len(vocabulary), 27)  # must be updated if add new vocabulary
+
+    def test_news_categories_topics_local_cat(self):
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        entity = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            id="imio.events.Entity",
+            local_categories="Foo\r\nbaz\r\nbar",
+        )
+        agenda = api.content.create(
+            container=entity,
+            type="imio.events.Agenda",
+            id="imio.events.Agenda",
+        )
+        event_item = api.content.create(
+            container=agenda,
+            type="imio.events.Event",
+            id="imio.events.Event",
+        )
+
+        factory = getUtility(
+            IVocabularyFactory,
+            "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
+        )
+        vocabulary = factory(event_item)
+        self.assertEqual(len(vocabulary), 30)  # must be updated if add new vocabulary
+
     def test_agendas_UIDs(self):
         entity1 = api.content.create(
             container=self.portal,
@@ -81,44 +122,3 @@ class TestVocabularies(unittest.TestCase):
         vocabulary = factory(self.portal)
         ordered_agendas = [a.title for a in vocabulary]
         self.assertEqual(ordered_agendas, [agenda2.title, agenda1.title])
-
-    def test_event_categories_topics(self):
-        entity = api.content.create(
-            container=self.portal,
-            type="imio.events.Entity",
-            id="imio.events.Entity",
-            local_categories="",
-        )
-
-        factory = getUtility(
-            IVocabularyFactory,
-            "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
-        )
-        vocabulary = factory(entity)
-        self.assertEqual(len(vocabulary), 27)  # must be updated if add new vocabulary
-
-    def test_news_categories_topics_local_cat(self):
-        setRoles(self.portal, TEST_USER_ID, ["Manager"])
-        entity = api.content.create(
-            container=self.portal,
-            type="imio.events.Entity",
-            id="imio.events.Entity",
-            local_categories="Foo\r\nbaz\r\nbar",
-        )
-        agenda = api.content.create(
-            container=entity,
-            type="imio.events.Agenda",
-            id="imio.events.Agenda",
-        )
-        event_item = api.content.create(
-            container=agenda,
-            type="imio.events.Event",
-            id="imio.events.Event",
-        )
-
-        factory = getUtility(
-            IVocabularyFactory,
-            "imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary",
-        )
-        vocabulary = factory(event_item)
-        self.assertEqual(len(vocabulary), 30)  # must be updated if add new vocabulary
