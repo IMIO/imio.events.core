@@ -103,7 +103,9 @@ class IEvent(IAddress):
         default=False,
     )
 
-    model.fieldset("categorization", fields=["selected_agendas", "category"])
+    model.fieldset(
+        "categorization", fields=["selected_agendas", "category", "local_category"]
+    )
     directives.widget(selected_agendas=SelectFieldWidget)
     selected_agendas = schema.List(
         title=_(u"Selected agendas"),
@@ -121,6 +123,15 @@ class IEvent(IAddress):
             u"Important! These categories are used to supplement the information provided by the topics"
         ),
         source="imio.events.vocabulary.EventsCategories",
+        required=False,
+    )
+
+    local_category = schema.Choice(
+        title=_(u"Specific category"),
+        description=_(
+            u"Important! These categories allow you to use criteria that are specific to your organization"
+        ),
+        source="imio.events.vocabulary.EventsLocalCategories",
         required=False,
     )
 
