@@ -1,0 +1,9 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+  <adapter
+      name="category_and_topics"
+      factory=".indexers.category_and_topics_indexer"
+      />
+
+</configure>

@@ -12,33 +12,11 @@
   <include package=".contents" />
   <include package=".browser" />
 
+  <include file="indexers.zcml" />
   <include file="permissions.zcml" />
+  <include file="profiles.zcml" />
   <include file="subscribers.zcml" />
   <include file="vocabularies.zcml" />
 
-  <genericsetup:registerProfile
-      name="default"
-      title="imio.events.core"
-      directory="profiles/default"
-      description="Installs the imio.events.core add-on."
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      post_handler=".setuphandlers.post_install"
-      />
-
-  <genericsetup:registerProfile
-      name="uninstall"
-      title="imio.events.core (uninstall)"
-      directory="profiles/uninstall"
-      description="Uninstalls the imio.events.core add-on."
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      post_handler=".setuphandlers.uninstall"
-      />
-
-  <utility
-      factory=".setuphandlers.HiddenProfiles"
-      name="imio.events.core-hiddenprofiles"
-      />
-
-  <adapter factory=".indexers.category_and_topics_indexer" name="category_and_topics" />
 
 </configure>
