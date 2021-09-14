@@ -63,7 +63,6 @@ class AgendasUIDsVocabularyFactory:
             search_context,
             portal_type="imio.events.Agenda",
             sort_on="sortable_title",
-            review_state="published",
         )
         terms = [SimpleTerm(value=b.UID, token=b.UID, title=b.Title) for b in brains]
         return SimpleVocabulary(terms)

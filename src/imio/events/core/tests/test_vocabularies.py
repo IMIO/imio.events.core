@@ -63,11 +63,6 @@ class TestVocabularies(unittest.TestCase):
         )
         factory = getUtility(IVocabularyFactory, "imio.events.vocabulary.AgendasUIDs")
         vocabulary = factory(self.portal)
-        self.assertEqual(len(vocabulary), 0)
-
-        api.content.transition(agenda1, to_state="published")
-        api.content.transition(agenda2, to_state="published")
-        vocabulary = factory(self.portal)
         self.assertEqual(len(vocabulary), 2)
 
         vocabulary = factory(event1)
