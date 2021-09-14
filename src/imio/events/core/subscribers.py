@@ -6,6 +6,7 @@ import os
 
 
 def set_default_agenda_uid(event):
+    event.selected_agendas = event.selected_agendas or []
     uid = get_agenda_uid_for_event(event)
     if uid not in event.selected_agendas:
         event.selected_agendas = event.selected_agendas + [uid]
