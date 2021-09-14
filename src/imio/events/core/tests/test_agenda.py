@@ -13,7 +13,7 @@ from zope.component import queryUtility
 import unittest
 
 
-class IAgendaIntegrationTest(unittest.TestCase):
+class TestAgenda(unittest.TestCase):
 
     layer = IMIO_EVENTS_CORE_INTEGRATION_TESTING
 

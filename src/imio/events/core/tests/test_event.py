@@ -19,7 +19,7 @@ from zope.schema.interfaces import IVocabularyFactory
 import unittest
 
 
-class IEventIntegrationTest(unittest.TestCase):
+class TestEvent(unittest.TestCase):
 
     layer = IMIO_EVENTS_CORE_INTEGRATION_TESTING
 
