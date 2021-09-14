@@ -6,10 +6,10 @@ from imio.events.core.contents import IEntity
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
 from plone.app.layout.navigation.interfaces import INavigationRoot
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 class EventsCategoriesVocabularyFactory:
