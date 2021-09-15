@@ -135,6 +135,13 @@ class IEvent(IAddress):
         required=False,
     )
 
+    event_type = schema.Choice(
+        title=_(u"Event type"),
+        description=_(u"Select what's sort of event is"),
+        source="imio.events.vocabulary.EventTypes",
+        required=False,
+    )
+
     read_permission(selected_agendas="imio.events.core.AddEntity")
     write_permission(selected_agendas="imio.events.core.AddEntity")
 

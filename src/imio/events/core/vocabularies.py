@@ -118,3 +118,16 @@ class AgendasUIDsVocabularyFactory:
 
 
 AgendasUIDsVocabulary = AgendasUIDsVocabularyFactory()
+
+
+class EventTypesVocabularyFactory:
+    def __call__(self, context=None):
+        event_types = [
+            (u"event-driven", _(u"Event-driven")),
+            (u"activity", _(u"Activity")),
+        ]
+        terms = [SimpleTerm(value=t[0], token=t[0], title=t[1]) for t in event_types]
+        return SimpleVocabulary(terms)
+
+
+EventTypesVocabulary = EventTypesVocabularyFactory()
