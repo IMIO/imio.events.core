@@ -107,7 +107,7 @@ class TestVocabularies(unittest.TestCase):
         self.assertEqual(len(vocabulary), 2)
 
         vocabulary = factory(event1)
-        self.assertEqual(len(vocabulary), 1)
+        self.assertEqual(len(vocabulary), 2)
 
         vocabulary = factory(event2)
         uid = agenda2.UID()
