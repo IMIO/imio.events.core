@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# from collective.geolocationbehavior.geolocation import IGeolocatable
 from imio.events.core.utils import get_agenda_uid_for_event
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.app.z3cform.widget import SelectFieldWidget
@@ -9,12 +8,14 @@ from plone.autoform.directives import read_permission
 from plone.autoform.directives import write_permission
 from plone.dexterity.content import Container
 from plone.supermodel import model
-# from plone.supermodel.interfaces import FIELDSETS_KEY
-# from plone.supermodel.model import Fieldset
 from zope import schema
 from zope.interface import implementer
 from zope.interface import provider
 from zope.schema.interfaces import IContextAwareDefaultFactory
+
+# from collective.geolocationbehavior.geolocation import IGeolocatable
+# from plone.supermodel.interfaces import FIELDSETS_KEY
+# from plone.supermodel.model import Fieldset
 
 
 class IAddress(model.Schema):
