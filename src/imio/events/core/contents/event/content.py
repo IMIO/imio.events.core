@@ -137,7 +137,6 @@ class IEvent(IAddress):
 
     event_type = schema.Choice(
         title=_(u"Event type"),
-        description=_(u"Select what's sort of event is"),
         source="imio.events.vocabulary.EventTypes",
         required=False,
     )
