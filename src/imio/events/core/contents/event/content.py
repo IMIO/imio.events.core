@@ -117,7 +117,7 @@ class IEvent(IAddress):
     model.fieldset(
         "categorization",
         label=_(u"Categorization"),
-        fields=["selected_agendas", "category", "local_category"]
+        fields=["selected_agendas", "category", "local_category"],
     )
     directives.widget(selected_agendas=SelectFieldWidget)
     selected_agendas = schema.List(

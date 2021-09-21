@@ -121,7 +121,9 @@ class TestVocabularies(unittest.TestCase):
         agenda1.reindexObject()
         vocabulary = factory(self.portal)
         ordered_agendas = [a.title for a in vocabulary]
-        self.assertEqual(ordered_agendas, ["Entity2 » Agenda2", "Z Change order! » Agenda1"])
+        self.assertEqual(
+            ordered_agendas, ["Entity2 » Agenda2", "Z Change order! » Agenda1"]
+        )
 
     def test_event_types(self):
         factory = getUtility(IVocabularyFactory, "imio.events.vocabulary.EventTypes")
