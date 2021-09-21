@@ -23,7 +23,7 @@ class IAddress(model.Schema):
 
     model.fieldset(
         "address",
-        label=_(u"Address"),
+        label=_(u"Event address"),
         fields=["street", "number", "complement", "zipcode", "city", "country"],
     )
     street = schema.TextLine(title=_(u"Street"), required=False)
@@ -115,7 +115,9 @@ class IEvent(IAddress):
     )
 
     model.fieldset(
-        "categorization", fields=["selected_agendas", "category", "local_category"]
+        "categorization",
+        label=_(u"Categorization"),
+        fields=["selected_agendas", "category", "local_category"]
     )
     directives.widget(selected_agendas=SelectFieldWidget)
     selected_agendas = schema.List(
