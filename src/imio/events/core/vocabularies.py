@@ -103,9 +103,11 @@ class AgendasUIDsVocabularyFactory:
         brains = api.content.find(
             context=portal,
             portal_type="imio.events.Agenda",
-            sort_on="sortable_title",
+            sort_on="breadcrumb",
         )
-        terms = [SimpleTerm(value=b.UID, token=b.UID, title=b.Title) for b in brains]
+        terms = [
+            SimpleTerm(value=b.UID, token=b.UID, title=b.breadcrumb) for b in brains
+        ]
         return SimpleVocabulary(terms)
 
 
