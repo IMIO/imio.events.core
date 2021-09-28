@@ -17,4 +17,12 @@
                    zope.lifecycleevent.interfaces.IObjectModifiedEvent"
               handler=".subscribers.modified_event" />
 
+  <subscriber for="imio.events.core.contents.IAgenda
+                   zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+              handler=".subscribers.modified_agenda" />
+
+  <subscriber for="imio.events.core.contents.IAgenda
+                 zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+            handler=".subscribers.removed_agenda" />
+
 </configure>
