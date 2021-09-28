@@ -7,10 +7,11 @@ import os
 
 def set_default_agenda_uid(event):
     event.selected_agendas = event.selected_agendas or []
-    uid = get_agenda_uid_for_event(event)
+    uid = get_agenda_for_event(event).UID()
     if uid not in event.selected_agendas:
         event.selected_agendas = event.selected_agendas + [uid]
         event.reindexObject()
+    return uid
 
 
 def init_faceted(obj):
