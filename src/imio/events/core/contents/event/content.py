@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from imio.events.core.utils import get_agenda_uid_for_event
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.app.z3cform.widget import SelectFieldWidget
 from plone.autoform import directives
@@ -11,8 +10,6 @@ from plone.supermodel import model
 from z3c.form.browser.radio import RadioFieldWidget
 from zope import schema
 from zope.interface import implementer
-from zope.interface import provider
-from zope.schema.interfaces import IContextAwareDefaultFactory
 
 # from collective.geolocationbehavior.geolocation import IGeolocatable
 # from plone.supermodel.interfaces import FIELDSETS_KEY
@@ -45,11 +42,6 @@ class IAddress(model.Schema):
 #     fields=["geolocation"],
 # )
 # IGeolocatable.setTaggedValue(FIELDSETS_KEY, [address_fieldset])
-
-
-@provider(IContextAwareDefaultFactory)
-def get_current_agenda_UID(context):
-    return [get_agenda_uid_for_event(context)]
 
 
 class IEvent(IAddress):
