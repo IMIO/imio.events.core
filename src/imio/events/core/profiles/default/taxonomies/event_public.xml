@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='utf-8'?>
+<vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsvdex_v1p0 imsvdex_v1p0.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd" orderSignificant="false" profileType="hierarchicalTokenTerms" language="fr">
+  <vocabName>
+    <langstring language="fr">Public cible d'un événement</langstring>
+  </vocabName>
+  <vocabIdentifier>event_public</vocabIdentifier>
+  <term>
+    <termIdentifier>i8gf49541q</termIdentifier>
+    <caption>
+      <langstring language="fr">Petit enfant</langstring>
+    </caption>
+    <term>
+      <termIdentifier>tdtpdh546x</termIdentifier>
+      <caption>
+        <langstring language="fr">1 an</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>19hb3u884v</termIdentifier>
+      <caption>
+        <langstring language="fr">2 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>cl7oi9xaig</termIdentifier>
+      <caption>
+        <langstring language="fr">3 ans</langstring>
+      </caption>
+    </term>
+  </term>
+  <term>
+    <termIdentifier>omg40jn2yl</termIdentifier>
+    <caption>
+      <langstring language="fr">Enfant</langstring>
+    </caption>
+    <term>
+      <termIdentifier>a04ryxt74a</termIdentifier>
+      <caption>
+        <langstring language="fr">4 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>2u0ugvi72u</termIdentifier>
+      <caption>
+        <langstring language="fr">5 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>8btkbsp9ei</termIdentifier>
+      <caption>
+        <langstring language="fr">6 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>gp881gyhmy</termIdentifier>
+      <caption>
+        <langstring language="fr">7 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>me9vnw7vnk</termIdentifier>
+      <caption>
+        <langstring language="fr">8 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>11ps76le1h</termIdentifier>
+      <caption>
+        <langstring language="fr">9 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>rf2m1fbrot</termIdentifier>
+      <caption>
+        <langstring language="fr">10 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>79qhii8mnf</termIdentifier>
+      <caption>
+        <langstring language="fr">11 ans</langstring>
+      </caption>
+    </term>
+  </term>
+  <term>
+    <termIdentifier>ah0rbc2qr4</termIdentifier>
+    <caption>
+      <langstring language="fr">Adolescent</langstring>
+    </caption>
+    <term>
+      <termIdentifier>x6rmmxao6i</termIdentifier>
+      <caption>
+        <langstring language="fr">12 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>1pn83a9xkw</termIdentifier>
+      <caption>
+        <langstring language="fr">13 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>b8skpvhfka</termIdentifier>
+      <caption>
+        <langstring language="fr">14 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>snvxin8j4j</termIdentifier>
+      <caption>
+        <langstring language="fr">15 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>v4ty7v0hab</termIdentifier>
+      <caption>
+        <langstring language="fr">16 ans</langstring>
+      </caption>
+    </term>
+    <term>
+      <termIdentifier>1x1ii6jxhu</termIdentifier>
+      <caption>
+        <langstring language="fr">17 ans</langstring>
+      </caption>
+    </term>
+  </term>
+  <term>
+    <termIdentifier>5lfbjyeea0</termIdentifier>
+    <caption>
+      <langstring language="fr">Adulte</langstring>
+    </caption>
+  </term>
+  <term>
+    <termIdentifier>58cuuquwed</termIdentifier>
+    <caption>
+      <langstring language="fr">Plus de 60 ans</langstring>
+    </caption>
+  </term>
+  <term>
+    <termIdentifier>ry275hefdy</termIdentifier>
+    <caption>
+      <langstring language="fr">Tout public</langstring>
+    </caption>
+  </term>
+</vdex>

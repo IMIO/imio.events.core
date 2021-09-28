@@ -42,6 +42,7 @@
     <element value="plone.eventcontact"/>
     <element value="plone.richtext"/>
     <element value="geolocatable"/>
+    <element value="collective.taxonomy.generated.event_public"/>
     <element value="imio.smartweb.topics"/>
     <element value="imio.smartweb.iam"/>
     <element value="plone.categorization"/>

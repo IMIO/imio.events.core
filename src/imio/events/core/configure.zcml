@@ -5,6 +5,7 @@
     i18n_domain="imio.smartweb">
 
   <include package="collective.geolocationbehavior" />
+  <include package="collective.taxonomy" />
   <include package="eea.facetednavigation" />
   <include package="imio.smartweb.common" />
   <include package="imio.smartweb.locales" />

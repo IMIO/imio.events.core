@@ -56,6 +56,7 @@ setup(
         "plone.restapi",
         "plone.app.dexterity",
         "collective.geolocationbehavior",
+        "collective.taxonomy",
         "eea.facetednavigation",
         "imio.smartweb.common",
         "imio.smartweb.locales",
