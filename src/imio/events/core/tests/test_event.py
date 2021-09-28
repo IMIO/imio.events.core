@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from imio.events.core.contents import IEvent
 from imio.events.core.contents.event.content import IEvent  # NOQA E501
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING  # noqa
 from imio.events.core.tests.utils import get_leadimage_filename
@@ -10,10 +9,15 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.namedfile.file import NamedBlobFile
+from z3c.relationfield import RelationValue
+from z3c.relationfield.interfaces import IRelationList
 from zope.component import createObject
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
 from zope.component import queryUtility
+from zope.intid.interfaces import IIntIds
+from zope.lifecycleevent import Attributes
+from zope.lifecycleevent import modified
 from zope.schema.interfaces import IVocabularyFactory
 
 import unittest
@@ -235,3 +239,48 @@ class TestEvent(unittest.TestCase):
         brains = api.content.find(selected_agendas=[agenda2.UID(), self.agenda.UID()])
         lst = [brain.UID for brain in brains]
         self.assertEqual(lst, [event1.UID(), event2.UID()])
+
+    def test_referrer_agendas(self):
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        intids = getUtility(IIntIds)
+        entity2 = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            id="entity2",
+        )
+        agenda2 = api.content.create(
+            container=entity2,
+            type="imio.events.Agenda",
+            id="agenda2",
+        )
+        event2 = api.content.create(
+            container=agenda2,
+            type="imio.events.Event",
+            id="event2",
+        )
+        setattr(
+            self.agenda, "populating_agendas", [RelationValue(intids.getId(agenda2))]
+        )
+        modified(self.agenda, Attributes(IRelationList, "populating_agendas"))
+        self.assertIn(self.agenda.UID(), event2.selected_agendas)
+
+        # if we create an event in an agenda that is referred in another agenda
+        # then, referrer agenda UID is in event.selected_agendas list.
+        event2b = api.content.create(
+            container=agenda2,
+            type="imio.events.Event",
+            id="event2b",
+        )
+        self.assertIn(self.agenda.UID(), event2b.selected_agendas)
+
+    def test_automaticaly_readd_container_agenda_uid(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="event",
+        )
+        self.assertIn(self.agenda.UID(), event.selected_agendas)
+        event.selected_agendas = []
+        event.reindexObject()
+        modified(event)
+        self.assertIn(self.agenda.UID(), event.selected_agendas)
