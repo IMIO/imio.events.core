@@ -2,6 +2,8 @@
 
 from imio.events.core.utils import get_agenda_for_event
 from imio.smartweb.common.faceted.utils import configure_faceted
+from imio.smartweb.common.interfaces import IAddress
+from imio.smartweb.common.utils import geocode_object
 from plone import api
 import os
 
@@ -46,10 +48,21 @@ def removed_agenda(obj, event):
 def added_event(obj, event):
     container_agenda = get_agenda_for_event(obj)
     set_uid_of_referrer_agendas(obj, event, container_agenda)
+    if not obj.is_geolocated:
+        # geocode only if the user has not already changed geolocation
+        geocode_object(obj)
 
 
 def modified_event(obj, event):
     set_default_agenda_uid(obj)
+
+    if not hasattr(event, "descriptions") or not event.descriptions:
+        return
+    for d in event.descriptions:
+        if d.interface is IAddress and d.attributes:
+            # an address field has been changed
+            geocode_object(obj)
+            return
 
 
 def diff_list(li1, li2):

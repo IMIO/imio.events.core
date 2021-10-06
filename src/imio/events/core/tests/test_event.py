@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from imio.events.core.contents.event.content import IEvent  # NOQA E501
-from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING  # noqa
+from imio.smartweb.common.utils import geocode_object
+from imio.events.core.contents.event.content import IEvent
+from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from imio.events.core.tests.utils import get_leadimage_filename
 from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.formwidget.geolocation.geolocation import Geolocation
 from plone.namedfile.file import NamedBlobFile
+from unittest import mock
 from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
 from zope.component import createObject
@@ -20,6 +23,7 @@ from zope.lifecycleevent import Attributes
 from zope.lifecycleevent import modified
 from zope.schema.interfaces import IVocabularyFactory
 
+import geopy
 import unittest
 
 
@@ -284,3 +288,21 @@ class TestEvent(unittest.TestCase):
         event.reindexObject()
         modified(event)
         self.assertIn(self.agenda.UID(), event.selected_agendas)
+
+    def test_geolocation(self):
+        attr = {"geocode.return_value": mock.Mock(latitude=1, longitude=2)}
+        geopy.geocoders.Nominatim = mock.Mock(return_value=mock.Mock(**attr))
+
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="event",
+        )
+
+        self.assertFalse(event.is_geolocated)
+        event.geolocation = Geolocation(0, 0)
+        event.street = "My beautiful street"
+        geocode_object(event)
+        self.assertTrue(event.is_geolocated)
+        self.assertEqual(event.geolocation.latitude, 1)
+        self.assertEqual(event.geolocation.longitude, 2)
