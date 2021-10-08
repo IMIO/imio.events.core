@@ -37,15 +37,21 @@ class IEvent(IAddress):
         required=True,
     )
 
-    video_url = schema.URI(
-        title=_(u"Video url"),
-        description=_(u"Video url from youtube, vimeo"),
+    online_participation = schema.URI(
+        title=_(u"Online participation url"),
+        description=_(u"Link to online participation"),
         required=False,
     )
 
     ticket_url = schema.URI(
         title=_(u"Ticket url"),
         description=_(u"Ticket url to subscribe to this event"),
+        required=False,
+    )
+
+    video_url = schema.URI(
+        title=_(u"Video url"),
+        description=_(u"Video url from youtube, vimeo"),
         required=False,
     )
 
@@ -72,12 +78,6 @@ class IEvent(IAddress):
         description=_(u"Check if entry is free"),
         required=False,
         default=False,
-    )
-
-    online_participation = schema.URI(
-        title=_(u"Online participation url"),
-        description=_(u"Link to online participation"),
-        required=False,
     )
 
     reduced_mobility_facilities = schema.Bool(
