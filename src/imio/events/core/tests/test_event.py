@@ -305,3 +305,19 @@ class TestEvent(unittest.TestCase):
         self.assertTrue(event.is_geolocated)
         self.assertEqual(event.geolocation.latitude, 1)
         self.assertEqual(event.geolocation.longitude, 2)
+
+    def test_name_chooser(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="event",
+        )
+        self.assertEqual(event.id, event.UID())
+
+        entity = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            title="entity",
+        )
+        self.assertNotEqual(entity.id, entity.UID())
+        self.assertEqual(entity.id, "entity")

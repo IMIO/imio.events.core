@@ -3,6 +3,7 @@
 from collective.geolocationbehavior.geolocation import IGeolocatable
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.locales import SmartwebMessageFactory as _
+from plone.app.content.namechooser import NormalizingNameChooser
 from plone.app.z3cform.widget import SelectFieldWidget
 from plone.autoform import directives
 from plone.autoform.directives import read_permission
@@ -11,6 +12,7 @@ from plone.dexterity.content import Container
 from plone.supermodel import model
 from z3c.form.browser.radio import RadioFieldWidget
 from zope import schema
+from zope.container.interfaces import INameChooser
 from zope.interface import implementer
 
 # from collective.geolocationbehavior.geolocation import IGeolocatable
@@ -135,3 +137,11 @@ class Event(Container):
         if coordinates is None:
             return False
         return all([coordinates.latitude, coordinates.longitude])
+
+
+@implementer(INameChooser)
+class EventNameChooser(NormalizingNameChooser):
+    def chooseName(self, name, obj):
+        if IEvent.providedBy(obj):
+            return obj.UID()
+        return super(EventNameChooser, self).chooseName(name, obj)
