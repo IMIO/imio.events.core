@@ -95,7 +95,7 @@ class TestFolder(unittest.TestCase):
         )
 
     def test_ct_folder_filter_content_type_true(self):
-        setRoles(self.portal, TEST_USER_ID, ["Contributor"])
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
         fti = queryUtility(IDexterityFTI, name="imio.events.Folder")
         portal_types = self.portal.portal_types
         parent_id = portal_types.constructContent(
@@ -118,7 +118,6 @@ class TestFolder(unittest.TestCase):
                 type=t,
                 title="My {}".format(t),
             )
-        setRoles(self.portal, TEST_USER_ID, ["Manager"])
         with self.assertRaises(InvalidParameterError):
             api.content.create(
                 container=folder,
