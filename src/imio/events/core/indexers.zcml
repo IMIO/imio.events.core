@@ -6,4 +6,9 @@
       factory=".indexers.category_and_topics_indexer"
       />
 
+  <adapter
+      name="container_uid"
+      factory=".indexers.container_uid"
+      />
+
 </configure>

@@ -201,7 +201,7 @@ class TestEvent(unittest.TestCase):
         )
         self.assertEqual(event.selected_agendas, [self.agenda.UID()])
 
-    def test_index(self):
+    def test_indexes(self):
         event1 = api.content.create(
             container=self.agenda,
             type="imio.events.Event",
@@ -217,6 +217,11 @@ class TestEvent(unittest.TestCase):
             type="imio.events.Event",
             title="Event2",
         )
+        catalog = api.portal.get_tool("portal_catalog")
+        brain = api.content.find(UID=event1.UID())[0]
+        indexes = catalog.getIndexDataForRID(brain.getRID())
+        self.assertEqual(indexes.get("container_uid"), self.agenda.UID())
+
         # On va requêter sur self.agenda et trouver les 2 événements car event2 vient de s'ajouter dedans aussi.
         event2.selected_agendas = [self.agenda.UID()]
         event2.reindexObject()
@@ -242,6 +247,11 @@ class TestEvent(unittest.TestCase):
         brains = api.content.find(selected_agendas=[agenda2.UID(), self.agenda.UID()])
         lst = [brain.UID for brain in brains]
         self.assertEqual(lst, [event1.UID(), event2.UID()])
+
+        api.content.move(event1, agenda2)
+        brain = api.content.find(UID=event1.UID())[0]
+        indexes = catalog.getIndexDataForRID(brain.getRID())
+        self.assertEqual(indexes.get("container_uid"), agenda2.UID())
 
     def test_referrer_agendas(self):
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
