@@ -37,7 +37,11 @@ def modified_agenda(obj, event):
 
 
 def removed_agenda(obj, event):
-    brains = api.content.find(selected_agendas=obj.UID())
+    try:
+        brains = api.content.find(selected_agendas=obj.UID())
+    except api.exc.CannotGetPortalError:
+        # This happen when we try to remove plone object
+        return
     for brain in brains:
         event = brain.getObject()
         event.selected_agendas = [
