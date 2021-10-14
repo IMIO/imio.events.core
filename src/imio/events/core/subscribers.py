@@ -15,7 +15,7 @@ def set_default_agenda_uid(event):
     uid = get_agenda_for_event(event).UID()
     if uid not in event.selected_agendas:
         event.selected_agendas = event.selected_agendas + [uid]
-        event.reindexObject()
+        event.reindexObject(idxs=["selected_agendas"])
     return uid
 
 
@@ -49,6 +49,7 @@ def removed_agenda(obj, event):
         event.selected_agendas = [
             uid for uid in event.selected_agendas if uid != obj.UID()
         ]
+        event.reindexObject(idxs=["selected_agendas"])
 
 
 def added_event(obj, event):
@@ -107,5 +108,8 @@ def mark_current_agenda_in_events_from_other_agendas(obj, event):
 def set_uid_of_referrer_agendas(obj, event, container_agenda):
     obj.selected_agendas = [container_agenda.UID()]
     rels = api.relation.get(target=container_agenda, relationship="populating_agendas")
+    if not rels:
+        return
     for rel in rels:
         obj.selected_agendas.append(rel.from_object.UID())
+    obj.reindexObject(idxs=["selected_agendas"])
