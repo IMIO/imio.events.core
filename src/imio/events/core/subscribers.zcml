@@ -9,6 +9,14 @@
                    zope.lifecycleevent.interfaces.IObjectAddedEvent"
               handler=".subscribers.added_agenda" />
 
+  <subscriber for="imio.events.core.contents.IAgenda
+                   zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+              handler=".subscribers.modified_agenda" />
+
+  <subscriber for="imio.events.core.contents.IAgenda
+                 zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+            handler=".subscribers.removed_agenda" />
+
   <subscriber for="imio.events.core.contents.IEvent
                    zope.lifecycleevent.interfaces.IObjectAddedEvent"
               handler=".subscribers.added_event" />
@@ -20,13 +28,5 @@
   <subscriber for="imio.events.core.contents.IEvent
                    zope.lifecycleevent.interfaces.IObjectMovedEvent"
               handler=".subscribers.moved_event" />
-
-  <subscriber for="imio.events.core.contents.IAgenda
-                   zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-              handler=".subscribers.modified_agenda" />
-
-  <subscriber for="imio.events.core.contents.IAgenda
-                 zope.lifecycleevent.interfaces.IObjectRemovedEvent"
-            handler=".subscribers.removed_agenda" />
 
 </configure>
