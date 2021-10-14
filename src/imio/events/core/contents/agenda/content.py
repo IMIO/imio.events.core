@@ -16,7 +16,9 @@ class IAgenda(model.Schema):
 
     populating_agendas = RelationList(
         title=_(u"Populating agendas"),
-        description=_(u"Agendas that populate current agenda with their events."),
+        description=_(
+            u"Agendas that automatically populates this agenda with their events."
+        ),
         value_type=RelationChoice(
             title=u"Items selection",
             source=CatalogSource(),
