@@ -5,6 +5,8 @@ from imio.smartweb.common.faceted.utils import configure_faceted
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
 from plone import api
+from zope.lifecycleevent.interfaces import IAttributes
+
 import os
 
 
@@ -73,6 +75,9 @@ def mark_current_agenda_in_events_from_other_agendas(obj, event):
     changed = False
     agendas_to_treat = []
     for d in event.descriptions:
+        if not IAttributes.providedBy(d):
+            # we do not have fields change description, but maybe a request
+            continue
         if "populating_agendas" in d.attributes:
             changed = True
             uids_in_current_agenda = [
