@@ -5,6 +5,7 @@ from imio.smartweb.common.faceted.utils import configure_faceted
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
 from plone import api
+from zope.lifecycleevent import ObjectRemovedEvent
 from zope.lifecycleevent.interfaces import IAttributes
 
 import os
@@ -70,6 +71,17 @@ def modified_event(obj, event):
             # an address field has been changed
             geocode_object(obj)
             return
+
+
+def moved_event(obj, event):
+    if event.oldParent == event.newParent and event.oldName != event.newName:
+        # item was simply renamed
+        return
+    if type(event) is ObjectRemovedEvent:
+        # We don't have anything to do if news item is being removed
+        return
+    container_agenda = get_agenda_for_event(obj)
+    set_uid_of_referrer_agendas(obj, event, container_agenda)
 
 
 def mark_current_agenda_in_events_from_other_agendas(obj, event):

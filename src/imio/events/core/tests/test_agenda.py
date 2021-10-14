@@ -10,10 +10,7 @@ from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import createObject
 from zope.component import queryUtility
 from zope.lifecycleevent import modified
-from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
-from zope.component import getUtility
-from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import Attributes
 
 import unittest
@@ -166,28 +163,37 @@ class TestAgenda(unittest.TestCase):
             type="imio.events.Event",
             id="event3",
         )
-        intids = getUtility(IIntIds)
 
         # Link agenda2 (all these events) to our object "agenda".
-        setattr(agenda, "populating_agendas", [RelationValue(intids.getId(agenda2))])
+        api.relation.create(
+            source=agenda, target=agenda2, relationship="populating_agendas"
+        )
         modified(agenda, Attributes(IRelationList, "populating_agendas"))
         # So agenda.uid() can be find on event2
         self.assertIn(agenda.UID(), event2.selected_agendas)
 
+        moving_event = api.content.create(
+            container=agenda2,
+            type="imio.events.Event",
+            id="moving_event",
+        )
+        self.assertIn(agenda.UID(), moving_event.selected_agendas)
+        # We move an event from one agenda to another
+        api.content.move(moving_event, agenda3)
+        self.assertNotIn(agenda.UID(), moving_event.selected_agendas)
+
         # Clear linking agendas out of our object "agenda".
-        setattr(agenda, "populating_agendas", [])
+        api.relation.delete(source=agenda, relationship="populating_agendas")
         modified(agenda, Attributes(IRelationList, "populating_agendas"))
         # So agenda.uid() can not be find on event2
         self.assertNotIn(agenda.UID(), event2.selected_agendas)
 
         # First, link agenda2 and agenda3
-        setattr(
-            agenda,
-            "populating_agendas",
-            [
-                RelationValue(intids.getId(agenda2)),
-                RelationValue(intids.getId(agenda3)),
-            ],
+        api.relation.create(
+            source=agenda, target=agenda2, relationship="populating_agendas"
+        )
+        api.relation.create(
+            source=agenda, target=agenda3, relationship="populating_agendas"
         )
         modified(agenda, Attributes(IRelationList, "populating_agendas"))
         # Assert link is OK

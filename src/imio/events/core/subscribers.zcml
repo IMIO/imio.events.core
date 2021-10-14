@@ -17,6 +17,10 @@
                    zope.lifecycleevent.interfaces.IObjectModifiedEvent"
               handler=".subscribers.modified_event" />
 
+  <subscriber for="imio.events.core.contents.IEvent
+                   zope.lifecycleevent.interfaces.IObjectMovedEvent"
+              handler=".subscribers.moved_event" />
+
   <subscriber for="imio.events.core.contents.IAgenda
                    zope.lifecycleevent.interfaces.IObjectModifiedEvent"
               handler=".subscribers.modified_agenda" />
