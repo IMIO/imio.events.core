@@ -69,42 +69,38 @@ def modified_event(obj, event):
             return
 
 
-def diff_list(li1, li2):
-    li_dif = [i for i in li1 + li2 if i not in li1 or i not in li2]
-    return li_dif
-
-
 def mark_current_agenda_in_events_from_other_agendas(obj, event):
+    changed = False
     agendas_to_treat = []
     for d in event.descriptions:
         if "populating_agendas" in d.attributes:
+            changed = True
             uids_in_current_agenda = [
                 rf.to_object.UID() for rf in obj.populating_agendas
             ]
-            agendas_to_treat = diff_list(
-                getattr(obj, "old_populating_agendas", []),
-                uids_in_current_agenda,
-            )
+            old_uids = getattr(obj, "old_populating_agendas", [])
+            agendas_to_treat = set(old_uids) ^ set(uids_in_current_agenda)
+            break
+    if not changed:
+        return
     for uid_agenda in agendas_to_treat:
         agenda = api.content.get(UID=uid_agenda)
-        for tuple in agenda.contentItems():
-            event = tuple[1]
+        event_brains = api.content.find(context=agenda, portal_type="imio.events.Event")
+        for brain in event_brains:
+            event = brain.getObject()
             if uid_agenda in uids_in_current_agenda:
                 event.selected_agendas.append(obj.UID())
             else:
                 event.selected_agendas = [
                     item for item in event.selected_agendas if item != obj.UID()
                 ]
-            event.reindexObject()
+            event.reindexObject(idxs=["selected_agendas"])
     # Keep a copy of populating_agendas
-    obj.old_populating_agendas = [rf.to_object.UID() for rf in obj.populating_agendas]
-    return
+    obj.old_populating_agendas = uids_in_current_agenda
 
 
 def set_uid_of_referrer_agendas(obj, event, container_agenda):
     obj.selected_agendas = [container_agenda.UID()]
-    brains = api.relation.get(
-        target=container_agenda, relationship="populating_agendas"
-    )
-    for brain in brains:
-        obj.selected_agendas.append(brain.__parent__.UID())
+    rels = api.relation.get(target=container_agenda, relationship="populating_agendas")
+    for rel in rels:
+        obj.selected_agendas.append(rel.from_object.UID())

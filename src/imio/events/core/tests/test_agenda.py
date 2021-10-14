@@ -156,8 +156,13 @@ class TestAgenda(unittest.TestCase):
             type="imio.events.Agenda",
             id="agenda3",
         )
-        event3 = api.content.create(
+        folder = api.content.create(
             container=agenda3,
+            type="imio.events.Folder",
+            id="folder",
+        )
+        event3 = api.content.create(
+            container=folder,
             type="imio.events.Event",
             id="event3",
         )
