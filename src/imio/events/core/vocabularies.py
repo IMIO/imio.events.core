@@ -5,6 +5,7 @@ from Acquisition import aq_parent
 from imio.events.core.contents import IEntity
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
@@ -34,6 +35,9 @@ EventsCategoriesVocabulary = EventsCategoriesVocabularyFactory()
 
 class EventsLocalCategoriesVocabularyFactory:
     def __call__(self, context=None):
+        if IPloneSiteRoot.providedBy(context):
+            # ex: call on @types or @vocabularies from RESTAPI
+            return SimpleVocabulary([])
         obj = context
         while not IEntity.providedBy(obj):
             obj = aq_parent(aq_inner(obj))
