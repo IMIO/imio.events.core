@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from imio.events.core.utils import get_agenda_for_event
 from imio.smartweb.common.faceted.utils import configure_faceted
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
 from plone import api
+from zope.interface import noLongerProvides
 from zope.lifecycleevent import ObjectRemovedEvent
 from zope.lifecycleevent.interfaces import IAttributes
 
@@ -25,6 +27,8 @@ def init_faceted(obj):
         os.path.dirname(__file__)
     )
     configure_faceted(obj, faceted_config_path)
+    if IHidePloneLeftColumn.providedBy(obj):
+        noLongerProvides(obj, IHidePloneLeftColumn)
 
 
 def added_entity(obj, event):
