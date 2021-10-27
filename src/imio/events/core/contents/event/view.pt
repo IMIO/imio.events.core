@@ -11,7 +11,7 @@
 
     <h1 class="documentFirstHeading" tal:content="context/Title" />
 
-    <p class="documentDescription" tal:content="structure view/description" />
+    <p class="documentDescription" tal:content="structure context/@@description" />
     <tal:check tal:condition="view/has_leadimage"
                tal:define="scale_func context/@@images;
                            scaled_image python: getattr(context.aq_explicit, 'image', False) and scale_func.scale('image', scale='large')">
