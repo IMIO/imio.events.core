@@ -10,9 +10,6 @@
   <index name="container_uid" meta_type="FieldIndex">
     <indexed_attr value="container_uid"/>
   </index>
-  <index name="facilities" meta_type="KeywordIndex">
-    <indexed_attr value="facilities"/>
-  </index>
   <index name="selected_agendas" meta_type="KeywordIndex">
     <indexed_attr value="selected_agendas"/>
   </index>
@@ -20,7 +17,6 @@
   <column value="category"/>
   <column value="category_and_topics"/>
   <column value="container_uid"/>
-  <column value="facilities"/>
   <column value="selected_agendas"/>
 
 </object>
