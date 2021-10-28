@@ -5,6 +5,8 @@
   <include package="collective.taxonomy" />
   <include package="eea.facetednavigation" />
   <include package="plone.app.content" />
+  <include package="plone.app.imagecropping" />
+
   <include package="imio.smartweb.common" />
   <include package="imio.smartweb.locales" />
 
