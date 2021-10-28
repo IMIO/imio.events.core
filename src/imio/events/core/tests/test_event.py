@@ -2,6 +2,7 @@
 
 from imio.smartweb.common.utils import geocode_object
 from imio.events.core.contents.event.content import IEvent
+from imio.events.core.interfaces import IImioEventsCoreLayer
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from imio.events.core.tests.utils import get_leadimage_filename
 from plone import api
@@ -16,8 +17,10 @@ from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
 from zope.component import createObject
 from zope.component import getUtility
+from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.component import queryUtility
+from zope.interface import alsoProvides
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import Attributes
 from zope.lifecycleevent import modified
@@ -331,3 +334,24 @@ class TestEvent(unittest.TestCase):
         )
         self.assertNotEqual(entity.id, entity.UID())
         self.assertEqual(entity.id, "entity")
+
+    def test_js_bundles(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="Event",
+        )
+
+        alsoProvides(self.request, IImioEventsCoreLayer)
+        getMultiAdapter((event, self.request), name="view")()
+        bundles = getattr(self.request, "enabled_bundles", [])
+        self.assertEqual(len(bundles), 0)
+        api.content.create(
+            container=event,
+            type="Image",
+            title="Image",
+        )
+        getMultiAdapter((event, self.request), name="view")()
+        bundles = getattr(self.request, "enabled_bundles", [])
+        self.assertEqual(len(bundles), 2)
+        self.assertListEqual(bundles, ["spotlightjs", "flexbin"])
