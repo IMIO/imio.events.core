@@ -36,32 +36,41 @@
     </tal:def>
     <ul>
         <li>
-          <span i18n:translate="">Category</span>:
-          <span itemprop="category" class="category" tal:content="context/category">category</span></li>
-        <li>
           <span i18n:translate="">Free entry</span>:
-          <span itemprop="free-entry" class="free-entry" tal:content="context/free_entry">free entry</span></li>
+          <span i18n:translate="" itemprop="free-entry" class="free-entry" tal:content="python:'Yes' if context.free_entry else 'No'">free entry</span></li>
         <li>
           <span i18n:translate="">Facilities for person with reduced mobility</span>:
-          <span itemprop="reduced-mobility-facilities" class="reduced-mobility-facilities" tal:content="context/reduced_mobility_facilities">Facilities for person with reduced mobility</span></li>
+          <span i18n:translate="" itemprop="reduced-mobility-facilities" class="reduced-mobility-facilities" tal:content="python:'Yes' if context.reduced_mobility_facilities else 'No'">Facilities for person with reduced mobility</span></li>
         <li>
           <span i18n:translate="">Ticket url</span>:
-          <span itemprop="ticket-url" class="ticket-url"><a href="" tal:attributes="href context/ticket_url" tal:content="context/ticket_url">Ticket url</a></span></li>
+          <span itemprop="ticket-url" class="ticket-url"><a target="_blank" href="" tal:attributes="href context/ticket_url" tal:content="context/ticket_url">Ticket url</a></span></li>
         <li>
           <span i18n:translate="">Facebook</span>
-          <span itemprop="facebook" class="facebook"><a href="" tal:attributes="href context/facebook" tal:content="context/facebook">Facebook</a></span></li>
+          <span itemprop="facebook" class="facebook"><a target="_blank" href="" tal:attributes="href context/facebook" tal:content="context/facebook">Facebook</a></span></li>
         <li>
           <span i18n:translate="">Twitter</span>:
-          <span itemprop="twitter" class="twitter"><a href="" tal:attributes="href context/twitter" tal:content="context/twitter">Twitter</a></span></li>
+          <span itemprop="twitter" class="twitter"><a target="_blank" href="" tal:attributes="href context/twitter" tal:content="context/twitter">Twitter</a></span></li>
         <li>
           <span i18n:translate="">Instagram</span>:
-          <span itemprop="instagram" class="instagram"><a href="" tal:attributes="href context/instagram" tal:content="context/instagram">Instagram</a></span></li>
+          <span itemprop="instagram" class="instagram"><a target="_blank" href="" tal:attributes="href context/instagram" tal:content="context/instagram">Instagram</a></span></li>
         <li>
           <span i18n:translate="">Online participation</span>:
-          <span itemprop="online-participation" class="online-participation"><a href="" tal:attributes="href context/online_participation" tal:content="context/online_participation">Online participation</a></span></li>
+          <span itemprop="online-participation" class="online-participation"><a target="_blank" href="" tal:attributes="href context/online_participation" tal:content="context/online_participation">Online participation</a></span></li>
+        <li tal:condition="context/category">
+          <span i18n:translate="">Category</span>:
+          <span itemprop="category" class="category" tal:content="view/category">category</span></li>
+        <li tal:condition="context/topics">
+          <span i18n:translate="">Topics</span>:
+          <span itemprop="topics" class="topic" tal:content="python:view.topics()">topics</span></li>
+        <li tal:condition="context/iam">
+          <span i18n:translate="">I am</span>:
+          <span itemprop="iam" class="iam" tal:content="python:view.iam()">iam</span></li>
+        <li tal:condition="context/subjects">
+          <span i18n:translate="">Search</span>:
+          <span tal:repeat="subject context/subjects" itemprop="subject" class="subject" tal:content="subject">subject</span></li>
     </ul>
 
-    <div class="" 
+    <div class=""
          tal:condition="context/video_url"
          tal:content="structure view/get_embed_video" />
 
