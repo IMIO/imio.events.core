@@ -8,7 +8,11 @@
 <body>
 
 <metal:main fill-slot="main">
-
+      <!-- fix some css for usage in Plone  -->
+      <style type="text/css">
+       #spotlight .header { padding-right: 120px !important; }
+       #content-core a { border-bottom: 0px solid transparent !important;}
+      </style>
     <h1 class="documentFirstHeading" tal:content="context/Title" />
 
     <p class="documentDescription" tal:content="structure context/@@description" />
