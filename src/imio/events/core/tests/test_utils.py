@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from imio.events.core.contents.agenda.content import IAgenda  # NOQA E501
-from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING  # noqa
+from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_agendas_uids_for_faceted
 from imio.events.core.utils import get_entity_for_obj
