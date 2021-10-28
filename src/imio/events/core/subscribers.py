@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from imio.events.core.utils import get_agenda_for_event
-from imio.smartweb.common.faceted.utils import configure_faceted
+from imio.events.core.utils import get_entity_for_obj
+from imio.events.core.utils import reload_faceted_config
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
 from plone import api
-from zope.interface import noLongerProvides
+from zope.globalrequest import getRequest
 from zope.lifecycleevent import ObjectRemovedEvent
 from zope.lifecycleevent.interfaces import IAttributes
-
-import os
 
 
 def set_default_agenda_uid(event):
@@ -22,21 +20,16 @@ def set_default_agenda_uid(event):
     return uid
 
 
-def init_faceted(obj):
-    faceted_config_path = "{}/faceted/config/events.xml".format(
-        os.path.dirname(__file__)
-    )
-    configure_faceted(obj, faceted_config_path)
-    if IHidePloneLeftColumn.providedBy(obj):
-        noLongerProvides(obj, IHidePloneLeftColumn)
-
-
 def added_entity(obj, event):
-    init_faceted(obj)
+    request = getRequest()
+    reload_faceted_config(obj, request)
 
 
 def added_agenda(obj, event):
-    init_faceted(obj)
+    request = getRequest()
+    reload_faceted_config(obj, request)
+    entity = get_entity_for_obj(obj)
+    reload_faceted_config(entity, request)
 
 
 def modified_agenda(obj, event):
@@ -55,6 +48,9 @@ def removed_agenda(obj, event):
             uid for uid in event.selected_agendas if uid != obj.UID()
         ]
         event.reindexObject(idxs=["selected_agendas"])
+    request = getRequest()
+    entity = get_entity_for_obj(obj)
+    reload_faceted_config(entity, request)
 
 
 def added_event(obj, event):
