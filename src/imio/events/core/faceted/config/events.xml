@@ -44,6 +44,22 @@
    <property name="hidezerocount">True</property>
    <property name="sortreversed">False</property>
   </criterion>
+  <criterion name="public">
+   <property name="widget">select</property>
+   <property name="title">Public cible</property>
+   <property name="index">taxonomy_event_public</property>
+   <property name="vocabulary">collective.taxonomy.event_public</property>
+   <property name="catalog"></property>
+   <property name="hidealloption">False</property>
+   <property name="position">top</property>
+   <property name="section">default</property>
+   <property name="hidden">False</property>
+   <property name="custom_css"></property>
+   <property name="count">True</property>
+   <property name="sortcountable">False</property>
+   <property name="hidezerocount">True</property>
+   <property name="sortreversed">False</property>
+  </criterion>
   <criterion name="iam">
    <property name="widget">select</property>
    <property name="title">Je suis</property>
