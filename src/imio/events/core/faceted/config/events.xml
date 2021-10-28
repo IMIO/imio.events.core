@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object name="agenda_faceted" meta_type="Dexterity Container">
  <criteria>
-  <criterion name="c2">
+  <criterion name="search">
+   <property name="widget">text</property>
+   <property name="title">Rechercher</property>
+   <property name="index">SearchableText</property>
+   <property name="onlyallelements">True</property>
+   <property name="wildcard">True</property>
+   <property name="position">top</property>
+   <property name="section">default</property>
+   <property name="hidden">False</property>
+  </criterion>
+  <criterion name="topics">
    <property name="widget">select</property>
-   <property name="title">Catégorie</property>
+   <property name="title">Thématiques</property>
+   <property name="index">topics</property>
+   <property name="vocabulary">imio.smartweb.vocabulary.Topics</property>
+   <property name="catalog"></property>
+   <property name="hidealloption">False</property>
+   <property name="position">top</property>
+   <property name="section">default</property>
+   <property name="hidden">False</property>
+   <property name="custom_css"></property>
+   <property name="count">True</property>
+   <property name="sortcountable">False</property>
+   <property name="hidezerocount">True</property>
+   <property name="sortreversed">False</property>
+  </criterion>
+  <criterion name="category">
+   <property name="widget">select</property>
+   <property name="title">Catégories</property>
    <property name="index">category</property>
    <property
       name="vocabulary">imio.events.vocabulary.EventsCategories</property>
@@ -12,27 +38,13 @@
    <property name="position">top</property>
    <property name="section">default</property>
    <property name="hidden">False</property>
+   <property name="custom_css"></property>
    <property name="count">True</property>
    <property name="sortcountable">False</property>
    <property name="hidezerocount">True</property>
    <property name="sortreversed">False</property>
   </criterion>
-  <criterion name="c1">
-   <property name="widget">select</property>
-   <property name="title">Topics</property>
-   <property name="index">topics</property>
-   <property name="vocabulary">imio.smartweb.vocabulary.Topics</property>
-   <property name="catalog"></property>
-   <property name="hidealloption">False</property>
-   <property name="position">top</property>
-   <property name="section">default</property>
-   <property name="hidden">False</property>
-   <property name="count">True</property>
-   <property name="sortcountable">False</property>
-   <property name="hidezerocount">True</property>
-   <property name="sortreversed">False</property>
-  </criterion>
-  <criterion name="c3">
+  <criterion name="iam">
    <property name="widget">select</property>
    <property name="title">Je suis</property>
    <property name="index">iam</property>
@@ -42,14 +54,89 @@
    <property name="position">top</property>
    <property name="section">default</property>
    <property name="hidden">False</property>
+   <property name="custom_css"></property>
    <property name="count">True</property>
    <property name="sortcountable">False</property>
    <property name="hidezerocount">True</property>
    <property name="sortreversed">False</property>
   </criterion>
+  <criterion name="event-type">
+   <property name="widget">select</property>
+   <property name="title">Type d'événements</property>
+   <property name="index">event_type</property>
+   <property
+      name="vocabulary">imio.events.vocabulary.EventTypes</property>
+   <property name="catalog"></property>
+   <property name="hidealloption">False</property>
+   <property name="position">top</property>
+   <property name="section">default</property>
+   <property name="hidden">False</property>
+   <property name="custom_css"></property>
+   <property name="count">True</property>
+   <property name="sortcountable">False</property>
+   <property name="hidezerocount">True</property>
+   <property name="sortreversed">False</property>
+  </criterion>
+  <criterion name="state">
+   <property name="widget">select</property>
+   <property name="title">Etat</property>
+   <property name="index">review_state</property>
+   <property
+      name="vocabulary">plone.app.vocabularies.WorkflowStates</property>
+   <property name="hidealloption">False</property>
+   <property name="position">top</property>
+   <property name="section">default</property>
+   <property name="hidden">False</property>
+   <property name="count">True</property>
+   <property name="sortcountable">False</property>
+   <property name="hidezerocount">True</property>
+   <property name="sortreversed">False</property>
+  </criterion>
+  <criterion name="author">
+   <property name="widget">select</property>
+   <property name="title">Auteur</property>
+   <property name="index">Creator</property>
+   <property name="catalog">portal_catalog</property>
+   <property name="hidealloption">False</property>
+   <property name="position">top</property>
+   <property name="section">default</property>
+   <property name="hidden">False</property>
+   <property name="count">True</property>
+   <property name="sortcountable">False</property>
+   <property name="hidezerocount">True</property>
+   <property name="sortreversed">False</property>
+  </criterion>
+  <criterion name="current">
+   <property name="widget">criteria</property>
+   <property name="title">Filtres courant</property>
+   <property name="hidecriteriaenabled">False</property>
+   <property name="position">top</property>
+   <property name="section">default</property>
+   <property name="hidden">False</property>
+   <property name="custom_css"></property>
+  </criterion>
+  <criterion name="agenda">
+   <property name="widget">checkbox</property>
+   <property name="title">Agenda</property>
+   <property name="index">selected_agendas</property>
+   <property name="operator">or</property>
+   <property name="operator_visible">False</property>
+   <property
+      name="vocabulary">imio.events.vocabulary.AgendasUIDs</property>
+   <property name="hidealloption">True</property>
+   <property name="position">bottom</property>
+   <property name="section">default</property>
+   <property name="hidden">True</property>
+   <property name="custom_css"></property>
+   <property name="count">False</property>
+   <property name="sortcountable">False</property>
+   <property name="hidezerocount">False</property>
+   <property name="maxitems">0</property>
+   <property name="sortreversed">False</property>
+  </criterion>
   <criterion name="type">
    <property name="widget">checkbox</property>
-   <property name="title">Portal type</property>
+   <property name="title">Type de contenu</property>
    <property name="index">portal_type</property>
    <property name="operator">and</property>
    <property name="operator_visible">False</property>
@@ -59,18 +146,15 @@
    <property name="default">
     <element value="imio.events.Event"/>
    </property>
-   <property name="position">right</property>
+   <property name="position">bottom</property>
    <property name="section">default</property>
    <property name="hidden">True</property>
+   <property name="custom_css"></property>
    <property name="count">True</property>
    <property name="sortcountable">False</property>
    <property name="hidezerocount">False</property>
    <property name="maxitems">5</property>
    <property name="sortreversed">True</property>
-  </criterion>
-  <criterion name="c4">
-   <property name="widget">relative_path</property>
-   <property name="title">Relative path</property>
   </criterion>
  </criteria>
 </object>
