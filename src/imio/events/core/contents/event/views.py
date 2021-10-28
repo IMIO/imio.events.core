@@ -12,9 +12,8 @@ from zope.i18n import translate
 
 class View(EventView, FolderView):
     def __call__(self):
-        if (
-            len(self.context.listFolderContents(contentFilter={"portal_type": "Image"})) > 0  # noqa
-        ):
+        images = self.context.listFolderContents(contentFilter={"portal_type": "Image"})
+        if len(images) > 0:
             add_bundle_on_request(self.request, "spotlightjs")
             add_bundle_on_request(self.request, "flexbin")
         return self.index()
