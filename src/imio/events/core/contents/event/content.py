@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collective.geolocationbehavior.geolocation import IGeolocatable
+from imio.smartweb.common.adapters import BaseCroppingProvider
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.app.content.namechooser import NormalizingNameChooser
@@ -25,6 +26,14 @@ from zope.interface import implementer
 #     fields=["geolocation"],
 # )
 # IGeolocatable.setTaggedValue(FIELDSETS_KEY, [address_fieldset])
+
+
+class EventCroppingProvider(BaseCroppingProvider):
+    def get_scales(self, fieldname, request=None):
+        if fieldname == "image":
+            # scales used for lead image field
+            return ["vignette", "slide", "affiche"]
+        return []
 
 
 class IEvent(IAddress):

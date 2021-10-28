@@ -33,6 +33,7 @@
     <element value="plone.basic"/>
     <element value="plone.locking" />
     <element value="plone.leadimage"/>
+    <element value="plone.imagecropping"/>
     <element value="plone.constraintypes" />
     <element value="plone.eventbasic"/>
     <element value="plone.eventrecurrence"/>
