@@ -106,6 +106,17 @@
    <property name="hidezerocount">True</property>
    <property name="sortreversed">False</property>
   </criterion>
+  <criterion name="sort">
+   <property name="widget">sorting</property>
+   <property name="title">Trier par</property>
+   <property
+      name="vocabulary">eea.faceted.vocabularies.SortingCatalogIndexes</property>
+   <property name="default">created(reverse)</property>
+   <property name="position">top</property>
+   <property name="section">default</property>
+   <property name="hidden">False</property>
+   <property name="custom_css"></property>
+  </criterion>
   <criterion name="current">
    <property name="widget">criteria</property>
    <property name="title">Filtres courant</property>
