@@ -41,7 +41,13 @@
     <ul>
         <li>
           <span i18n:translate="">Free entry</span>:
-          <span i18n:translate="" itemprop="free-entry" class="free-entry" tal:content="python:'Yes' if context.free_entry else 'No'">free entry</span></li>
+          <tal:cond condition="context/free_entry">
+            <span i18n:translate="" itemprop="free-entry" class="free-entry">Yes</span>
+          </tal:cond>
+          <tal:cond condition="not:context/free_entry">
+            <span i18n:translate="" itemprop="free-entry" class="free-entry">No</span>
+          </tal:cond>
+        </li>
         <li>
           <span i18n:translate="">Facilities for person with reduced mobility</span>:
           <span i18n:translate="" itemprop="reduced-mobility-facilities" class="reduced-mobility-facilities" tal:content="python:'Yes' if context.reduced_mobility_facilities else 'No'">Facilities for person with reduced mobility</span></li>
