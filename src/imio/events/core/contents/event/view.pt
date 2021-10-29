@@ -8,14 +8,17 @@
 <body>
 
 <metal:main fill-slot="main">
-      <!-- fix some css for usage in Plone  -->
-      <style type="text/css">
-       #spotlight .header { padding-right: 120px !important; }
-       #content-core a { border-bottom: 0px solid transparent !important;}
-      </style>
+
+    <!-- fix some css for usage in Plone  -->
+    <style type="text/css">
+     #spotlight .header { padding-right: 120px !important; }
+     #content-core a { border-bottom: 0px solid transparent !important;}
+    </style>
+
     <h1 class="documentFirstHeading" tal:content="context/Title" />
 
     <p class="documentDescription" tal:content="structure context/@@description" />
+
     <tal:check tal:condition="view/has_leadimage"
                tal:define="scale_func context/@@images;
                            scaled_image python: getattr(context.aq_explicit, 'image', False) and scale_func.scale('image', scale='large')">
@@ -38,9 +41,10 @@
         </div>
         <tal:eventsummary replace="structure context/@@event_summary"/>
     </tal:def>
+
     <ul>
         <li>
-          <span i18n:translate="">Free entry</span>:
+          <span i18n:translate="">Free entry</span> :
           <tal:cond condition="context/free_entry">
             <span i18n:translate="" itemprop="free-entry" class="free-entry">Yes</span>
           </tal:cond>
@@ -48,8 +52,9 @@
             <span i18n:translate="" itemprop="free-entry" class="free-entry">No</span>
           </tal:cond>
         </li>
+
         <li>
-          <span i18n:translate="">Facilities for person with reduced mobility</span>:
+          <span i18n:translate="">Facilities for person with reduced mobility</span> :
           <tal:cond condition="context/reduced_mobility_facilities">
             <span i18n:translate="" itemprop="reduced-mobility-facilities" class="reduced-mobility-facilities">Yes</span>
           </tal:cond>
@@ -57,33 +62,51 @@
             <span i18n:translate="" itemprop="reduced-mobility-facilities" class="reduced-mobility-facilities">No</span>
           </tal:cond>
         </li>
-        <li>
-          <span i18n:translate="">Ticket url</span>:
-          <span itemprop="ticket-url" class="ticket-url"><a target="_blank" href="" tal:attributes="href context/ticket_url" tal:content="context/ticket_url">Ticket url</a></span></li>
-        <li>
+
+        <li tal:condition="context/ticket_url">
+          <span i18n:translate="">Ticket url</span> :
+          <span itemprop="ticket-url" class="ticket-url"><a target="_blank" href="" tal:attributes="href context/ticket_url" tal:content="context/ticket_url">Ticket url</a></span>
+        </li>
+
+        <li tal:condition="context/facebook">
           <span i18n:translate="">Facebook</span>
-          <span itemprop="facebook" class="facebook"><a target="_blank" href="" tal:attributes="href context/facebook" tal:content="context/facebook">Facebook</a></span></li>
-        <li>
-          <span i18n:translate="">Twitter</span>:
-          <span itemprop="twitter" class="twitter"><a target="_blank" href="" tal:attributes="href context/twitter" tal:content="context/twitter">Twitter</a></span></li>
-        <li>
-          <span i18n:translate="">Instagram</span>:
-          <span itemprop="instagram" class="instagram"><a target="_blank" href="" tal:attributes="href context/instagram" tal:content="context/instagram">Instagram</a></span></li>
-        <li>
-          <span i18n:translate="">Online participation</span>:
-          <span itemprop="online-participation" class="online-participation"><a target="_blank" href="" tal:attributes="href context/online_participation" tal:content="context/online_participation">Online participation</a></span></li>
+          <span itemprop="facebook" class="facebook"><a target="_blank" href="" tal:attributes="href context/facebook" tal:content="context/facebook">Facebook</a></span>
+        </li>
+
+        <li tal:condition="context/twitter">
+          <span i18n:translate="">Twitter</span> :
+          <span itemprop="twitter" class="twitter"><a target="_blank" href="" tal:attributes="href context/twitter" tal:content="context/twitter">Twitter</a></span>
+        </li>
+
+        <li tal:condition="context/instagram">
+          <span i18n:translate="">Instagram</span> :
+          <span itemprop="instagram" class="instagram"><a target="_blank" href="" tal:attributes="href context/instagram" tal:content="context/instagram">Instagram</a></span>
+        </li>
+
+        <li tal:condition="context/online_participation">
+          <span i18n:translate="">Online participation</span> :
+          <span itemprop="online-participation" class="online-participation"><a target="_blank" href="" tal:attributes="href context/online_participation" tal:content="context/online_participation">Online participation</a></span>
+        </li>
+
         <li tal:condition="context/category">
-          <span i18n:translate="">Category</span>:
-          <span itemprop="category" class="category" tal:content="view/category">category</span></li>
+          <span i18n:translate="">Category</span> :
+          <span itemprop="category" class="category" tal:content="view/category">category</span>
+        </li>
+
         <li tal:condition="context/topics">
-          <span i18n:translate="">Topics</span>:
-          <span itemprop="topics" class="topic" tal:content="view/topics">topics</span></li>
+          <span i18n:translate="">Topics</span> :
+          <span itemprop="topics" class="topic" tal:content="view/topics">topics</span>
+        </li>
+
         <li tal:condition="context/iam">
-          <span i18n:translate="">I am</span>:
-          <span itemprop="iam" class="iam" tal:content="view/iam">iam</span></li>
+          <span i18n:translate="">I am</span> :
+          <span itemprop="iam" class="iam" tal:content="view/iam">iam</span>
+        </li>
+
         <li tal:condition="context/subjects">
-          <span i18n:translate="">Keywords</span>:
-          <span tal:repeat="subject context/subjects" itemprop="subject" class="subject" tal:content="subject">subject</span></li>
+          <span i18n:translate="">Keywords</span> :
+          <span tal:repeat="subject context/subjects" itemprop="subject" class="subject" tal:content="subject">subject</span>
+        </li>
     </ul>
 
     <div class=""
@@ -100,6 +123,7 @@
         <li tal:condition="context/contact_phone" tal:content="context/contact_phone"></li>
       </ul>
     </div>
+
     <div id="map" class="map"
          tal:define="is_geolocated context/is_geolocated;
                      utils_view context/@@utils;"
@@ -125,6 +149,7 @@
             </a>
         </tal:images>
     </div>
+
     <div class="event-files"
          tal:define="files view/files"
          tal:condition="files">
