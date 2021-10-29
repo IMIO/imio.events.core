@@ -68,21 +68,21 @@ class TestAgenda(unittest.TestCase):
         )
 
     def test_get_entity_for_obj(self):
-        self.assertEquals(get_entity_for_obj(self.entity1), self.entity1)
-        self.assertEquals(get_entity_for_obj(self.agenda1), self.entity1)
-        self.assertEquals(get_entity_for_obj(self.event1), self.entity1)
+        self.assertEqual(get_entity_for_obj(self.entity1), self.entity1)
+        self.assertEqual(get_entity_for_obj(self.agenda1), self.entity1)
+        self.assertEqual(get_entity_for_obj(self.event1), self.entity1)
 
     def test_get_agenda_for_event(self):
-        self.assertEquals(get_agenda_for_event(self.event1), self.agenda1)
-        self.assertEquals(get_agenda_for_event(self.event2), self.agenda2)
+        self.assertEqual(get_agenda_for_event(self.event1), self.agenda1)
+        self.assertEqual(get_agenda_for_event(self.event2), self.agenda2)
 
     def test_get_agendas_uids_for_faceted(self):
         with self.assertRaises(NotImplementedError):
             get_agendas_uids_for_faceted(self.event1)
-        self.assertEquals(
+        self.assertEqual(
             get_agendas_uids_for_faceted(self.agenda1), [self.agenda1.UID()]
         )
-        self.assertEquals(
+        self.assertEqual(
             get_agendas_uids_for_faceted(self.entity1),
             [self.agenda1.UID(), self.agenda3.UID()],
         )

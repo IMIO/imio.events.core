@@ -78,6 +78,26 @@
          tal:condition="context/video_url"
          tal:content="structure view/get_embed_video" />
 
+    <div id="contact"
+         class="contact"
+         tal:condition="view/has_contact">
+      <h2>Contact</h2>
+      <ul>
+        <li tal:condition="context/contact_name" tal:content="context/contact_name"></li>
+        <li tal:condition="context/contact_email" tal:content="context/contact_email"></li>
+        <li tal:condition="context/contact_phone" tal:content="context/contact_phone"></li>
+      </ul>
+    </div>
+    <div id="map" class="map"
+         tal:define="is_geolocated context/is_geolocated;
+                     utils_view context/@@utils;"
+         tal:condition="python:is_geolocated">
+      <div class="pat-leaflet map"
+           tal:attributes="data-geojson view/data_geojson"
+           data-pat-leaflet='${utils_view/map_configuration}'></div>
+      <div class="address" tal:content="view/address"></div>
+    </div>
+
     <div tal:define="images view/images;
                      thumb_scale string:preview"
          tal:condition="images"

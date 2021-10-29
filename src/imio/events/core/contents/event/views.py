@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
+from collective.geolocationbehavior.geolocation import IGeolocatable
 from embeddify import Embedder
 from imio.smartweb.common.utils import translate_vocabulary_term
 from imio.smartweb.locales import SmartwebMessageFactory as _
+from plone import api
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.event.browser.event_view import EventView
 from Products.CMFPlone.resources import add_bundle_on_request
 from zope.i18n import translate
+
+import json
 
 
 class View(EventView, FolderView):
@@ -41,10 +45,12 @@ class View(EventView, FolderView):
         )
         if term is None:
             return
-        return term.title()
+        return term
 
     def topics(self):
         topics = self.context.topics
+        if topics is None:
+            return
         items = []
         for item in topics:
             term = translate_vocabulary_term("imio.smartweb.vocabulary.Topics", item)
@@ -54,9 +60,66 @@ class View(EventView, FolderView):
 
     def iam(self):
         iam = self.context.iam
+        if iam is None:
+            return
         items = []
         for item in iam:
             term = translate_vocabulary_term("imio.smartweb.vocabulary.IAm", item)
             translated_title = translate(_(term), context=self.request)
             items.append(translated_title)
         return ", ".join(items)
+
+    def data_geojson(self):
+        """Return the contact geolocation as GeoJSON string."""
+        current_lang = api.portal.get_current_language()[:2]
+        coordinates = IGeolocatable(self.context).geolocation
+        longitude = coordinates.longitude
+        latitude = coordinates.latitude
+        link_text = translate(_("Itinerary"), target_language=current_lang)
+        geo_json = {
+            "type": "Feature",
+            "properties": {
+                "popup": '<a href="{}">{}</a>'.format(
+                    self.get_itinerary_link(), link_text
+                ),
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    longitude,
+                    latitude,
+                ],
+            },
+        }
+        return json.dumps(geo_json)
+
+    def get_itinerary_link(self):
+        if not self.context.is_geolocated:
+            return
+        if not self.address or self.address() == "":
+            return
+        return "https://www.google.com/maps/dir/?api=1&destination={}".format(
+            self.address("+")
+        )
+
+    def address(self, separator=" "):
+        address_parts = [
+            self.context.street,
+            self.context.number and str(self.context.number) or "",
+            self.context.complement,
+            self.context.zipcode and str(self.context.zipcode) or "",
+            self.context.city,
+        ]
+        if self.context.country:
+            term = translate_vocabulary_term(
+                "imio.smartweb.vocabulary.Countries", self.context.country
+            )
+            address_parts.append(term)
+        address = f"{separator}".join(filter(None, address_parts))
+        return address
+
+    def has_contact(self):
+        name = self.context.contact_name
+        mail = self.context.contact_email
+        phone = self.context.contact_phone
+        return True if name or mail or phone is not None else False

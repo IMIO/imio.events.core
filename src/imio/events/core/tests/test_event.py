@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collective.geolocationbehavior.geolocation import IGeolocatable
 from imio.smartweb.common.utils import geocode_object
 from imio.events.core.contents.event.content import IEvent
 from imio.events.core.interfaces import IImioEventsCoreLayer
@@ -319,6 +320,17 @@ class TestEvent(unittest.TestCase):
         self.assertEqual(event.geolocation.latitude, 1)
         self.assertEqual(event.geolocation.longitude, 2)
 
+    def test_geolocation_in_view(self):
+        event = api.content.create(
+            container=self.folder,
+            type="imio.events.Event",
+            id="my-event",
+        )
+        IGeolocatable(event).geolocation = Geolocation(latitude="4.5", longitude="45")
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertIn("map", view())
+        self.assertIn('class="pat-leaflet map"', view())
+
     def test_name_chooser(self):
         event = api.content.create(
             container=self.agenda,
@@ -355,3 +367,68 @@ class TestEvent(unittest.TestCase):
         bundles = getattr(self.request, "enabled_bundles", [])
         self.assertEqual(len(bundles), 2)
         self.assertListEqual(bundles, ["spotlightjs", "flexbin"])
+
+    def test_has_contact(self):
+        event = api.content.create(
+            container=self.folder,
+            type="imio.events.Event",
+            id="my-event",
+        )
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertEqual(view.has_contact(), False)
+        event.contact_name = "Mike 'Billy' Bainbridge"
+        self.assertEqual(view.has_contact(), True)
+        event.contact_name = None
+        event.contact_email = "billy@plone.org"
+        self.assertEqual(view.has_contact(), True)
+        event.contact_email = None
+        event.contact_phone = "01123456"
+        self.assertEqual(view.has_contact(), True)
+
+    def test_address(self):
+        event = api.content.create(
+            container=self.folder,
+            type="imio.events.Event",
+            id="my-event",
+        )
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertEqual(view.address(), "")
+        event.street = "Rue Léon Morel"
+        self.assertEqual(view.address(), "Rue Léon Morel")
+        event.city = "Gembloux"
+        self.assertEqual(view.address(), "Rue Léon Morel Gembloux")
+        event.country = "be"
+        self.assertEqual(view.address(), "Rue Léon Morel Gembloux Belgique")
+
+    def test_iam(self):
+        event = api.content.create(
+            container=self.folder,
+            type="imio.events.Event",
+            id="my-event",
+        )
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertEqual(view.iam(), None)
+        event.iam = ["young", "parent"]
+        self.assertEqual(view.iam(), "Young, Parent")
+
+    def test_topics(self):
+        event = api.content.create(
+            container=self.folder,
+            type="imio.events.Event",
+            id="my-event",
+        )
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertEqual(view.topics(), None)
+        event.topics = ["citizen_participation", "sports"]
+        self.assertEqual(view.topics(), "Citizen participation, Sports")
+
+    def test_category(self):
+        event = api.content.create(
+            container=self.folder,
+            type="imio.events.Event",
+            id="my-event",
+        )
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertEqual(view.topics(), None)
+        event.category = "exhibition_artistic_meeting"
+        self.assertEqual(view.category(), "Exhibition and artistic meeting")
