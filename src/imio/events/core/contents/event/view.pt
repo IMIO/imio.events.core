@@ -50,7 +50,13 @@
         </li>
         <li>
           <span i18n:translate="">Facilities for person with reduced mobility</span>:
-          <span i18n:translate="" itemprop="reduced-mobility-facilities" class="reduced-mobility-facilities" tal:content="python:'Yes' if context.reduced_mobility_facilities else 'No'">Facilities for person with reduced mobility</span></li>
+          <tal:cond condition="context/reduced_mobility_facilities">
+            <span i18n:translate="" itemprop="reduced-mobility-facilities" class="reduced-mobility-facilities">Yes</span>
+          </tal:cond>
+          <tal:cond condition="not:context/reduced_mobility_facilities">
+            <span i18n:translate="" itemprop="reduced-mobility-facilities" class="reduced-mobility-facilities">No</span>
+          </tal:cond>
+        </li>
         <li>
           <span i18n:translate="">Ticket url</span>:
           <span itemprop="ticket-url" class="ticket-url"><a target="_blank" href="" tal:attributes="href context/ticket_url" tal:content="context/ticket_url">Ticket url</a></span></li>
@@ -71,10 +77,10 @@
           <span itemprop="category" class="category" tal:content="view/category">category</span></li>
         <li tal:condition="context/topics">
           <span i18n:translate="">Topics</span>:
-          <span itemprop="topics" class="topic" tal:content="python:view.topics()">topics</span></li>
+          <span itemprop="topics" class="topic" tal:content="view/topics">topics</span></li>
         <li tal:condition="context/iam">
           <span i18n:translate="">I am</span>:
-          <span itemprop="iam" class="iam" tal:content="python:view.iam()">iam</span></li>
+          <span itemprop="iam" class="iam" tal:content="view/iam">iam</span></li>
         <li tal:condition="context/subjects">
           <span i18n:translate="">Search</span>:
           <span tal:repeat="subject context/subjects" itemprop="subject" class="subject" tal:content="subject">subject</span></li>
