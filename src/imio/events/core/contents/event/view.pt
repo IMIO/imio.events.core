@@ -82,7 +82,7 @@
           <span i18n:translate="">I am</span>:
           <span itemprop="iam" class="iam" tal:content="view/iam">iam</span></li>
         <li tal:condition="context/subjects">
-          <span i18n:translate="">Search</span>:
+          <span i18n:translate="">Keywords</span>:
           <span tal:repeat="subject context/subjects" itemprop="subject" class="subject" tal:content="subject">subject</span></li>
     </ul>
 
