@@ -10,7 +10,7 @@
   <index name="container_uid" meta_type="FieldIndex">
     <indexed_attr value="container_uid"/>
   </index>
-  <index name="event_type" meta_type="KeywordIndex">
+  <index name="event_type" meta_type="FieldIndex">
     <indexed_attr value="event_type"/>
   </index>
   <index name="selected_agendas" meta_type="KeywordIndex">
