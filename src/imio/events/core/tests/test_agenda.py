@@ -64,6 +64,7 @@ class TestAgenda(unittest.TestCase):
         )
 
     def test_ct_agenda_adding(self):
+        setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         obj = api.content.create(
             container=self.entity,
             type="imio.events.Agenda",
@@ -85,12 +86,14 @@ class TestAgenda(unittest.TestCase):
         self.assertNotIn("imio.events.Agenda", parent.objectIds())
 
     def test_ct_agenda_globally_addable(self):
+        setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="imio.events.Agenda")
         self.assertFalse(
             fti.global_allow, u"{0} is not globally addable!".format(fti.id)
         )
 
     def test_ct_agenda_filter_content_type_true(self):
+        setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="imio.events.Agenda")
         portal_types = self.portal.portal_types
         parent_id = portal_types.constructContent(
