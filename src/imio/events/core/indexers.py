@@ -14,6 +14,14 @@ import copy
 
 
 @indexer(IEvent)
+def category_title(obj):
+    if obj.category is not None:
+        return translate_vocabulary_term(
+            "imio.events.vocabulary.EventsCategories", obj.category
+        )
+
+
+@indexer(IEvent)
 def category_and_topics_indexer(obj):
     values = []
     if obj.topics is not None:

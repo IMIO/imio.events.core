@@ -292,6 +292,19 @@ class TestEvent(unittest.TestCase):
             ],
         )
 
+    def test_category_title_index(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="Title",
+        )
+        event.category = "stroll_discovery"
+        event.reindexObject()
+        catalog = api.portal.get_tool("portal_catalog")
+        brain = api.content.find(UID=event.UID())[0]
+        indexes = catalog.getIndexDataForRID(brain.getRID())
+        self.assertEqual(indexes.get("category_title"), "Balade et découverte")
+
     def test_referrer_agendas(self):
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         intids = getUtility(IIntIds)

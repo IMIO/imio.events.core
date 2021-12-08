@@ -2,6 +2,11 @@
     xmlns="http://namespaces.zope.org/zope">
 
   <adapter
+      name="category_title"
+      factory=".indexers.category_title"
+      />
+
+  <adapter
       name="category_and_topics"
       factory=".indexers.category_and_topics_indexer"
       />

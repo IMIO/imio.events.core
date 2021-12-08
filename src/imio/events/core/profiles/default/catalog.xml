@@ -4,6 +4,9 @@
   <index name="category" meta_type="KeywordIndex">
     <indexed_attr value="category"/>
   </index>
+  <index name="category_title" meta_type="FieldIndex">
+    <indexed_attr value="category_title"/>
+  </index>
   <index name="category_and_topics" meta_type="KeywordIndex">
     <indexed_attr value="category_and_topics"/>
   </index>
@@ -18,6 +21,7 @@
   </index>
 
   <column value="category"/>
+  <column value="category_title"/>
   <column value="category_and_topics"/>
   <column value="container_uid"/>
   <column value="event_type"/>
