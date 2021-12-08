@@ -286,9 +286,9 @@ class TestEvent(unittest.TestCase):
                 "description",
                 "text",
                 "agriculture",
-                "stroll",
-                "and",
-                "discovery",
+                "balade",
+                "et",
+                "decouverte",
             ],
         )
 
@@ -444,7 +444,7 @@ class TestEvent(unittest.TestCase):
         view = queryMultiAdapter((event, self.request), name="view")
         self.assertEqual(view.iam(), None)
         event.iam = ["young", "parent"]
-        self.assertEqual(view.iam(), "Young, Parent")
+        self.assertEqual(view.iam(), "Jeune, Parent")
 
     def test_topics(self):
         event = api.content.create(
@@ -455,7 +455,7 @@ class TestEvent(unittest.TestCase):
         view = queryMultiAdapter((event, self.request), name="view")
         self.assertEqual(view.topics(), None)
         event.topics = ["citizen_participation", "sports"]
-        self.assertEqual(view.topics(), "Citizen participation, Sports")
+        self.assertEqual(view.topics(), "Participation citoyenne, Sports")
 
     def test_category(self):
         event = api.content.create(
@@ -466,4 +466,4 @@ class TestEvent(unittest.TestCase):
         view = queryMultiAdapter((event, self.request), name="view")
         self.assertEqual(view.topics(), None)
         event.category = "exhibition_artistic_meeting"
-        self.assertEqual(view.category(), "Exhibition and artistic meeting")
+        self.assertEqual(view.category(), "Exposition et rencontre artistique")

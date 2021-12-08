@@ -40,12 +40,11 @@ class View(EventView, FolderView):
         return embedder(self.context.video_url, params=dict(autoplay=False))
 
     def category(self):
-        term = translate_vocabulary_term(
+        title = translate_vocabulary_term(
             "imio.events.vocabulary.EventsCategories", self.context.category
         )
-        if term is None:
-            return
-        return term
+        if title:
+            return title
 
     def topics(self):
         topics = self.context.topics
@@ -53,9 +52,8 @@ class View(EventView, FolderView):
             return
         items = []
         for item in topics:
-            term = translate_vocabulary_term("imio.smartweb.vocabulary.Topics", item)
-            translated_title = translate(_(term), context=self.request)
-            items.append(translated_title)
+            title = translate_vocabulary_term("imio.smartweb.vocabulary.Topics", item)
+            items.append(title)
         return ", ".join(items)
 
     def iam(self):
@@ -64,9 +62,8 @@ class View(EventView, FolderView):
             return
         items = []
         for item in iam:
-            term = translate_vocabulary_term("imio.smartweb.vocabulary.IAm", item)
-            translated_title = translate(_(term), context=self.request)
-            items.append(translated_title)
+            title = translate_vocabulary_term("imio.smartweb.vocabulary.IAm", item)
+            items.append(title)
         return ", ".join(items)
 
     def data_geojson(self):
