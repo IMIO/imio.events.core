@@ -83,7 +83,7 @@ class TestEvent(unittest.TestCase):
         obj = createObject(factory)
         self.assertTrue(
             IEvent.providedBy(obj),
-            u"IEvent not provided by {0}!".format(
+            "IEvent not provided by {0}!".format(
                 obj,
             ),
         )
@@ -98,7 +98,7 @@ class TestEvent(unittest.TestCase):
 
         self.assertTrue(
             IEvent.providedBy(obj),
-            u"IEvent not provided by {0}!".format(
+            "IEvent not provided by {0}!".format(
                 obj.id,
             ),
         )
@@ -114,7 +114,7 @@ class TestEvent(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="imio.events.Event")
         self.assertFalse(
-            fti.global_allow, u"{0} is not globally addable!".format(fti.id)
+            fti.global_allow, "{0} is not globally addable!".format(fti.id)
         )
 
     def test_ct_event_filter_content_type_true(self):

@@ -51,7 +51,7 @@ class TestEntity(unittest.TestCase):
 
         self.assertTrue(
             IEntity.providedBy(obj),
-            u"IEntity not provided by {0}!".format(
+            "IEntity not provided by {0}!".format(
                 obj,
             ),
         )
@@ -65,7 +65,7 @@ class TestEntity(unittest.TestCase):
 
         self.assertTrue(
             IEntity.providedBy(obj),
-            u"IEntity not provided by {0}!".format(
+            "IEntity not provided by {0}!".format(
                 obj.id,
             ),
         )
@@ -79,9 +79,7 @@ class TestEntity(unittest.TestCase):
 
     def test_ct_entity_globally_addable(self):
         fti = queryUtility(IDexterityFTI, name="imio.events.Entity")
-        self.assertTrue(
-            fti.global_allow, u"{0} is not globally addable!".format(fti.id)
-        )
+        self.assertTrue(fti.global_allow, "{0} is not globally addable!".format(fti.id))
 
     def test_ct_entity_filter_content_type_true(self):
         fti = queryUtility(IDexterityFTI, name="imio.events.Entity")

@@ -15,16 +15,16 @@ from zope.schema.vocabulary import SimpleVocabulary
 class EventsCategoriesVocabularyFactory:
     def __call__(self, context=None):
         values = [
-            (u"stroll_discovery", _(u"Stroll and discovery")),
-            (u"flea_market_market", _(u"Flea market and market")),
-            (u"concert_festival", _(u"Concert and festival")),
-            (u"conference_debate", _(u"Conference and debate")),
-            (u"exhibition_artistic_meeting", _(u"Exhibition and artistic meeting")),
-            (u"party_folklore", _(u"Party and folklore")),
-            (u"projection_cinema", _(u"Projection and cinema")),
-            (u"trade_fair_fair", _(u"Trade Fair and Fair")),
-            (u"internships_courses", _(u"Internships and courses")),
-            (u"theater_show", _(u"Theater and show")),
+            ("stroll_discovery", _("Stroll and discovery")),
+            ("flea_market_market", _("Flea market and market")),
+            ("concert_festival", _("Concert and festival")),
+            ("conference_debate", _("Conference and debate")),
+            ("exhibition_artistic_meeting", _("Exhibition and artistic meeting")),
+            ("party_folklore", _("Party and folklore")),
+            ("projection_cinema", _("Projection and cinema")),
+            ("trade_fair_fair", _("Trade Fair and Fair")),
+            ("internships_courses", _("Internships and courses")),
+            ("theater_show", _("Theater and show")),
         ]
         terms = [SimpleTerm(value=t[0], token=t[0], title=t[1]) for t in values]
         return SimpleVocabulary(terms)
@@ -122,14 +122,14 @@ class EventTypesVocabularyFactory:
     def __call__(self, context=None):
         event_types = [
             (
-                u"event-driven",
+                "event-driven",
                 _(
-                    u"Event-driven (festivity, play, conference, flea market, walk, etc.)"
+                    "Event-driven (festivity, play, conference, flea market, walk, etc.)"
                 ),
             ),
             (
-                u"activity",
-                _(u"Activity (extracurricular, sport, workshop and course, etc.)"),
+                "activity",
+                _("Activity (extracurricular, sport, workshop and course, etc.)"),
             ),
         ]
         terms = [SimpleTerm(value=t[0], token=t[0], title=t[1]) for t in event_types]

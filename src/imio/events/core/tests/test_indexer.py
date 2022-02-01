@@ -65,18 +65,18 @@ class TestIndexer(unittest.TestCase):
             container=self.agenda,
             type="imio.events.Event",
             id="id_news",
-            category=u"stroll_discovery",
-            local_category=u"Foo",
-            topics=[u"culture", u"health"],
+            category="stroll_discovery",
+            local_category="Foo",
+            topics=["culture", "health"],
         )
 
         api.content.create(
             container=self.agenda,
             type="imio.events.Event",
             id="id_news2",
-            category=u"theater_show",
-            local_category=u"baz",
-            topics=[u"tourism", u"health"],
+            category="theater_show",
+            local_category="baz",
+            topics=["tourism", "health"],
         )
 
         search_result = self._search_all_from_vocabulary(

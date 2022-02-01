@@ -60,7 +60,7 @@ class TestFolder(unittest.TestCase):
 
         self.assertTrue(
             IFolder.providedBy(obj),
-            u"IFolder not provided by {0}!".format(
+            "IFolder not provided by {0}!".format(
                 obj,
             ),
         )
@@ -75,7 +75,7 @@ class TestFolder(unittest.TestCase):
 
         self.assertTrue(
             IFolder.providedBy(obj),
-            u"IFolder not provided by {0}!".format(
+            "IFolder not provided by {0}!".format(
                 obj.id,
             ),
         )
@@ -91,7 +91,7 @@ class TestFolder(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="imio.events.Folder")
         self.assertFalse(
-            fti.global_allow, u"{0} is not globally addable!".format(fti.id)
+            fti.global_allow, "{0} is not globally addable!".format(fti.id)
         )
 
     def test_ct_folder_filter_content_type_true(self):

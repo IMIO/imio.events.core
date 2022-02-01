@@ -58,7 +58,7 @@ class TestAgenda(unittest.TestCase):
 
         self.assertTrue(
             IAgenda.providedBy(obj),
-            u"IAgenda not provided by {0}!".format(
+            "IAgenda not provided by {0}!".format(
                 obj,
             ),
         )
@@ -73,7 +73,7 @@ class TestAgenda(unittest.TestCase):
 
         self.assertTrue(
             IAgenda.providedBy(obj),
-            u"IAgenda not provided by {0}!".format(
+            "IAgenda not provided by {0}!".format(
                 obj.id,
             ),
         )
@@ -89,7 +89,7 @@ class TestAgenda(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ["Contributor"])
         fti = queryUtility(IDexterityFTI, name="imio.events.Agenda")
         self.assertFalse(
-            fti.global_allow, u"{0} is not globally addable!".format(fti.id)
+            fti.global_allow, "{0} is not globally addable!".format(fti.id)
         )
 
     def test_ct_agenda_filter_content_type_true(self):

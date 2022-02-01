@@ -42,72 +42,72 @@ class IEvent(IAddress):
     directives.order_before(event_type="IBasic.title")
     directives.widget(event_type=RadioFieldWidget)
     event_type = schema.Choice(
-        title=_(u"Event type"),
+        title=_("Event type"),
         source="imio.events.vocabulary.EventTypes",
         default="event-driven",
         required=True,
     )
 
     online_participation = schema.URI(
-        title=_(u"Online participation url"),
-        description=_(u"Link to online participation"),
+        title=_("Online participation url"),
+        description=_("Link to online participation"),
         required=False,
     )
 
     ticket_url = schema.URI(
-        title=_(u"Ticket url"),
-        description=_(u"Ticket url to subscribe to this event"),
+        title=_("Ticket url"),
+        description=_("Ticket url to subscribe to this event"),
         required=False,
     )
 
     video_url = schema.URI(
-        title=_(u"Video url"),
-        description=_(u"Video url from youtube, vimeo"),
+        title=_("Video url"),
+        description=_("Video url from youtube, vimeo"),
         required=False,
     )
 
     facebook = schema.URI(
-        title=_(u"Facebook"),
-        description=_(u"Facebook url for this event"),
+        title=_("Facebook"),
+        description=_("Facebook url for this event"),
         required=False,
     )
 
     twitter = schema.URI(
-        title=_(u"Twitter"),
-        description=_(u"Twitter url for this event"),
+        title=_("Twitter"),
+        description=_("Twitter url for this event"),
         required=False,
     )
 
     instagram = schema.URI(
-        title=_(u"Instagram"),
-        description=_(u"Instagram url for this event"),
+        title=_("Instagram"),
+        description=_("Instagram url for this event"),
         required=False,
     )
 
     free_entry = schema.Bool(
-        title=_(u"Free entry"),
-        description=_(u"Check if entry is free"),
+        title=_("Free entry"),
+        description=_("Check if entry is free"),
         required=False,
         default=False,
     )
 
     reduced_mobility_facilities = schema.Bool(
-        title=_(u"Facilities for person with reduced mobility"),
-        description=_(u"Check if there is facilities for person with reduced mobility"),
+        title=_("Facilities for person with reduced mobility"),
+        description=_("Check if there is facilities for person with reduced mobility"),
         required=False,
         default=False,
     )
 
     model.fieldset(
         "categorization",
-        label=_(u"Categorization"),
+        label=_("Categorization"),
         fields=["selected_agendas", "category", "local_category"],
     )
     directives.widget(selected_agendas=SelectFieldWidget)
     selected_agendas = schema.List(
-        title=_(u"Selected agendas"),
+        title=_("Selected agendas"),
         description=_(
-            u"Select agendas where this event will be displayed. Current agenda is always selected."
+            "Select agendas where this event will be displayed. Current agenda is always selected."
         ),
         value_type=schema.Choice(vocabulary="imio.events.vocabulary.AgendasUIDs"),
         default=[],
@@ -115,18 +115,18 @@ class IEvent(IAddress):
     )
 
     category = schema.Choice(
-        title=_(u"Category"),
+        title=_("Category"),
         description=_(
-            u"Important! These categories are used to supplement the information provided by the topics"
+            "Important! These categories are used to supplement the information provided by the topics"
         ),
         source="imio.events.vocabulary.EventsCategories",
         required=False,
     )
 
     local_category = schema.Choice(
-        title=_(u"Specific category"),
+        title=_("Specific category"),
         description=_(
-            u"Important! These categories allow you to use criteria that are specific to your organization"
+            "Important! These categories allow you to use criteria that are specific to your organization"
         ),
         source="imio.events.vocabulary.EventsLocalCategories",
         required=False,

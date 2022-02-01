@@ -15,12 +15,12 @@ class IAgenda(model.Schema):
     """Marker interface and Dexterity Python Schema for Agenda"""
 
     populating_agendas = RelationList(
-        title=_(u"Populating agendas"),
+        title=_("Populating agendas"),
         description=_(
-            u"Agendas that automatically populates this agenda with their events."
+            "Agendas that automatically populates this agenda with their events."
         ),
         value_type=RelationChoice(
-            title=u"Items selection",
+            title="Items selection",
             source=CatalogSource(),
         ),
         default=[],
