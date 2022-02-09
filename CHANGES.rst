@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.0a2 (unreleased)
+1.0a2 (2022-02-09)
 ------------------
 
 - Add event_dates index to handle current events queries correctly
