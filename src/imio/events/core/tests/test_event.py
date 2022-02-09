@@ -10,7 +10,6 @@ from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
-from plone.app.textfield.value import RichTextValue
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.formwidget.geolocation.geolocation import Geolocation
 from plone.namedfile.file import NamedBlobFile
@@ -206,104 +205,6 @@ class TestEvent(unittest.TestCase):
             title="My event item",
         )
         self.assertEqual(event.selected_agendas, [self.agenda.UID()])
-
-    def test_indexes(self):
-        event1 = api.content.create(
-            container=self.agenda,
-            type="imio.events.Event",
-            title="Event1",
-        )
-        agenda2 = api.content.create(
-            container=self.entity,
-            type="imio.events.Agenda",
-            title="Agenda2",
-        )
-        event2 = api.content.create(
-            container=agenda2,
-            type="imio.events.Event",
-            title="Event2",
-        )
-        catalog = api.portal.get_tool("portal_catalog")
-        brain = api.content.find(UID=event1.UID())[0]
-        indexes = catalog.getIndexDataForRID(brain.getRID())
-        self.assertEqual(indexes.get("container_uid"), self.agenda.UID())
-
-        # On va requêter sur self.agenda et trouver les 2 événements car event2 vient de s'ajouter dedans aussi.
-        event2.selected_agendas = [self.agenda.UID()]
-        event2.reindexObject()
-        brains = api.content.find(selected_agendas=self.agenda.UID())
-        lst = [brain.UID for brain in brains]
-        self.assertEqual(lst, [event1.UID(), event2.UID()])
-
-        # On va requêter sur agenda2 et trouver uniquement event2 car event2 est dans les 2 agendas mais event1 n'est que dans self.agenda
-        event2.selected_agendas = [agenda2.UID(), self.agenda.UID()]
-        event2.reindexObject()
-        brains = api.content.find(selected_agendas=agenda2.UID())
-        lst = [brain.UID for brain in brains]
-        self.assertEqual(lst, [event2.UID()])
-
-        # Via une recherche catalog sur les agenda, on va trouver les 2 événements
-        brains = api.content.find(selected_agendas=[agenda2.UID(), self.agenda.UID()])
-        lst = [brain.UID for brain in brains]
-        self.assertEqual(lst, [event1.UID(), event2.UID()])
-
-        # On va requêter sur les 2 agendas et trouver les 2 événements car 1 dans chaque
-        event2.selected_agendas = [agenda2.UID()]
-        event2.reindexObject()
-        brains = api.content.find(selected_agendas=[agenda2.UID(), self.agenda.UID()])
-        lst = [brain.UID for brain in brains]
-        self.assertEqual(lst, [event1.UID(), event2.UID()])
-
-        api.content.move(event1, agenda2)
-        brain = api.content.find(UID=event1.UID())[0]
-        indexes = catalog.getIndexDataForRID(brain.getRID())
-        self.assertEqual(indexes.get("container_uid"), agenda2.UID())
-
-    def test_searchable_text(self):
-        event = api.content.create(
-            container=self.agenda,
-            type="imio.events.Event",
-            title="Title",
-        )
-        catalog = api.portal.get_tool("portal_catalog")
-        brain = api.content.find(UID=event.UID())[0]
-        indexes = catalog.getIndexDataForRID(brain.getRID())
-        self.assertEqual(indexes.get("SearchableText"), ["title"])
-
-        event.description = "Description"
-        event.topics = ["agriculture"]
-        event.category = "stroll_discovery"
-        event.text = RichTextValue("<p>Text</p>", "text/html", "text/html")
-        event.reindexObject()
-
-        catalog = api.portal.get_tool("portal_catalog")
-        brain = api.content.find(UID=event.UID())[0]
-        indexes = catalog.getIndexDataForRID(brain.getRID())
-        self.assertEqual(
-            indexes.get("SearchableText"),
-            [
-                "title",
-                "description",
-                "text",
-                "agriculture",
-                "balade",
-                "et",
-                "decouverte",
-            ],
-        )
-
-    def test_category_title_index(self):
-        event = api.content.create(
-            container=self.agenda,
-            type="imio.events.Event",
-            title="Title",
-        )
-        event.category = "stroll_discovery"
-        event.reindexObject()
-        catalog = api.portal.get_tool("portal_catalog")
-        brain = api.content.find(UID=event.UID())[0]
-        indexes = catalog.getIndexDataForRID(brain.getRID())
-        self.assertEqual(indexes.get("category_title"), "Balade et découverte")
 
     def test_referrer_agendas(self):
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
