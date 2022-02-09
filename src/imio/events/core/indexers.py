@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
 from imio.events.core.contents.event.content import IEvent
 from imio.events.core.utils import get_agenda_for_event
 from imio.smartweb.common.utils import translate_vocabulary_term
@@ -7,6 +8,8 @@ from plone.indexer import indexer
 from plone import api
 from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.app.contenttypes.indexers import _unicode_save_string_concat
+from plone.app.event.base import expand_events
+from plone.app.event.base import RET_MODE_ACCESSORS
 from plone.app.textfield.value import IRichTextValue
 from Products.CMFPlone.utils import safe_unicode
 
@@ -40,6 +43,26 @@ def category_and_topics_indexer(obj):
 def container_uid(obj):
     uid = get_agenda_for_event(obj).UID()
     return uid
+
+
+@indexer(IEvent)
+def event_dates(obj):
+    """Return all dates in which the event occur"""
+    if obj.start is None or obj.end is None:
+        return
+
+    event_days = set()
+    occurences = expand_events([obj], RET_MODE_ACCESSORS)
+    for occurence in occurences:
+        start = occurence.start
+        event_days.add(start.date().strftime("%Y-%m-%d"))
+        end = occurence.end
+        duration = (end.date() - start.date()).days
+        for idx in range(1, duration + 1):
+            day = start + timedelta(days=idx)
+            event_days.add(day.date().strftime("%Y-%m-%d"))
+
+    return tuple(event_days)
 
 
 @indexer(IEvent)

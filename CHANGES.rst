@@ -5,6 +5,9 @@ Changelog
 1.0a2 (unreleased)
 ------------------
 
+- Add event_dates index to handle current events queries correctly
+  [laulaz]
+
 - Update buildout to use Plone 6.0.0a3 packages versions
   [boulch]
 

@@ -12,4 +12,13 @@
       profile="imio.events.core:default"
       />
 
+  <genericsetup:upgradeStep
+      title="Add event_dates index"
+      description=""
+      source="1001"
+      destination="1002"
+      handler=".upgrades.add_event_dates_index"
+      profile="imio.events.core:default"
+      />
+
 </configure>

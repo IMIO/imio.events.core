@@ -17,6 +17,11 @@
       />
 
   <adapter
+      name="event_dates"
+      factory=".indexers.event_dates"
+      />
+
+  <adapter
       name="SearchableText"
       factory=".indexers.SearchableText_event"
       />

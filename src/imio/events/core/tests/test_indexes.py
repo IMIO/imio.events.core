@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+from imio.events.core.indexers import event_dates
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import setRoles
@@ -204,3 +206,22 @@ class TestIndexer(unittest.TestCase):
                 "decouverte",
             ],
         )
+
+    def test_event_dates_index(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="My event",
+        )
+        event.start = datetime(2022, 2, 13, 12, 30)
+        event.end = datetime(2022, 2, 14, 12, 30)
+        event.open_end = False
+        dates = sorted(event_dates(event)())
+        self.assertEqual(dates, ["2022-02-13", "2022-02-14"])
+
+        # event with open end
+        event.start = datetime(2022, 2, 13, 12, 30)
+        event.end = datetime(2022, 2, 14, 12, 30)
+        event.open_end = True
+        dates = sorted(event_dates(event)())
+        self.assertEqual(dates, ["2022-02-13"])

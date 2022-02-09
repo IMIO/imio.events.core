@@ -13,6 +13,9 @@
   <index name="container_uid" meta_type="FieldIndex">
     <indexed_attr value="container_uid"/>
   </index>
+  <index name="event_dates" meta_type="KeywordIndex">
+    <indexed_attr value="event_dates"/>
+  </index>
   <index name="event_type" meta_type="FieldIndex">
     <indexed_attr value="event_type"/>
   </index>
@@ -24,6 +27,7 @@
   <column value="category_title"/>
   <column value="category_and_topics"/>
   <column value="container_uid"/>
+  <column value="event_dates"/>
   <column value="event_type"/>
   <column value="selected_agendas"/>
 
