@@ -21,7 +21,7 @@
 
     <tal:check tal:condition="view/has_leadimage"
                tal:define="scale_func context/@@images;
-                           scaled_image python: getattr(context.aq_explicit, 'image', False) and scale_func.scale('image', scale='large')">
+                           scaled_image python: getattr(context.aq_explicit, 'image', False) and scale_func.scale('image', scale='affiche')">
         <img tal:replace="structure python: scaled_image.tag(css_class='figure-img img-fluid')" />
     </tal:check>
 
@@ -134,18 +134,18 @@
       <div class="address" tal:content="view/address"></div>
     </div>
 
-    <div tal:define="images view/images;
-                     thumb_scale string:preview"
+    <div tal:define="images view/images"
          tal:condition="images"
          class="flexbin flexbin-margin">
         <tal:images tal:repeat="item images">
             <a class="spotlight gallery_item"
-               tal:attributes="href string:${item/absolute_url}/@@images/image/large;
+               tal:define="image_view item/@@images;
+                           large python: image_view.scale('image', 'large')"
+               tal:attributes="href large/url | nothing;
                                title item/title;
                                data-description item/description">
-              <img tal:attributes="src string:${item/absolute_url}/@@images/image/${thumb_scale};
-                                   alt item/title;
-                                   title item/title" />
+              <img tal:define="thumb python: image_view.scale('image', 'preview')"
+                   tal:replace="structure thumb/tag" />
             </a>
         </tal:images>
     </div>
