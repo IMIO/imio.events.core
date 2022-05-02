@@ -5,14 +5,14 @@ from imio.smartweb.common.utils import geocode_object
 from imio.events.core.contents.event.content import IEvent
 from imio.events.core.interfaces import IImioEventsCoreLayer
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
-from imio.events.core.tests.utils import get_leadimage_filename
+from imio.events.core.tests.utils import make_named_image
 from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.formwidget.geolocation.geolocation import Geolocation
-from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedBlobImage
 from unittest import mock
 from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
@@ -195,7 +195,7 @@ class TestEvent(unittest.TestCase):
         )
         view = queryMultiAdapter((event, self.request), name="view")
         self.assertEqual(view.has_leadimage(), False)
-        event.image = NamedBlobFile("ploneLeadImage", filename=get_leadimage_filename())
+        event.image = NamedBlobImage(**make_named_image())
         self.assertEqual(view.has_leadimage(), True)
 
     def test_subscriber_to_select_current_agenda(self):
@@ -307,11 +307,12 @@ class TestEvent(unittest.TestCase):
         getMultiAdapter((event, self.request), name="view")()
         bundles = getattr(self.request, "enabled_bundles", [])
         self.assertEqual(len(bundles), 0)
-        api.content.create(
+        image = api.content.create(
             container=event,
             type="Image",
             title="Image",
         )
+        image.image = NamedBlobImage(**make_named_image())
         getMultiAdapter((event, self.request), name="view")()
         bundles = getattr(self.request, "enabled_bundles", [])
         self.assertEqual(len(bundles), 2)
