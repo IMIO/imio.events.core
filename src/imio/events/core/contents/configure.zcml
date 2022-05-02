@@ -5,6 +5,5 @@
   <include package=".entity" />
   <include package=".event" />
   <include package=".folder" />
-  <include package=".page" />
 
 </configure>

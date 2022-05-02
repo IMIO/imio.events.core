@@ -3,6 +3,14 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="imio.smartweb">
 
+  <genericsetup:registerProfile
+      name="upgrade_1002_to_1003"
+      title="Upgrade core from 1002 to 1003"
+      directory="profiles/1002_to_1003"
+      description="Remove imio.events.Page portal type"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <genericsetup:upgradeStep
       title="Refresh faceted"
       description="Refresh faceted configurations on all entities / agendas"
@@ -20,5 +28,15 @@
       handler=".upgrades.add_event_dates_index"
       profile="imio.events.core:default"
       />
+
+  <genericsetup:upgradeSteps
+      source="1002"
+      destination="1003"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Remove imio.events.Page portal type"
+        import_profile="imio.events.core.upgrades:upgrade_1002_to_1003"
+        />
+  </genericsetup:upgradeSteps>
 
 </configure>

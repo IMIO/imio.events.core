@@ -5,6 +5,9 @@ Changelog
 1.0a3 (unreleased)
 ------------------
 
+- Remove useless imio.events.Page content type
+  [boulch]
+
 - Use unique urls for images scales to ease caching
   [boulch]
 

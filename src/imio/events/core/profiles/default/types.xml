@@ -4,5 +4,4 @@
   <object meta_type="Dexterity FTI" name="imio.events.Entity"/>
   <object meta_type="Dexterity FTI" name="imio.events.Event"/>
   <object meta_type="Dexterity FTI" name="imio.events.Folder"/>
-  <object meta_type="Dexterity FTI" name="imio.events.Page"/>
 </object>
