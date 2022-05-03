@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.0a3 (unreleased)
+1.0a3 (2022-05-03)
 ------------------
 
 - Remove useless imio.events.Page content type
