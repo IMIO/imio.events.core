@@ -7,11 +7,14 @@ from plone.api.exc import InvalidParameterError
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
-from zope.component import createObject
-from zope.component import queryUtility
-from zope.lifecycleevent import modified
+from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
+from zope.component import createObject
+from zope.component import getUtility
+from zope.component import queryUtility
+from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import Attributes
+from zope.lifecycleevent import modified
 
 import unittest
 
@@ -129,7 +132,12 @@ class TestAgenda(unittest.TestCase):
         agenda = api.content.create(
             container=self.entity,
             type="imio.events.Agenda",
-            id="imio.events.Agenda",
+            id="agenda",
+        )
+        event = api.content.create(
+            container=agenda,
+            type="imio.events.Event",
+            id="event",
         )
         entity2 = api.content.create(
             container=self.portal,
@@ -166,6 +174,18 @@ class TestAgenda(unittest.TestCase):
             type="imio.events.Event",
             id="event3",
         )
+
+        # Add new agenda + subscription to existing agenda.
+        intids = getUtility(IIntIds)
+
+        agenda4 = api.content.create(
+            container=self.entity,
+            type="imio.events.Agenda",
+            id="imio.events.Agenda4",
+            populating_agendas=[RelationValue(intids.getId(agenda))],
+        )
+        self.assertIn(agenda4.UID(), event.selected_agendas)
+        api.content.delete(agenda4)
 
         # Link agenda2 (all these events) to our object "agenda".
         api.relation.create(

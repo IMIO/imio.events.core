@@ -5,8 +5,8 @@ Changelog
 1.0a4 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Fix selected_agendas on events after creating a "linked" agenda
+  [boulch]
 
 1.0a3 (2022-05-03)
 ------------------

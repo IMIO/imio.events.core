@@ -6,7 +6,10 @@ from imio.events.core.utils import reload_faceted_config
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
 from plone import api
+from z3c.relationfield.interfaces import IRelationList
 from zope.globalrequest import getRequest
+from zope.lifecycleevent import Attributes
+from zope.lifecycleevent import modified
 from zope.lifecycleevent import ObjectRemovedEvent
 from zope.lifecycleevent.interfaces import IAttributes
 
@@ -30,6 +33,7 @@ def added_agenda(obj, event):
     reload_faceted_config(obj, request)
     entity = get_entity_for_obj(obj)
     reload_faceted_config(entity, request)
+    modified(obj, Attributes(IRelationList, "populating_agendas"))
 
 
 def modified_agenda(obj, event):
