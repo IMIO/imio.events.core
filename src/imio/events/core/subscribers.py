@@ -112,6 +112,7 @@ def mark_current_agenda_in_events_from_other_agendas(obj, event):
             event = brain.getObject()
             if uid_agenda in uids_in_current_agenda:
                 event.selected_agendas.append(obj.UID())
+                event._p_changed = 1
             else:
                 event.selected_agendas = [
                     item for item in event.selected_agendas if item != obj.UID()
@@ -128,4 +129,5 @@ def set_uid_of_referrer_agendas(obj, event, container_agenda):
         return
     for rel in rels:
         obj.selected_agendas.append(rel.from_object.UID())
+        obj._p_changed = 1
     obj.reindexObject(idxs=["selected_agendas"])

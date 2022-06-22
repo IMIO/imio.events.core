@@ -5,8 +5,12 @@ Changelog
 1.0a4 (unreleased)
 ------------------
 
+- Ensure objects are marked as modified after appending to a list attribute
+  [laulaz]
+
 - Fix selected_agendas on events after creating a "linked" agenda
   [boulch]
+
 
 1.0a3 (2022-05-03)
 ------------------
@@ -19,6 +23,7 @@ Changelog
 
 - Use common.interfaces.ILocalManagerAware to mark a locally manageable content
   [boulch]
+
 
 1.0a2 (2022-02-09)
 ------------------
