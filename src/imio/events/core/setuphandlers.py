@@ -7,9 +7,15 @@ from zope.interface import implementer
 @implementer(INonInstallable)
 class HiddenProfiles(object):
     def getNonInstallableProfiles(self):
-        """Hide uninstall profile from site-creation and quickinstaller."""
+        """Hide unwanted profiles from site-creation and quickinstaller."""
         return [
             "imio.events.core:uninstall",
+        ]
+
+    def getNonInstallableProducts(self):
+        """Hide unwanted products from site-creation and quickinstaller."""
+        return [
+            "imio.events.core.upgrades",
         ]
 
 
