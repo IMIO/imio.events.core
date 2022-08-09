@@ -39,4 +39,13 @@
         />
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeStep
+      title="Reindex SearchableText index to add Subjects"
+      description="Reindex SearchableText index to add Subjects"
+      source="1003"
+      destination="1004"
+      handler=".upgrades.reindex_searchable_text"
+      profile="imio.events.core:default"
+      />
+
 </configure>

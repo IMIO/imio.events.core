@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from imio.events.core.utils import reload_faceted_config
+from imio.smartweb.common.upgrades import upgrades
 from plone import api
 from zope.globalrequest import getRequest
 
@@ -23,3 +24,7 @@ def add_event_dates_index(context):
     catalog.addIndex("event_dates", "KeywordIndex")
     catalog.manage_reindexIndex(ids=["event_dates"])
     logger.info("Added and indexed event_dates KeywordIndex")
+
+
+def reindex_searchable_text(context):
+    upgrades.reindex_searchable_text(context)

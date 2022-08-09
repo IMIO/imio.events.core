@@ -92,13 +92,14 @@ def SearchableText_event(obj):
         "imio.events.vocabulary.EventsCategories",
         getattr(obj.aq_base, "category", None),
     )
-
+    subjects = obj.Subject()
     result = " ".join(
         (
             safe_unicode(obj.title) or "",
             safe_unicode(obj.description) or "",
             safe_unicode(text),
             *topics,
+            *subjects,
             safe_unicode(category),
         )
     )
