@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from eea.facetednavigation.subtypes.interfaces import IFacetedNavigable
 from imio.events.core.contents.agenda.content import IAgenda  # NOQA E501
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING  # noqa
 from plone import api
@@ -80,6 +81,8 @@ class TestAgenda(unittest.TestCase):
                 obj.id,
             ),
         )
+
+        self.assertTrue(IFacetedNavigable.providedBy(obj))
 
         parent = obj.__parent__
         self.assertIn("imio.events.Agenda", parent.objectIds())

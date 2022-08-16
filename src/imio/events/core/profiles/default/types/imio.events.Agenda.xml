@@ -36,6 +36,7 @@
     <element value="plone.locking" />
     <element value="plone.leadimage"/>
     <element value="plone.constraintypes" />
+    <element value="eea.faceted.navigable"/>
   </property>
 
 </object>
