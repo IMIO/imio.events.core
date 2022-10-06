@@ -41,6 +41,9 @@ Changelog
 - Add logging to find cause of infinite loop statement
   [laulaz]
 
+- Fix deprecated get_mimetype_icon
+  [boulch]
+
 - Add eea.faceted.navigable behavior on Entity & Agenda types
   [laulaz]
 

@@ -12,6 +12,7 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.formwidget.geolocation.geolocation import Geolocation
+from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 from unittest import mock
 from z3c.relationfield import RelationValue
@@ -382,3 +383,20 @@ class TestEvent(unittest.TestCase):
         self.assertEqual(view.topics(), None)
         event.category = "exhibition_artistic_meeting"
         self.assertEqual(view.category(), "Exposition et rencontre artistique")
+
+    def test_files_in_event_view(self):
+        event = api.content.create(
+            container=self.folder,
+            type="imio.events.Event",
+            id="my-event",
+        )
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertNotIn("event-files", view())
+        file_obj = api.content.create(
+            container=event,
+            type="File",
+            title="file",
+        )
+        file_obj.file = NamedBlobFile(data="file data", filename="file.txt")
+        view = queryMultiAdapter((event, self.request), name="view")
+        self.assertIn("++resource++mimetype.icons/txt.png", view())
