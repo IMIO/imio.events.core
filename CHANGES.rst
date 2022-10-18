@@ -5,6 +5,9 @@ Changelog
 1.0a5 (unreleased)
 ------------------
 
+- Add logging to find cause of infinite loop statement
+  [laulaz]
+
 - Add eea.faceted.navigable behavior on Entity & Agenda types
   [laulaz]
 
