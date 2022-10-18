@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.0a5 (unreleased)
+1.0a5 (2022-10-18)
 ------------------
 
 - Add logging to find cause of infinite loop statement
