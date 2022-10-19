@@ -41,7 +41,7 @@ This products contains:
 Examples
 --------
 
-Hopefully soon in production :-)
+- https://agenda.enwallonie.be
 
 
 Documentation
