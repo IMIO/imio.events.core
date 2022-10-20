@@ -6,8 +6,11 @@ from imio.events.core.utils import reload_faceted_config
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
 from plone import api
+from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
+from zope.component import getUtility
 from zope.globalrequest import getRequest
+from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import Attributes
 from zope.lifecycleevent import modified
 from zope.lifecycleevent import ObjectRemovedEvent
@@ -26,6 +29,28 @@ def set_default_agenda_uid(event):
 def added_entity(obj, event):
     request = getRequest()
     reload_faceted_config(obj, request)
+    agenda_ac = api.content.create(
+        container=obj,
+        type="imio.events.Agenda",
+        title="Administration communale",
+        id="administration-communale",
+    )
+    api.content.transition(agenda_ac, transition="publish")
+    agenda_all = api.content.create(
+        container=obj,
+        type="imio.events.Agenda",
+        title="Agenda général",
+        id="agenda-general",
+    )
+    api.content.transition(agenda_all, transition="publish")
+    intids = getUtility(IIntIds)
+    setattr(
+        agenda_all,
+        "populating_agendas",
+        [RelationValue(intids.getId(agenda_ac))],
+    )
+    modified(agenda_all, Attributes(IRelationList, "populating_agendas"))
+    api.content.transition(obj, transition="publish")
 
 
 def added_agenda(obj, event):

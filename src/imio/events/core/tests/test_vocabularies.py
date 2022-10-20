@@ -109,12 +109,22 @@ class TestVocabularies(unittest.TestCase):
             type="imio.events.Event",
             title="Event2",
         )
+
+        all_agendas = []
+        ag_entity1 = entity1.listFolderContents(
+            contentFilter={"portal_type": "imio.events.Agenda"}
+        )
+        ag_entity2 = entity2.listFolderContents(
+            contentFilter={"portal_type": "imio.events.Agenda"}
+        )
+        all_agendas = [*set(ag_entity1 + ag_entity2)]
+
         factory = getUtility(IVocabularyFactory, "imio.events.vocabulary.AgendasUIDs")
         vocabulary = factory(self.portal)
-        self.assertEqual(len(vocabulary), 2)
+        self.assertEqual(len(vocabulary), len(all_agendas))
 
         vocabulary = factory(event1)
-        self.assertEqual(len(vocabulary), 2)
+        self.assertEqual(len(vocabulary), len(all_agendas))
 
         vocabulary = factory(event2)
         uid = agenda2.UID()
@@ -123,14 +133,18 @@ class TestVocabularies(unittest.TestCase):
 
         vocabulary = factory(self.portal)
         ordered_agendas = [a.title for a in vocabulary]
-        self.assertEqual(ordered_agendas, ["Entity1 » Agenda1", "Entity2 » Agenda2"])
-        entity1.title = "Z Change order!"
+        titles = []
+        for news_folder in ag_entity1 + ag_entity2:
+            titles.append(f"{news_folder.aq_parent.Title()} » {news_folder.Title()}")
+        titles.sort()
+        ordered_agendas.sort()
+        self.assertEqual(ordered_agendas, titles)
+        agenda1.title = "Z Change order!"
         agenda1.reindexObject()
         vocabulary = factory(self.portal)
         ordered_agendas = [a.title for a in vocabulary]
-        self.assertEqual(
-            ordered_agendas, ["Entity2 » Agenda2", "Z Change order! » Agenda1"]
-        )
+        # "Entity2 » Agenda2", "Z Change order! » Agenda1"
+        self.assertIn("Entity1 » Z Change order!", ordered_agendas)
 
     def test_event_types(self):
         factory = getUtility(IVocabularyFactory, "imio.events.vocabulary.EventTypes")
