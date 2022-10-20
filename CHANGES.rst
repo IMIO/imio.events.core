@@ -5,6 +5,9 @@ Changelog
 1.0a6 (unreleased)
 ------------------
 
+- WEB-3757 : Automaticaly create some defaults agendas (with agendas subscription) when creating a new entity
+  [boulch]
+
 - WEB-3726 : Add subjects (keyword) in SearchableText
   [boulch]
 

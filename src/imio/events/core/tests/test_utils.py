@@ -82,7 +82,15 @@ class TestAgenda(unittest.TestCase):
         self.assertEqual(
             get_agendas_uids_for_faceted(self.agenda1), [self.agenda1.UID()]
         )
+        default_agendas = self.entity1.listFolderContents(
+            contentFilter={"portal_type": "imio.events.Agenda"}
+        )
+        uids = []
+        for event in default_agendas:
+            uids.append(event.UID())
         self.assertEqual(
             get_agendas_uids_for_faceted(self.entity1),
-            [self.agenda1.UID(), self.agenda3.UID()],
+            uids,
         )
+        self.assertIn(self.agenda1.UID(), get_agendas_uids_for_faceted(self.entity1))
+        self.assertIn(self.agenda3.UID(), get_agendas_uids_for_faceted(self.entity1))
