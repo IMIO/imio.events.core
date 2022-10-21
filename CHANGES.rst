@@ -5,6 +5,9 @@ Changelog
 1.0a6 (unreleased)
 ------------------
 
+- WEB-3770 : Add serializer to get included items when you request an imio.events.Event fullbobjects
+  [boulch]
+
 - WEB-3757 : Automaticaly create some defaults agendas (with agendas subscription) when creating a new entity
   [boulch]
 

@@ -2,6 +2,8 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser">
 
+  <adapter factory=".serializer.SerializeEventToJson" />
+
   <adapter
       for=".content.Event"
       provides="imio.smartweb.common.interfaces.ICropping"
