@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.0a6 (unreleased)
+1.0a6 (2022-10-21)
 ------------------
 
 - WEB-3770 : Add serializer to get included items when you request an imio.events.Event fullbobjects
