@@ -67,7 +67,7 @@ class TestIndexer(unittest.TestCase):
         api.content.create(
             container=self.agenda,
             type="imio.events.Event",
-            id="id_news",
+            id="id_event",
             category="stroll_discovery",
             local_category="Foo",
             topics=["culture", "health"],
@@ -76,7 +76,7 @@ class TestIndexer(unittest.TestCase):
         api.content.create(
             container=self.agenda,
             type="imio.events.Event",
-            id="id_news2",
+            id="id_event2",
             category="theater_show",
             local_category="baz",
             topics=["tourism", "health"],
@@ -101,13 +101,13 @@ class TestIndexer(unittest.TestCase):
         self.assertEqual(len(search_result["tourism"]), 1)
 
         # check for good return object
-        self.assertEqual(search_result["stroll_discovery"], ["id_news"])
-        self.assertEqual(search_result["Foo"], ["id_news"])
-        self.assertEqual(search_result["baz"], ["id_news2"])
-        self.assertEqual(search_result["culture"], ["id_news"])
-        self.assertEqual(sorted(search_result["health"]), ["id_news", "id_news2"])
-        self.assertEqual(search_result["theater_show"], ["id_news2"])
-        self.assertEqual(search_result["tourism"], ["id_news2"])
+        self.assertEqual(search_result["stroll_discovery"], ["id_event"])
+        self.assertEqual(search_result["Foo"], ["id_event"])
+        self.assertEqual(search_result["baz"], ["id_event2"])
+        self.assertEqual(search_result["culture"], ["id_event"])
+        self.assertEqual(sorted(search_result["health"]), ["id_event", "id_event2"])
+        self.assertEqual(search_result["theater_show"], ["id_event2"])
+        self.assertEqual(search_result["tourism"], ["id_event2"])
 
     def test_category_title_index(self):
         event = api.content.create(

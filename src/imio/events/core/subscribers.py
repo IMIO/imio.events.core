@@ -107,7 +107,7 @@ def moved_event(obj, event):
         # item was simply renamed
         return
     if type(event) is ObjectRemovedEvent:
-        # We don't have anything to do if news item is being removed
+        # We don't have anything to do if event is being removed
         return
     container_agenda = get_agenda_for_event(obj)
     set_uid_of_referrer_agendas(obj, event, container_agenda)
