@@ -17,6 +17,21 @@ import copy
 
 
 @indexer(IEvent)
+def translated_in_nl(obj):
+    return bool(obj.title_nl)
+
+
+@indexer(IEvent)
+def translated_in_de(obj):
+    return bool(obj.title_de)
+
+
+@indexer(IEvent)
+def translated_in_en(obj):
+    return bool(obj.title_en)
+
+
+@indexer(IEvent)
 def category_title(obj):
     if obj.category is not None:
         return translate_vocabulary_term(
@@ -98,6 +113,15 @@ def SearchableText_event(obj):
             safe_unicode(obj.title) or "",
             safe_unicode(obj.description) or "",
             safe_unicode(text),
+            safe_unicode(obj.title_nl) or "",
+            safe_unicode(obj.description_nl) or "",
+            safe_unicode(obj.text_nl) or "",
+            safe_unicode(obj.title_de) or "",
+            safe_unicode(obj.description_de) or "",
+            safe_unicode(obj.text_de) or "",
+            safe_unicode(obj.title_en) or "",
+            safe_unicode(obj.description_en) or "",
+            safe_unicode(obj.text_en) or "",
             *topics,
             *subjects,
             safe_unicode(category),
