@@ -28,6 +28,7 @@ class ImioEventsCoreLayer(PloneSandboxLayer):
 
         self.loadZCML(package=plone.restapi)
         self.loadZCML(package=imio.events.core)
+        self.loadZCML(package=imio.events.core, name="overrides.zcml")
 
     def setUpPloneSite(self, portal):
         request = portal.REQUEST
