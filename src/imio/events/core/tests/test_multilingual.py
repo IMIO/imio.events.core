@@ -84,8 +84,12 @@ class TestMultilingual(unittest.TestCase):
         event.title_de = "Mein Veranstaltung, den ich in mehreren Sprachen testen werde"
         event.text = RichTextValue("<p>Mon eventtexte</p>", "text/html", "text/html")
         event.text_en = RichTextValue("<p>My eventtext</p>", "text/html", "text/html")
-        event.text_nl = RichTextValue("<p>Mijn eventtekst</p>", "text/html", "text/html")
-        event.text_de = RichTextValue("<p>Meine eventetext</p>", "text/html", "text/html")
+        event.text_nl = RichTextValue(
+            "<p>Mijn eventtekst</p>", "text/html", "text/html"
+        )
+        event.text_de = RichTextValue(
+            "<p>Meine eventetext</p>", "text/html", "text/html"
+        )
         event.reindexObject()
         transaction.commit()
         catalog = api.portal.get_tool("portal_catalog")

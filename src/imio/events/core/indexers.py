@@ -108,7 +108,6 @@ def event_dates(obj):
 
 @indexer(IEvent)
 def SearchableText_event(obj):
-
     def get_text(lang):
         text = ""
         if lang == "fr":
