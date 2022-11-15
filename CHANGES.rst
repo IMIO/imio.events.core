@@ -5,7 +5,8 @@ Changelog
 1.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix SearchableText index for multilingual
+  [laulaz]
 
 
 1.0 (2022-11-15)

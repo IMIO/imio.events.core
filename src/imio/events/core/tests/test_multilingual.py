@@ -82,6 +82,10 @@ class TestMultilingual(unittest.TestCase):
         event.title_en = "My event that I will test in several languages"
         event.title_nl = "Mijn evenement die ik in verschillende talen zal testen"
         event.title_de = "Mein Veranstaltung, den ich in mehreren Sprachen testen werde"
+        event.text = RichTextValue("<p>Mon eventtexte</p>", "text/html", "text/html")
+        event.text_en = RichTextValue("<p>My eventtext</p>", "text/html", "text/html")
+        event.text_nl = RichTextValue("<p>Mijn eventtekst</p>", "text/html", "text/html")
+        event.text_de = RichTextValue("<p>Meine eventetext</p>", "text/html", "text/html")
         event.reindexObject()
         transaction.commit()
         catalog = api.portal.get_tool("portal_catalog")
@@ -89,6 +93,11 @@ class TestMultilingual(unittest.TestCase):
         indexes = catalog.getIndexDataForRID(brain.getRID())
         self.assertIn("several", indexes.get("SearchableText"))
         self.assertIn("verschillende", indexes.get("SearchableText"))
+        self.assertIn("mehreren", indexes.get("SearchableText"))
+        self.assertIn("eventtexte", indexes.get("SearchableText"))
+        self.assertIn("eventtext", indexes.get("SearchableText"))
+        self.assertIn("eventtekst", indexes.get("SearchableText"))
+        self.assertIn("eventetext", indexes.get("SearchableText"))
         metadatas = catalog.getMetadataForRID(brain.getRID())
         self.assertEqual(event.title, metadatas.get("title_fr"))
         self.assertEqual(event.title_nl, metadatas.get("title_nl"))
