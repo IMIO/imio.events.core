@@ -22,6 +22,15 @@
   <index name="selected_agendas" meta_type="KeywordIndex">
     <indexed_attr value="selected_agendas"/>
   </index>
+  <index name="translated_in_nl" meta_type="BooleanIndex">
+    <indexed_attr value="translated_in_nl"/>
+  </index>
+  <index name="translated_in_de" meta_type="BooleanIndex">
+    <indexed_attr value="translated_in_de"/>
+  </index>
+  <index name="translated_in_en" meta_type="BooleanIndex">
+    <indexed_attr value="translated_in_en"/>
+  </index>
 
   <column value="category"/>
   <column value="category_title"/>
@@ -30,5 +39,9 @@
   <column value="event_dates"/>
   <column value="event_type"/>
   <column value="selected_agendas"/>
+  <column value="title_fr"/>
+  <column value="title_nl"/>
+  <column value="title_de"/>
+  <column value="title_en"/>
 
 </object>

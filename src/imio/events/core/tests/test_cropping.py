@@ -32,7 +32,7 @@ class TestCropping(unittest.TestCase):
         self.event = api.content.create(
             container=self.agenda,
             type="imio.events.Event",
-            title="News",
+            title="Event",
         )
 
     def test_cropping_adapter(self):

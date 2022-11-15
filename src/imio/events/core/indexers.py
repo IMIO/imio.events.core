@@ -17,11 +17,52 @@ import copy
 
 
 @indexer(IEvent)
+def translated_in_nl(obj):
+    return bool(obj.title_nl)
+
+
+@indexer(IEvent)
+def translated_in_de(obj):
+    return bool(obj.title_de)
+
+
+@indexer(IEvent)
+def translated_in_en(obj):
+    return bool(obj.title_en)
+
+
+@indexer(IEvent)
 def category_title(obj):
     if obj.category is not None:
         return translate_vocabulary_term(
             "imio.events.vocabulary.EventsCategories", obj.category
         )
+
+
+@indexer(IEvent)
+def title_fr(obj):
+    return obj.title
+
+
+@indexer(IEvent)
+def title_nl(obj):
+    if not obj.title_nl:
+        raise AttributeError
+    return obj.title_nl
+
+
+@indexer(IEvent)
+def title_de(obj):
+    if not obj.title_de:
+        raise AttributeError
+    return obj.title_de
+
+
+@indexer(IEvent)
+def title_en(obj):
+    if not obj.title_en:
+        raise AttributeError
+    return obj.title_en
 
 
 @indexer(IEvent)
@@ -98,6 +139,15 @@ def SearchableText_event(obj):
             safe_unicode(obj.title) or "",
             safe_unicode(obj.description) or "",
             safe_unicode(text),
+            safe_unicode(obj.title_nl) or "",
+            safe_unicode(obj.description_nl) or "",
+            safe_unicode(obj.text_nl) or "",
+            safe_unicode(obj.title_de) or "",
+            safe_unicode(obj.description_de) or "",
+            safe_unicode(obj.text_de) or "",
+            safe_unicode(obj.title_en) or "",
+            safe_unicode(obj.description_en) or "",
+            safe_unicode(obj.text_en) or "",
             *topics,
             *subjects,
             safe_unicode(category),
