@@ -5,7 +5,8 @@ Changelog
 1.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Update to Plone 6.0.0 final
+  [boulch]
 
 
 1.0.1 (2022-11-15)
@@ -38,6 +39,11 @@ Changelog
 1.0a5 (2022-10-18)
 ------------------
 
+- Add logging to find cause of infinite loop statement
+  [laulaz]
+
+- Fix deprecated get_mimetype_icon
+  [boulch]
 - Add logging to find cause of infinite loop statement
   [laulaz]
 
