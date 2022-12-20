@@ -3,7 +3,6 @@ Changelog
 
 
 1.0.2 (unreleased)
-1.0a5 (2022-10-18)
 ------------------
 
 - Update to Plone 6.0.0 final
