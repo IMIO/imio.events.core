@@ -6,7 +6,8 @@ Changelog
 1.0a5 (2022-10-18)
 ------------------
 
-- Nothing changed yet.
+- Update to Plone 6.0.0 final
+  [boulch]
 
 
 1.0.1 (2022-11-15)
