@@ -82,6 +82,10 @@ class TestMultilingual(unittest.TestCase):
         event.title_en = "My event that I will test in several languages"
         event.title_nl = "Mijn evenement die ik in verschillende talen zal testen"
         event.title_de = "Mein Veranstaltung, den ich in mehreren Sprachen testen werde"
+        event.description = "Ma description_fr"
+        event.description_nl = "Mijn beschrijving"
+        event.description_de = "Meine Beschreibung"
+        event.description_en = "My description_en"
         event.text = RichTextValue("<p>Mon eventtexte</p>", "text/html", "text/html")
         event.text_en = RichTextValue("<p>My eventtext</p>", "text/html", "text/html")
         event.text_nl = RichTextValue(
@@ -95,18 +99,23 @@ class TestMultilingual(unittest.TestCase):
         catalog = api.portal.get_tool("portal_catalog")
         brain = api.content.find(UID=event.UID())[0]
         indexes = catalog.getIndexDataForRID(brain.getRID())
-        self.assertIn("several", indexes.get("SearchableText"))
-        self.assertIn("verschillende", indexes.get("SearchableText"))
-        self.assertIn("mehreren", indexes.get("SearchableText"))
+        self.assertIn("several", indexes.get("SearchableText_en"))
+        self.assertIn("verschillende", indexes.get("SearchableText_nl"))
+        self.assertIn("mehreren", indexes.get("SearchableText_de"))
         self.assertIn("eventtexte", indexes.get("SearchableText"))
-        self.assertIn("eventtext", indexes.get("SearchableText"))
-        self.assertIn("eventtekst", indexes.get("SearchableText"))
-        self.assertIn("eventetext", indexes.get("SearchableText"))
+        self.assertIn("eventtexte", indexes.get("SearchableText_fr"))
+        self.assertIn("eventtext", indexes.get("SearchableText_en"))
+        self.assertIn("eventtekst", indexes.get("SearchableText_nl"))
+        self.assertIn("eventetext", indexes.get("SearchableText_de"))
         metadatas = catalog.getMetadataForRID(brain.getRID())
         self.assertEqual(event.title, metadatas.get("title_fr"))
         self.assertEqual(event.title_nl, metadatas.get("title_nl"))
         self.assertEqual(event.title_de, metadatas.get("title_de"))
         self.assertEqual(event.title_en, metadatas.get("title_en"))
+        self.assertEqual(event.description, metadatas.get("description_fr"))
+        self.assertEqual(event.description_nl, metadatas.get("description_nl"))
+        self.assertEqual(event.description_de, metadatas.get("description_de"))
+        self.assertEqual(event.description_en, metadatas.get("description_en"))
 
         event.title_en = None
         event.reindexObject()
@@ -114,7 +123,7 @@ class TestMultilingual(unittest.TestCase):
         catalog = api.portal.get_tool("portal_catalog")
         brain = api.content.find(UID=event.UID())[0]
         indexes = catalog.getIndexDataForRID(brain.getRID())
-        self.assertNotIn("several", indexes.get("SearchableText"))
+        self.assertNotIn("several", indexes.get("SearchableText_en"))
 
     def test_event_serializer(self):
         alsoProvides(self.request, IImioEventsCoreLayer)

@@ -11,6 +11,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="upgrade_1005_to_1006"
+      title="Upgrade core from 1005 to 1006"
+      directory="profiles/1005_to_1006"
+      description="Add more missing translations indexes / metadata"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <genericsetup:upgradeStep
       title="Refresh faceted"
       description="Refresh faceted configurations on all entities / agendas"
@@ -56,5 +64,19 @@
       handler=".upgrades.add_translations_indexes"
       profile="imio.events.core:default"
       />
+
+  <genericsetup:upgradeSteps
+      source="1005"
+      destination="1006"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Add more missing translations indexes / metadata"
+        import_profile="imio.events.core.upgrades:upgrade_1005_to_1006"
+        />
+    <genericsetup:upgradeStep
+        title="Reindex catalog"
+        handler=".upgrades.reindex_catalog"
+        />
+  </genericsetup:upgradeSteps>
 
 </configure>
