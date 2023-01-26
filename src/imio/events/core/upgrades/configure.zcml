@@ -79,4 +79,13 @@
         />
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeStep
+      title="Remove SearchableText_fr (Solr will use SearchableText for FR)"
+      description=""
+      source="1006"
+      destination="1007"
+      handler=".upgrades.remove_searchabletext_fr"
+      profile="imio.events.core:default"
+      />
+
 </configure>

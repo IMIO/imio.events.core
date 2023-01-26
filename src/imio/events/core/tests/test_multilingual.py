@@ -103,7 +103,6 @@ class TestMultilingual(unittest.TestCase):
         self.assertIn("verschillende", indexes.get("SearchableText_nl"))
         self.assertIn("mehreren", indexes.get("SearchableText_de"))
         self.assertIn("eventtexte", indexes.get("SearchableText"))
-        self.assertIn("eventtexte", indexes.get("SearchableText_fr"))
         self.assertIn("eventtext", indexes.get("SearchableText_en"))
         self.assertIn("eventtekst", indexes.get("SearchableText_nl"))
         self.assertIn("eventetext", indexes.get("SearchableText_de"))

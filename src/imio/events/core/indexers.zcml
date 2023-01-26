@@ -82,11 +82,6 @@
       />
 
   <adapter
-      name="SearchableText_fr"
-      factory=".indexers.SearchableText_fr_contact"
-      />
-
-  <adapter
       name="SearchableText_nl"
       factory=".indexers.SearchableText_nl_contact"
       />
