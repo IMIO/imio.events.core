@@ -78,22 +78,22 @@
 
   <adapter
       name="SearchableText"
-      factory=".indexers.SearchableText_fr_contact"
+      factory=".indexers.SearchableText_fr_event"
       />
 
   <adapter
       name="SearchableText_nl"
-      factory=".indexers.SearchableText_nl_contact"
+      factory=".indexers.SearchableText_nl_event"
       />
 
   <adapter
       name="SearchableText_de"
-      factory=".indexers.SearchableText_de_contact"
+      factory=".indexers.SearchableText_de_event"
       />
 
   <adapter
       name="SearchableText_en"
-      factory=".indexers.SearchableText_en_contact"
+      factory=".indexers.SearchableText_en_event"
       />
 
 </configure>

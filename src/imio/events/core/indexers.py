@@ -186,20 +186,20 @@ def get_searchable_text(obj, lang):
 
 
 @indexer(IEvent)
-def SearchableText_fr_contact(obj):
+def SearchableText_fr_event(obj):
     return get_searchable_text(obj, "fr")
 
 
 @indexer(IEvent)
-def SearchableText_nl_contact(obj):
+def SearchableText_nl_event(obj):
     return get_searchable_text(obj, "nl")
 
 
 @indexer(IEvent)
-def SearchableText_de_contact(obj):
+def SearchableText_de_event(obj):
     return get_searchable_text(obj, "de")
 
 
 @indexer(IEvent)
-def SearchableText_en_contact(obj):
+def SearchableText_en_event(obj):
     return get_searchable_text(obj, "en")
