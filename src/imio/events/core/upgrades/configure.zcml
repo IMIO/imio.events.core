@@ -88,4 +88,13 @@
       profile="imio.events.core:default"
       />
 
+  <genericsetup:upgradeStep
+      title="Remove unused title_fr and description_fr metadatas"
+      description=""
+      source="1007"
+      destination="1008"
+      handler=".upgrades.remove_title_description_fr"
+      profile="imio.events.core:default"
+      />
+
 </configure>

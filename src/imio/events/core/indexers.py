@@ -40,11 +40,6 @@ def category_title(obj):
 
 
 @indexer(IEvent)
-def title_fr(obj):
-    return obj.title
-
-
-@indexer(IEvent)
 def title_nl(obj):
     if not obj.title_nl:
         raise AttributeError
@@ -63,13 +58,6 @@ def title_en(obj):
     if not obj.title_en:
         raise AttributeError
     return obj.title_en
-
-
-@indexer(IEvent)
-def description_fr(obj):
-    if not obj.description:
-        raise AttributeError
-    return obj.description
 
 
 @indexer(IEvent)
