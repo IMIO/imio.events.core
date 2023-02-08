@@ -16,7 +16,6 @@ import unittest
 
 
 class TestMultilingual(unittest.TestCase):
-
     layer = IMIO_EVENTS_CORE_FUNCTIONAL_TESTING
 
     def setUp(self):

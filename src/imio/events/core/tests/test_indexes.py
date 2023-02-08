@@ -29,7 +29,6 @@ def search_all_from_vocabulary(vocabulary, context, catalog):
 
 
 class TestIndexer(unittest.TestCase):
-
     layer = IMIO_EVENTS_CORE_INTEGRATION_TESTING
 
     def setUp(self):

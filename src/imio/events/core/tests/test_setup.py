@@ -30,7 +30,6 @@ class TestSetup(unittest.TestCase):
 
 
 class TestUninstall(unittest.TestCase):
-
     layer = IMIO_EVENTS_CORE_INTEGRATION_TESTING
 
     def setUp(self):

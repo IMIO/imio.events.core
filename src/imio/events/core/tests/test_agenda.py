@@ -21,7 +21,6 @@ import unittest
 
 
 class TestAgenda(unittest.TestCase):
-
     layer = IMIO_EVENTS_CORE_INTEGRATION_TESTING
 
     def setUp(self):
