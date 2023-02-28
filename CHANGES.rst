@@ -5,7 +5,8 @@ Changelog
 1.1.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix reindex after cut / copy / paste in some cases
+  [laulaz]
 
 
 1.1.2 (2023-02-20)

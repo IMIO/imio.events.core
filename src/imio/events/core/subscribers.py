@@ -22,8 +22,7 @@ def set_default_agenda_uid(event):
     uid = get_agenda_for_event(event).UID()
     if uid not in event.selected_agendas:
         event.selected_agendas = event.selected_agendas + [uid]
-        event.reindexObject(idxs=["selected_agendas"])
-    return uid
+    event.reindexObject(idxs=["selected_agendas"])
 
 
 def added_entity(obj, event):
@@ -151,6 +150,7 @@ def set_uid_of_referrer_agendas(obj, event, container_agenda):
     obj.selected_agendas = [container_agenda.UID()]
     rels = api.relation.get(target=container_agenda, relationship="populating_agendas")
     if not rels:
+        obj.reindexObject(idxs=["selected_agendas"])
         return
     for rel in rels:
         obj.selected_agendas.append(rel.from_object.UID())
