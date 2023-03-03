@@ -5,6 +5,9 @@ Changelog
 1.1.3 (unreleased)
 ------------------
 
+- Migrate to Plone 6.0.2
+  [boulch]
+
 - Fix reindex after cut / copy / paste in some cases
   [laulaz]
 
