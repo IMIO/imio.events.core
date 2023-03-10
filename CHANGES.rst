@@ -5,6 +5,9 @@ Changelog
 1.1.3 (unreleased)
 ------------------
 
+- Add warning message if images are too small to be cropped
+  [laulaz]
+
 - Migrate to Plone 6.0.2
   [boulch]
 

@@ -2,6 +2,7 @@
 
 from collective.geolocationbehavior.geolocation import IGeolocatable
 from embeddify import Embedder
+from imio.smartweb.common.utils import show_warning_for_scales
 from imio.smartweb.common.utils import translate_vocabulary_term
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
@@ -16,6 +17,7 @@ import json
 
 class View(EventView, FolderView):
     def __call__(self):
+        show_warning_for_scales(self.context, self.request)
         images = self.context.listFolderContents(contentFilter={"portal_type": "Image"})
         if len(images) > 0:
             add_bundle_on_request(self.request, "spotlightjs")
