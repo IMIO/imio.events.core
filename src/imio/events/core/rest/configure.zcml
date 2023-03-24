@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone">
+
+  <plone:service
+      name="@events"
+      method="GET"
+      accept="application/json"
+      for="zope.interface.Interface"
+      factory=".endpoint.EventsEndpointGet"
+      permission="zope2.View"
+      layer="imio.events.core.interfaces.IImioEventsCoreLayer"
+      />
+
+</configure>

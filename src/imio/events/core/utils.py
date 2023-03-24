@@ -1,15 +1,23 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+from datetime import timedelta
 from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
 from imio.smartweb.common.faceted.utils import configure_faceted
 from plone import api
+from plone.event.recurrence import recurrence_sequence_ical
+from plone.event.utils import pydt
+from plone.restapi.serializer.converters import json_compatible
 from Products.CMFPlone.utils import parent
+from pytz import utc
 from zope.component import getMultiAdapter
 from zope.interface import noLongerProvides
 
 import logging
+import copy
+import dateutil
 import os
 
 logger = logging.getLogger("imio.events.core")
@@ -62,3 +70,41 @@ def reload_faceted_config(obj, request):
     handler.edit(**request.form)
     if IHidePloneLeftColumn.providedBy(obj):
         noLongerProvides(obj, IHidePloneLeftColumn)
+
+
+def get_start_date(event):
+    return datetime.fromisoformat(event["start"])
+
+
+def expand_occurences(events):
+    expanded_events = []
+
+    for event in events:
+        if not event["recurrence"]:
+            expanded_events.append(event)
+            continue
+        start_date = dateutil.parser.parse(event["start"])
+        start_date = start_date.astimezone(utc)
+        end_date = dateutil.parser.parse(event["end"])
+        end_date = end_date.astimezone(utc)
+
+        start_dates = recurrence_sequence_ical(
+            start=start_date,
+            recrule=event["recurrence"],
+            from_=datetime.now(),
+        )
+
+        if event["whole_day"] or event["open_end"]:
+            duration = timedelta(hours=23, minutes=59, seconds=59)
+        else:
+            duration = end_date - start_date
+
+        for occurence_start in start_dates:
+            if pydt(start_date.replace(microsecond=0)) == occurence_start:
+                expanded_events.append(event)
+            else:
+                new_event = copy.deepcopy(event)
+                new_event["start"] = json_compatible(occurence_start)
+                new_event["end"] = json_compatible(occurence_start + duration)
+                expanded_events.append(new_event)
+    return expanded_events

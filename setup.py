@@ -73,6 +73,7 @@ setup(
             "plone.app.contenttypes",
             "plone.app.robotframework[debug]",
             "mock",
+            "freezegun",
         ],
     },
     entry_points="""""",

@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+from datetime import timezone
+from freezegun import freeze_time
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
+from imio.events.core.utils import expand_occurences
 from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_agendas_uids_for_faceted
 from imio.events.core.utils import get_entity_for_obj
+from imio.events.core.utils import get_start_date
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -93,3 +98,93 @@ class TestAgenda(unittest.TestCase):
         )
         self.assertIn(self.agenda1.UID(), get_agendas_uids_for_faceted(self.entity1))
         self.assertIn(self.agenda3.UID(), get_agendas_uids_for_faceted(self.entity1))
+
+    @freeze_time("2022-11-10")
+    def test_expand_occurences(self):
+        # test without occurence
+        events = [
+            {
+                "start": "2022-11-13T12:00:00+00:00",
+                "end": "2022-11-13T13:00:00+00:00",
+                "recurrence": None,
+                "open_end": False,
+                "whole_day": False,
+            }
+        ]
+        expanded_events = expand_occurences(events)
+        self.assertEqual(len(expanded_events), 1)
+        events = [
+            {
+                "start": "2022-11-13T12:00:00+00:00",
+                "end": "2022-11-14T13:00:00+00:00",
+                "recurrence": None,
+                "open_end": False,
+                "whole_day": False,
+            }
+        ]
+        expanded_events = expand_occurences(events)
+        self.assertEqual(len(expanded_events), 1)
+
+        # test range start for occurences
+        events = [
+            {
+                "start": "2022-11-01T12:00:00+00:00",
+                "end": "2022-11-01T13:00:00+00:00",
+                "recurrence": "RRULE:FREQ=WEEKLY;COUNT=5",
+                "open_end": False,
+                "whole_day": False,
+            }
+        ]
+        expanded_events = expand_occurences(events)
+        self.assertEqual(len(expanded_events), 3)
+
+        # test occurences data
+        events = [
+            {
+                "start": "2022-11-13T12:00:00+00:00",
+                "end": "2022-11-13T13:00:00+00:00",
+                "recurrence": "RRULE:FREQ=WEEKLY;COUNT=5",
+                "open_end": False,
+                "whole_day": False,
+            }
+        ]
+        expanded_events = expand_occurences(events)
+        self.assertEqual(len(expanded_events), 5)
+        self.assertEqual(expanded_events[-1]["start"], "2022-12-11T12:00:00+00:00")
+        self.assertEqual(expanded_events[-1]["end"], "2022-12-11T13:00:00+00:00")
+        events = [
+            {
+                "start": "2022-11-13T12:00:00+00:00",
+                "end": "2022-11-13T12:00:00+00:00",
+                "recurrence": "RRULE:FREQ=WEEKLY;COUNT=5",
+                "open_end": False,
+                "whole_day": True,
+            }
+        ]
+        expanded_events = expand_occurences(events)
+        self.assertEqual(expanded_events[-1]["start"], "2022-12-11T12:00:00+00:00")
+        self.assertEqual(expanded_events[-1]["end"], "2022-12-12T11:59:59+00:00")
+        events = [
+            {
+                "start": "2022-11-13T00:00:00+00:00",
+                "end": "2022-11-13T23:59:59+00:00",
+                "recurrence": "RRULE:FREQ=WEEKLY;COUNT=5",
+                "open_end": True,
+                "whole_day": True,
+            }
+        ]
+        expanded_events = expand_occurences(events)
+        self.assertEqual(expanded_events[-1]["start"], "2022-12-11T00:00:00+00:00")
+        self.assertEqual(expanded_events[-1]["end"], "2022-12-11T23:59:59+00:00")
+
+    def test_get_start_date(self):
+        event = {
+            "start": "2022-11-13T12:00:00+00:00",
+            "end": "2022-11-13T13:00:00+00:00",
+            "recurrence": None,
+            "open_end": False,
+            "whole_day": False,
+        }
+        start_date = get_start_date(event)
+        result = datetime(2022, 11, 13, 12, 0, tzinfo=timezone.utc)
+        self.assertEqual(start_date, result)

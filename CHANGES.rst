@@ -5,7 +5,8 @@ Changelog
 1.1.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- WEB-3908 : Create new endpoint to serve batched events occurrences
+  [boulch]
 
 
 1.1.3 (2023-03-13)
