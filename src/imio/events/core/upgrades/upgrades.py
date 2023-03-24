@@ -74,3 +74,9 @@ def remove_title_description_fr(context):
     catalog = api.portal.get_tool("portal_catalog")
     catalog.delColumn("title_fr")
     catalog.delColumn("description_fr")
+
+
+def reindex_event_dates_index(context):
+    catalog = api.portal.get_tool("portal_catalog")
+    catalog.manage_reindexIndex(ids=["event_dates"])
+    logger.info("Reindexed event_dates index")

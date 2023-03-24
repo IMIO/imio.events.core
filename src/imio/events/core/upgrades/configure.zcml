@@ -97,4 +97,13 @@
       profile="imio.events.core:default"
       />
 
+  <genericsetup:upgradeStep
+      title="Reindex event_dates index"
+      description=""
+      source="1008"
+      destination="1009"
+      handler=".upgrades.reindex_event_dates_index"
+      profile="imio.events.core:default"
+      />
+
 </configure>

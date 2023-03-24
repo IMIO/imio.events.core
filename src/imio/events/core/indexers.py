@@ -109,10 +109,15 @@ def event_dates(obj):
         return
 
     event_days = set()
-    occurences = expand_events([obj], RET_MODE_ACCESSORS)
+    occurences = [obj]
+    if obj.recurrence:
+        next_occurences = expand_events([obj], RET_MODE_ACCESSORS)
+        occurences = [obj] + next_occurences
     for occurence in occurences:
         start = occurence.start
         event_days.add(start.date().strftime("%Y-%m-%d"))
+        if occurence.open_end:
+            continue
         end = occurence.end
         duration = (end.date() - start.date()).days
         for idx in range(1, duration + 1):

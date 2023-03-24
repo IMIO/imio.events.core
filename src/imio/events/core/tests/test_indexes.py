@@ -224,3 +224,11 @@ class TestIndexer(unittest.TestCase):
         event.open_end = True
         dates = sorted(event_dates(event)())
         self.assertEqual(dates, ["2022-02-13"])
+
+        # event with recurrence
+        event.start = datetime(2022, 2, 13, 12, 30)
+        event.end = datetime(2022, 2, 13, 12, 30)
+        event.open_end = False
+        event.recurrence = "RRULE:FREQ=MONTHLY;COUNT=3"
+        dates = sorted(event_dates(event)())
+        self.assertEqual(dates, ["2022-02-13", "2022-03-13", "2022-04-13"])

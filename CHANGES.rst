@@ -5,6 +5,9 @@ Changelog
 1.1.4 (unreleased)
 ------------------
 
+- Fix bug calculating `event_dates` index with occurrences
+  [laulaz]
+
 - WEB-3908 : Create new endpoint to serve batched events occurrences
   [boulch]
 
