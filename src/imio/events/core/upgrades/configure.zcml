@@ -106,4 +106,13 @@
       profile="imio.events.core:default"
       />
 
+  <genericsetup:upgradeStep
+      title="Add new first_start and first_end indexes"
+      description=""
+      source="1009"
+      destination="1010"
+      handler=".upgrades.add_dates_indexes"
+      profile="imio.events.core:default"
+      />
+
 </configure>

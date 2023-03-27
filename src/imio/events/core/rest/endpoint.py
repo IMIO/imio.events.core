@@ -56,8 +56,8 @@ class EventsEndpointHandler(SearchHandler):
         self.request.form["metadata_fields"] = [
             "recurrence",
             "whole_day",
-            "start",
-            "end",
+            "first_start",
+            "first_end",
             "open_end",
         ]
 

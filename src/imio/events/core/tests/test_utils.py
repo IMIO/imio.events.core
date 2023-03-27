@@ -106,6 +106,8 @@ class TestAgenda(unittest.TestCase):
             {
                 "start": "2022-11-13T12:00:00+00:00",
                 "end": "2022-11-13T13:00:00+00:00",
+                "first_start": "2022-11-13T12:00:00+00:00",
+                "first_end": "2022-11-13T13:00:00+00:00",
                 "recurrence": None,
                 "open_end": False,
                 "whole_day": False,
@@ -117,6 +119,8 @@ class TestAgenda(unittest.TestCase):
             {
                 "start": "2022-11-13T12:00:00+00:00",
                 "end": "2022-11-14T13:00:00+00:00",
+                "first_start": "2022-11-13T12:00:00+00:00",
+                "first_end": "2022-11-14T13:00:00+00:00",
                 "recurrence": None,
                 "open_end": False,
                 "whole_day": False,
@@ -128,8 +132,10 @@ class TestAgenda(unittest.TestCase):
         # test range start for occurences
         events = [
             {
-                "start": "2022-11-01T12:00:00+00:00",
-                "end": "2022-11-01T13:00:00+00:00",
+                "start": "2022-11-15T12:00:00+00:00",
+                "end": "2022-11-15T13:00:00+00:00",
+                "first_start": "2022-11-01T12:00:00+00:00",
+                "first_end": "2022-11-01T13:00:00+00:00",
                 "recurrence": "RRULE:FREQ=WEEKLY;COUNT=5",
                 "open_end": False,
                 "whole_day": False,
@@ -143,6 +149,8 @@ class TestAgenda(unittest.TestCase):
             {
                 "start": "2022-11-13T12:00:00+00:00",
                 "end": "2022-11-13T13:00:00+00:00",
+                "first_start": "2022-11-13T12:00:00+00:00",
+                "first_end": "2022-11-13T13:00:00+00:00",
                 "recurrence": "RRULE:FREQ=WEEKLY;COUNT=5",
                 "open_end": False,
                 "whole_day": False,
@@ -156,6 +164,8 @@ class TestAgenda(unittest.TestCase):
             {
                 "start": "2022-11-13T12:00:00+00:00",
                 "end": "2022-11-13T12:00:00+00:00",
+                "first_start": "2022-11-13T12:00:00+00:00",
+                "first_end": "2022-11-13T12:00:00+00:00",
                 "recurrence": "RRULE:FREQ=WEEKLY;COUNT=5",
                 "open_end": False,
                 "whole_day": True,
@@ -168,6 +178,8 @@ class TestAgenda(unittest.TestCase):
             {
                 "start": "2022-11-13T00:00:00+00:00",
                 "end": "2022-11-13T23:59:59+00:00",
+                "first_start": "2022-11-13T00:00:00+00:00",
+                "first_end": "2022-11-13T23:59:59+00:00",
                 "recurrence": "RRULE:FREQ=WEEKLY;COUNT=5",
                 "open_end": True,
                 "whole_day": True,

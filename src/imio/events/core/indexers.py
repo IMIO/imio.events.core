@@ -127,6 +127,16 @@ def event_dates(obj):
     return tuple(event_days)
 
 
+@indexer(IEvent)
+def first_start(obj):
+    return obj.start
+
+
+@indexer(IEvent)
+def first_end(obj):
+    return obj.end
+
+
 def get_searchable_text(obj, lang):
     def get_text(lang):
         text = ""

@@ -46,6 +46,12 @@
    <extra name="index_type" value="Okapi BM25 Rank"/>
    <extra name="lexicon_id" value="plone_lexicon"/>
   </index>
+  <index name="first_start" meta_type="FieldIndex">
+    <indexed_attr value="first_start"/>
+  </index>
+  <index name="first_end" meta_type="FieldIndex">
+    <indexed_attr value="first_end"/>
+  </index>
 
   <column value="category"/>
   <column value="category_title"/>
@@ -60,5 +66,7 @@
   <column value="description_nl"/>
   <column value="description_de"/>
   <column value="description_en"/>
+  <column value="first_start"/>
+  <column value="first_end"/>
 
 </object>

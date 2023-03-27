@@ -80,3 +80,33 @@ def reindex_event_dates_index(context):
     catalog = api.portal.get_tool("portal_catalog")
     catalog.manage_reindexIndex(ids=["event_dates"])
     logger.info("Reindexed event_dates index")
+
+
+def add_dates_indexes(context):
+    catalog = api.portal.get_tool("portal_catalog")
+
+    new_indexes = ["first_start", "first_end"]
+    indexes = catalog.indexes()
+    indexables = []
+    for new_index in new_indexes:
+        if new_index in indexes:
+            continue
+        catalog.addIndex(new_index, "FieldIndex")
+        indexables.append(new_index)
+        logger.info(f"Added FieldIndex for field {new_index}")
+    if len(indexables) > 0:
+        logger.info(f"Indexing new indexes {', '.join(indexables)}")
+        catalog.manage_reindexIndex(ids=indexables)
+
+    new_metadatas = ["first_start", "first_end"]
+    metadatas = list(catalog.schema())
+    must_reindex = False
+    for new_metadata in new_metadatas:
+        if new_metadata in metadatas:
+            continue
+        catalog.addColumn(new_metadata)
+        must_reindex = True
+        logger.info(f"Added {new_metadata} metadata")
+    if must_reindex:
+        logger.info("Reindexing catalog for new metadatas")
+        catalog.clearFindAndRebuild()

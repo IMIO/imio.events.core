@@ -83,9 +83,9 @@ def expand_occurences(events):
         if not event["recurrence"]:
             expanded_events.append(event)
             continue
-        start_date = dateutil.parser.parse(event["start"])
+        start_date = dateutil.parser.parse(event["first_start"])
         start_date = start_date.astimezone(utc)
-        end_date = dateutil.parser.parse(event["end"])
+        end_date = dateutil.parser.parse(event["first_end"])
         end_date = end_date.astimezone(utc)
 
         start_dates = recurrence_sequence_ical(

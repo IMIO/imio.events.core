@@ -5,6 +5,11 @@ Changelog
 1.1.4 (unreleased)
 ------------------
 
+- Fix occurrences expansion calculation for start dates
+  We can't use start/end recurring indexes because they return the next occurrence
+  and not the first one, so recurrence rule cannot be applied on them.
+  [laulaz]
+
 - Fix bug calculating `event_dates` index with occurrences
   [laulaz]
 

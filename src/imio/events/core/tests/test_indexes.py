@@ -232,3 +232,23 @@ class TestIndexer(unittest.TestCase):
         event.recurrence = "RRULE:FREQ=MONTHLY;COUNT=3"
         dates = sorted(event_dates(event)())
         self.assertEqual(dates, ["2022-02-13", "2022-03-13", "2022-04-13"])
+
+    def test_first_dates_indexes(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="My event",
+        )
+        event.start = datetime(2022, 2, 13, 12, 30)
+        event.end = datetime(2022, 2, 13, 14, 30)
+        event.open_end = False
+        event.recurrence = "RRULE:FREQ=WEEKLY;COUNT=5"
+        event.reindexObject()
+
+        catalog = api.portal.get_tool("portal_catalog")
+        brain = api.content.find(UID=event.UID())[0]
+        self.assertEqual(brain.first_start, datetime(2022, 2, 13, 12, 30))
+        self.assertEqual(brain.first_end, datetime(2022, 2, 13, 14, 30))
+        indexes = catalog.getIndexDataForRID(brain.getRID())
+        self.assertEqual(indexes.get("first_start"), datetime(2022, 2, 13, 12, 30))
+        self.assertEqual(indexes.get("first_end"), datetime(2022, 2, 13, 14, 30))

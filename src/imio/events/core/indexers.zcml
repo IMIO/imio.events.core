@@ -67,6 +67,16 @@
       />
 
   <adapter
+      name="first_start"
+      factory=".indexers.first_start"
+      />
+
+  <adapter
+      name="first_end"
+      factory=".indexers.first_end"
+      />
+
+  <adapter
       name="SearchableText"
       factory=".indexers.SearchableText_fr_event"
       />
