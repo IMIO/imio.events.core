@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.4 (unreleased)
+1.1.4 (2023-03-30)
 ------------------
 
 - Fix occurrences expansion calculation for start dates
