@@ -42,13 +42,6 @@ class EventsEndpointHandler(SearchHandler):
         # Only future events
         today = date.today().isoformat()
         query["event_dates"] = {"query": today, "range": "min"}
-        use_site_search_settings = False
-        if "use_site_search_settings" in query:
-            use_site_search_settings = True
-            del query["use_site_search_settings"]
-
-        if use_site_search_settings:
-            query = self.filter_query(query)
 
         self._constrain_query_by_path(query)
         query = self._parse_query(query)
