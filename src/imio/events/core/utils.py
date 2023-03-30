@@ -80,13 +80,18 @@ def expand_occurences(events):
     expanded_events = []
 
     for event in events:
-        if not event["recurrence"]:
-            expanded_events.append(event)
-            continue
         start_date = dateutil.parser.parse(event["first_start"])
         start_date = start_date.astimezone(utc)
         end_date = dateutil.parser.parse(event["first_end"])
         end_date = end_date.astimezone(utc)
+
+        # Ensure event start/end are in same date format than other json dates
+        event["start"] = json_compatible(start_date)
+        event["end"] = json_compatible(end_date)
+
+        if not event["recurrence"]:
+            expanded_events.append(event)
+            continue
 
         start_dates = recurrence_sequence_ical(
             start=start_date,
