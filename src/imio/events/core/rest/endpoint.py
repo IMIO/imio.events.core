@@ -37,6 +37,7 @@ class EventsEndpointHandler(SearchHandler):
                 del query[param]
 
         query["portal_type"] = "imio.events.Event"
+        query["review_state"] = "published"
         query["b_size"] = 10000
         # Only future events
         today = date.today().isoformat()
@@ -65,7 +66,6 @@ class EventsEndpointHandler(SearchHandler):
         self.request.form["b_size"] = 10000
         self.request.form["b_start"] = 0
         results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)()
-
         expanded_occurences = expand_occurences(results.get("items"))
         sorted_expanded_occurences = sorted(expanded_occurences, key=get_start_date)
 
