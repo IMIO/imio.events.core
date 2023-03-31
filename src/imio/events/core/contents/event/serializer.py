@@ -22,6 +22,8 @@ class SerializeEventToJson(SerializeFolderToJson):
         result = super(SerializeEventToJson, self).__call__(version, include_items=True)
         query = self.request.form
         lang = get_restapi_query_lang(query)
+        result["first_start"] = json_compatible(self.context.start)
+        result["first_end"] = json_compatible(self.context.end)
         title = result["title"]
         text = result["text"]
         desc = result["description"]

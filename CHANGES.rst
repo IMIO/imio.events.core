@@ -5,7 +5,10 @@ Changelog
 1.1.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Need fullobjects in query to avoid "Cannot read properties of undefined (reading 'latitude')" in rest view
+  So, we need to serialize first_start and first_end from obj.start and obj.end. If we don't do that, we got brain.start/end
+  these are updates with first valid event occurence
+  [boulch]
 
 
 1.1.4 (2023-03-30)

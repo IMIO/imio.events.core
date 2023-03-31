@@ -23,7 +23,7 @@ class EventsEndpointHandler(SearchHandler):
 
     # we receive b_size and b_start from smartweb with values already set
     # So we ignore these values but we must stock these to use it ...
-    ignored_params = ["fullobjects", "b_size", "b_start"]
+    ignored_params = ["b_size", "b_start"]
 
     def search(self, query=None):
         if query is None:
@@ -36,9 +36,16 @@ class EventsEndpointHandler(SearchHandler):
             if param in query:
                 del query[param]
 
+        if "fullobjects" in query:
+            fullobjects = True
+            del query["fullobjects"]
+        else:
+            fullobjects = False
+
         query["portal_type"] = "imio.events.Event"
         query["review_state"] = "published"
         query["b_size"] = 10000
+
         # Only future events
         today = date.today().isoformat()
         query["event_dates"] = {"query": today, "range": "min"}
@@ -46,19 +53,18 @@ class EventsEndpointHandler(SearchHandler):
         self._constrain_query_by_path(query)
         query = self._parse_query(query)
         lazy_resultset = self.catalog.searchResults(**query)
-
-        self.request.form["metadata_fields"] = [
-            "recurrence",
-            "whole_day",
-            "first_start",
-            "first_end",
-            "open_end",
-        ]
-
+        if "metadata_fields" not in self.request.form:
+            self.request.form["metadata_fields"] = []
+        self.request.form["metadata_fields"] += [
+        "recurrence",
+        "whole_day",
+        "first_start",
+        "first_end",
+        "open_end",]
         # ISerializeToJson use a default request batch so we force a "full" b_size and a "zero" b_start
         self.request.form["b_size"] = 10000
         self.request.form["b_start"] = 0
-        results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)()
+        results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(fullobjects=fullobjects)
         expanded_occurences = expand_occurences(results.get("items"))
         sorted_expanded_occurences = sorted(expanded_occurences, key=get_start_date)
 
