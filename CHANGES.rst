@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.5 (unreleased)
+1.1.5 (2023-03-31)
 ------------------
 
 - Need fullobjects in query to avoid "Cannot read properties of undefined (reading 'latitude')" in rest view
