@@ -5,6 +5,9 @@ Changelog
 1.1.6 (unreleased)
 ------------------
 
+- INFRA-4725 : Add logging to find infinite loop in recurrence calculation
+  [laulaz]
+
 - Migrate to Plone 6.0.4
   [boulch]
 

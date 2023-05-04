@@ -25,5 +25,12 @@
     layer="imio.events.core.interfaces.IImioEventsCoreLayer"
     />
 
+  <browser:page
+    name="json_recurrence"
+    for="*"
+    class=".json_recurrence.LoggingRecurrenceView"
+    permission="zope2.View"
+    layer="imio.events.core.interfaces.IImioEventsCoreLayer"
+    />
 
 </configure>
