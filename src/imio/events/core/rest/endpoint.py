@@ -56,15 +56,18 @@ class EventsEndpointHandler(SearchHandler):
         if "metadata_fields" not in self.request.form:
             self.request.form["metadata_fields"] = []
         self.request.form["metadata_fields"] += [
-        "recurrence",
-        "whole_day",
-        "first_start",
-        "first_end",
-        "open_end",]
+            "recurrence",
+            "whole_day",
+            "first_start",
+            "first_end",
+            "open_end",
+        ]
         # ISerializeToJson use a default request batch so we force a "full" b_size and a "zero" b_start
         self.request.form["b_size"] = 10000
         self.request.form["b_start"] = 0
-        results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(fullobjects=fullobjects)
+        results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(
+            fullobjects=fullobjects
+        )
         expanded_occurences = expand_occurences(results.get("items"))
         sorted_expanded_occurences = sorted(expanded_occurences, key=get_start_date)
 
