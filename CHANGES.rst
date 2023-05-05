@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.6 (unreleased)
+1.1.6 (2023-05-05)
 ------------------
 
 - INFRA-4725 : Add logging to find infinite loop in recurrence calculation
