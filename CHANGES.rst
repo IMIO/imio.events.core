@@ -5,7 +5,9 @@ Changelog
 1.1.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Avoid infinite loop with bad recurrence RRULE expression (`INTERVAL=0"`)
+  See https://github.com/plone/plone.formwidget.recurrence/issues/39
+  [laulaz]
 
 
 1.1.6 (2023-05-05)
