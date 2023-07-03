@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.7 (unreleased)
+1.1.7 (2023-07-03)
 ------------------
 
 - Avoid infinite loop with bad recurrence RRULE expression (`INTERVAL=0"`)
