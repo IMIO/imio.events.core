@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.8 (unreleased)
+1.1.8 (2023-07-18)
 ------------------
 
 - Add logs in endpoint. Help us to find why agenda go slowlier
