@@ -5,7 +5,8 @@ Changelog
 1.1.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add logs in endpoint. Help us to find why agenda go slowlier
+  [boulch]
 
 
 1.1.7 (2023-07-03)

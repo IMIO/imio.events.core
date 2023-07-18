@@ -10,6 +10,11 @@ from plone.restapi.search.utils import unflatten_dotted_dict
 from plone.restapi.services import Service
 from zope.component import getMultiAdapter
 
+import logging
+import time
+
+logger = logging.getLogger("imio.events.core")
+
 
 class EventsEndpointGet(Service):
     def reply(self):
@@ -28,7 +33,6 @@ class EventsEndpointHandler(SearchHandler):
     def search(self, query=None):
         if query is None:
             query = {}
-
         b_size = query.get("b_size") or 20
         b_start = query.get("b_start") or 0
 
@@ -49,10 +53,13 @@ class EventsEndpointHandler(SearchHandler):
         # Only future events
         today = date.today().isoformat()
         query["event_dates"] = {"query": today, "range": "min"}
-
+        tps1 = time.time()
         self._constrain_query_by_path(query)
+        tps2 = time.time()
         query = self._parse_query(query)
+        tps3 = time.time()
         lazy_resultset = self.catalog.searchResults(**query)
+        tps4 = time.time()
         if "metadata_fields" not in self.request.form:
             self.request.form["metadata_fields"] = []
         self.request.form["metadata_fields"] += [
@@ -68,13 +75,24 @@ class EventsEndpointHandler(SearchHandler):
         results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(
             fullobjects=fullobjects
         )
+        tps5 = time.time()
         expanded_occurences = expand_occurences(results.get("items"))
         sorted_expanded_occurences = sorted(expanded_occurences, key=get_start_date)
+        tps6 = time.time()
 
         # It's time to get real b_size/b_start from the smartweb query
         self.request.form["b_size"] = b_size
         self.request.form["b_start"] = b_start
         batch = HypermediaBatch(self.request, sorted_expanded_occurences)
+        tps7 = time.time()
+        logger.info(f"query : {results['@id']}")
+        logger.info(f"time constrain_query_by_path : {tps2 - tps1}")
+        logger.info(f"time _parse_query : {tps3 - tps2}")
+        logger.info(f"time catalog lazy_resultset : {tps4 - tps3}")
+        logger.info(f"time MultiAdapter fullobj : {tps5 - tps4}")
+        logger.info(f"time occurences : {tps6 - tps5}")
+        logger.info(f"time batch : {tps7 - tps6}")
+        logger.info(f"time (total) : {tps7 - tps1}")
 
         results = {}
         results["@id"] = batch.canonical_url
