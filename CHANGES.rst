@@ -5,7 +5,8 @@ Changelog
 1.1.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- [WEB-3937] Limit event duration to maximum 3 years
+  [boulch, laulaz]
 
 
 1.1.8 (2023-07-18)

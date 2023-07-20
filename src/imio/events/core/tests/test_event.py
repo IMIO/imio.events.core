@@ -1,20 +1,25 @@
 # -*- coding: utf-8 -*-
 
 from collective.geolocationbehavior.geolocation import IGeolocatable
-from imio.smartweb.common.utils import geocode_object
+from datetime import datetime
+from imio.events.core.browser.forms import EventCustomAddForm
+from imio.events.core.browser.forms import EventCustomEditForm
 from imio.events.core.contents.event.content import IEvent
 from imio.events.core.interfaces import IImioEventsCoreLayer
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from imio.events.core.tests.utils import make_named_image
+from imio.smartweb.common.utils import geocode_object
 from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
+from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.formwidget.geolocation.geolocation import Geolocation
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 from unittest import mock
+from z3c.form.interfaces import WidgetActionExecutionError
 from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
 from zope.component import createObject
@@ -26,9 +31,11 @@ from zope.interface import alsoProvides
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import Attributes
 from zope.lifecycleevent import modified
+from zope.publisher.browser import TestRequest
 from zope.schema.interfaces import IVocabularyFactory
 
 import geopy
+import pytz
 import unittest
 
 
@@ -399,3 +406,42 @@ class TestEvent(unittest.TestCase):
         file_obj.file = NamedBlobFile(data="file data", filename="file.txt")
         view = queryMultiAdapter((event, self.request), name="view")
         self.assertIn("++resource++mimetype.icons/txt.png", view())
+
+    def test_timespan_invariant(self):
+        request = TestRequest(
+            form={
+                "form.widgets.IBasic.title": "My Event",
+                "form.widgets.ticket_url": "https://www.kamoulox.be",
+                "form.widgets.IEventBasic.start": "2023-09-01T22:00",
+                "form.widgets.IEventBasic.end": "2050-09-01T22:00",
+                "form.buttons.apply": "Apply",
+            }
+        )
+        alsoProvides(request, IPloneFormLayer)
+        form = EventCustomAddForm(self.folder, request)
+        form.portal_type = "imio.events.Event"
+        form.update()
+        with self.assertRaises(WidgetActionExecutionError):
+            form.handleApply(form, {})
+
+        event = api.content.create(
+            container=self.folder,
+            type="imio.events.Event",
+            id="my-event",
+        )
+        utc_timezone = pytz.UTC
+        event.start = datetime(2023, 9, 1, 22, 00, tzinfo=utc_timezone)
+        event.end = datetime(2024, 9, 1, 22, 00, tzinfo=utc_timezone)
+        request = TestRequest(
+            form={
+                "form.widgets.IEventBasic.start": "2023-09-01T22:00",
+                "form.widgets.IEventBasic.end": "2050-09-01T22:00",
+                "form.buttons.apply": "Apply",
+            }
+        )
+        alsoProvides(request, IPloneFormLayer)
+        form = EventCustomEditForm(event, request)
+        form.portal_type = "imio.events.Event"
+        form.update()
+        with self.assertRaises(WidgetActionExecutionError):
+            form.handleApply(form, {})

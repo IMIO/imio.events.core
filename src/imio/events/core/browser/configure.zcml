@@ -33,4 +33,29 @@
     layer="imio.events.core.interfaces.IImioEventsCoreLayer"
     />
 
+  <!-- Custom add view -->
+  <adapter
+      for="Products.CMFCore.interfaces.IFolderish
+           imio.events.core.interfaces.IImioEventsCoreLayer
+           plone.dexterity.interfaces.IDexterityFTI"
+      provides="zope.publisher.interfaces.browser.IBrowserPage"
+      factory=".forms.EventCustomAddView"
+      name="imio.events.Event"
+      />
+  <class class=".forms.EventCustomAddView">
+      <require
+          permission="cmf.AddPortalContent"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
+  <!-- Custom edit view -->
+  <browser:page
+      for="imio.events.core.contents.IEvent"
+      name="edit"
+      class=".forms.EventCustomEditView"
+      permission="cmf.ModifyPortalContent"
+      layer="imio.events.core.interfaces.IImioEventsCoreLayer"
+      />
+
 </configure>
