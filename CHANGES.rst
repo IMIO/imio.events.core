@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.9 (unreleased)
+1.1.9 (2023-07-24)
 ------------------
 
 - [WEB-3937] Limit event duration to maximum 3 years
