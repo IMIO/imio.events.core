@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.10 (unreleased)
+1.1.10 (2023-07-26)
 -------------------
 
 - [WEB-3937] Fix add / edit forms for events
