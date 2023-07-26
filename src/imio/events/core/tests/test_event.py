@@ -22,6 +22,7 @@ from unittest import mock
 from z3c.form.interfaces import WidgetActionExecutionError
 from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
+from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.component import createObject
 from zope.component import getUtility
 from zope.component import getMultiAdapter
@@ -411,10 +412,11 @@ class TestEvent(unittest.TestCase):
         request = TestRequest(
             form={
                 "form.widgets.IBasic.title": "My Event",
+                "form.widgets.event_type": "event-driven",
                 "form.widgets.ticket_url": "https://www.kamoulox.be",
                 "form.widgets.IEventBasic.start": "2023-09-01T22:00",
                 "form.widgets.IEventBasic.end": "2050-09-01T22:00",
-                "form.buttons.apply": "Apply",
+                "form.buttons.save": "Save",
             }
         )
         alsoProvides(request, IPloneFormLayer)
@@ -422,7 +424,24 @@ class TestEvent(unittest.TestCase):
         form.portal_type = "imio.events.Event"
         form.update()
         with self.assertRaises(WidgetActionExecutionError):
-            form.handleApply(form, {})
+            form.handleAdd(form, {})
+
+        request = TestRequest(
+            form={
+                "form.widgets.IBasic.title": "My Event",
+                "form.widgets.event_type": "event-driven",
+                "form.widgets.ticket_url": "https://www.kamoulox.be",
+                "form.widgets.IEventBasic.start": "2023-09-01T22:00",
+                "form.widgets.IEventBasic.end": "2024-09-01T22:00",
+                "form.buttons.save": "Save",
+            }
+        )
+        alsoProvides(request, IPloneFormLayer)
+        alsoProvides(request, IAttributeAnnotatable)
+        form = EventCustomAddForm(self.agenda, request)
+        form.portal_type = "imio.events.Event"
+        form.update()
+        form.handleAdd(form, {})
 
         event = api.content.create(
             container=self.folder,
@@ -434,9 +453,11 @@ class TestEvent(unittest.TestCase):
         event.end = datetime(2024, 9, 1, 22, 00, tzinfo=utc_timezone)
         request = TestRequest(
             form={
+                "form.widgets.IBasic.title": "My Event",
+                "form.widgets.event_type": "event-driven",
                 "form.widgets.IEventBasic.start": "2023-09-01T22:00",
                 "form.widgets.IEventBasic.end": "2050-09-01T22:00",
-                "form.buttons.apply": "Apply",
+                "form.buttons.save": "Save",
             }
         )
         alsoProvides(request, IPloneFormLayer)

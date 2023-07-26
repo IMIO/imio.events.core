@@ -5,7 +5,8 @@ Changelog
 1.1.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- [WEB-3937] Fix add / edit forms for events
+  [boulch, laulaz]
 
 
 1.1.9 (2023-07-24)
