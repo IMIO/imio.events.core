@@ -113,3 +113,10 @@ def expand_occurences(events):
                 new_event["end"] = json_compatible(occurence_start + duration)
                 expanded_events.append(new_event)
     return expanded_events
+
+
+def remove_zero_interval_from_recrule(recrule):
+    if not recrule:
+        return recrule
+    recrule = recrule.replace(";INTERVAL=0", "")
+    return recrule

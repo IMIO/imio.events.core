@@ -9,6 +9,7 @@ from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_agendas_uids_for_faceted
 from imio.events.core.utils import get_entity_for_obj
 from imio.events.core.utils import get_start_date
+from imio.events.core.utils import remove_zero_interval_from_recrule
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -200,3 +201,31 @@ class TestAgenda(unittest.TestCase):
         start_date = get_start_date(event)
         result = datetime(2022, 11, 13, 12, 0, tzinfo=timezone.utc)
         self.assertEqual(start_date, result)
+
+    def test_remove_zero_interval_from_recrule(self):
+        recrule = "RRULE:FREQ=WEEKLY;COUNT=5"
+        self.assertEqual(
+            remove_zero_interval_from_recrule(recrule), "RRULE:FREQ=WEEKLY;COUNT=5"
+        )
+        recrule = "RRULE:FREQ=WEEKLY;INTERVAL=1"
+        self.assertEqual(
+            remove_zero_interval_from_recrule(recrule), "RRULE:FREQ=WEEKLY;INTERVAL=1"
+        )
+        recrule = "RRULE:FREQ=WEEKLY;INTERVAL=1;COUNT=5"
+        self.assertEqual(
+            remove_zero_interval_from_recrule(recrule),
+            "RRULE:FREQ=WEEKLY;INTERVAL=1;COUNT=5",
+        )
+        recrule = "RRULE:FREQ=WEEKLY;INTERVAL=0"
+        self.assertEqual(
+            remove_zero_interval_from_recrule(recrule), "RRULE:FREQ=WEEKLY"
+        )
+        recrule = "RRULE:FREQ=WEEKLY;INTERVAL=0;COUNT=5"
+        self.assertEqual(
+            remove_zero_interval_from_recrule(recrule), "RRULE:FREQ=WEEKLY;COUNT=5"
+        )
+        recrule = "RRULE:FREQ=WEEKLY;INTERVAL=0\nRDATE:2023-09-12T000000"
+        self.assertEqual(
+            remove_zero_interval_from_recrule(recrule),
+            "RRULE:FREQ=WEEKLY\nRDATE:2023-09-12T000000",
+        )

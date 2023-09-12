@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+from imio.events.core.utils import remove_zero_interval_from_recrule
 from plone.formwidget.recurrence.browser.json_recurrence import RecurrenceView
 
 import logging
@@ -14,5 +16,5 @@ class LoggingRecurrenceView(RecurrenceView):
             rrule = self.request.form["rrule"]
             # INTERVAL=0 is not allowed in RFC 5545
             # See https://github.com/plone/plone.formwidget.recurrence/issues/39
-            self.request.form["rrule"] = rrule.replace("INTERVAL=0", "INTERVAL=1")
+            self.request.form["rrule"] = remove_zero_interval_from_recrule(rrule)
         return super(LoggingRecurrenceView, self).json_string

@@ -3,6 +3,7 @@
 from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_entity_for_obj
 from imio.events.core.utils import reload_faceted_config
+from imio.events.core.utils import remove_zero_interval_from_recrule
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
 from plone import api
@@ -82,6 +83,10 @@ def removed_agenda(obj, event):
 
 
 def added_event(obj, event):
+    # INTERVAL=0 is not allowed in RFC 5545
+    # See https://github.com/plone/plone.formwidget.recurrence/issues/39
+    obj.recurrence = remove_zero_interval_from_recrule(obj.recurrence)
+
     container_agenda = get_agenda_for_event(obj)
     set_uid_of_referrer_agendas(obj, event, container_agenda)
     if not obj.is_geolocated:
@@ -90,6 +95,10 @@ def added_event(obj, event):
 
 
 def modified_event(obj, event):
+    # INTERVAL=0 is not allowed in RFC 5545
+    # See https://github.com/plone/plone.formwidget.recurrence/issues/39
+    obj.recurrence = remove_zero_interval_from_recrule(obj.recurrence)
+
     set_default_agenda_uid(obj)
 
     if not hasattr(event, "descriptions") or not event.descriptions:

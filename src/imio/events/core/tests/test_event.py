@@ -466,3 +466,16 @@ class TestEvent(unittest.TestCase):
         form.update()
         with self.assertRaises(WidgetActionExecutionError):
             form.handleApply(form, {})
+
+    def test_recurrence(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="event",
+        )
+        event.recurrence = "RRULE:FREQ=WEEKLY;INTERVAL=0;COUNT=5"
+        modified(event)
+        self.assertEqual(event.recurrence, "RRULE:FREQ=WEEKLY;COUNT=5")
+        event.recurrence = "RRULE:FREQ=WEEKLY;INTERVAL=0"
+        modified(event)
+        self.assertEqual(event.recurrence, "RRULE:FREQ=WEEKLY")
