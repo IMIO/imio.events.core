@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from Acquisition import aq_inner
-from Acquisition import aq_parent
 from imio.events.core.contents import IEntity
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+from Products.CMFPlone.utils import parent
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
@@ -39,8 +38,8 @@ class EventsLocalCategoriesVocabularyFactory:
             # ex: call on @types or @vocabularies from RESTAPI
             return SimpleVocabulary([])
         obj = context
-        while not IEntity.providedBy(obj):
-            obj = aq_parent(aq_inner(obj))
+        while not IEntity.providedBy(obj) and obj is not None:
+            obj = parent(obj)
         if not obj.local_categories:
             return SimpleVocabulary([])
 

@@ -5,7 +5,8 @@ Changelog
 1.1.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-3989 : Fix infinite loop on object deletion & remove logs
+  [laulaz]
 
 
 1.1.11 (2023-09-12)

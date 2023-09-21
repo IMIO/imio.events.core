@@ -15,33 +15,22 @@ from pytz import utc
 from zope.component import getMultiAdapter
 from zope.interface import noLongerProvides
 
-import logging
 import copy
 import dateutil
 import os
 
-logger = logging.getLogger("imio.events.core")
-
 
 def get_entity_for_obj(obj):
-    logger.info(f"Getting entity for obj : {obj.absolute_url()}")
-    while not IEntity.providedBy(obj):
+    while not IEntity.providedBy(obj) and obj is not None:
         obj = parent(obj)
-        if obj is None:
-            logger.error("Infinite looping in while statement !", stack_info=True)
-            raise Exception
     entity = obj
     return entity
 
 
 def get_agenda_for_event(event):
-    logger.info(f"Getting agenda for event : {event.absolute_url()}")
     obj = event
-    while not IAgenda.providedBy(obj):
+    while not IAgenda.providedBy(obj) and obj is not None:
         obj = parent(obj)
-        if obj is None:
-            logger.error("Infinite looping in while statement !", stack_info=True)
-            raise Exception
     agenda = obj
     return agenda
 

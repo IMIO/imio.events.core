@@ -20,7 +20,10 @@ from zope.lifecycleevent.interfaces import IAttributes
 
 def set_default_agenda_uid(event):
     event.selected_agendas = event.selected_agendas or []
-    uid = get_agenda_for_event(event).UID()
+    agenda = get_agenda_for_event(event)
+    if agenda is None:
+        return
+    uid = agenda.UID()
     if uid not in event.selected_agendas:
         event.selected_agendas = event.selected_agendas + [uid]
     event.reindexObject(idxs=["selected_agendas"])
