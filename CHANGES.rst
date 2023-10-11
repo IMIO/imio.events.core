@@ -5,7 +5,8 @@ Changelog
 1.1.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-3997 : Add cascading agendas subscriptions retrieval in endpoint to get events "by dependency"
+  [boulch]
 
 
 1.1.12 (2023-10-09)
