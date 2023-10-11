@@ -3,6 +3,7 @@
 from datetime import date
 from imio.events.core.utils import expand_occurences
 from imio.events.core.utils import get_start_date
+from plone import api
 from plone.restapi.batching import HypermediaBatch
 from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.search.handler import SearchHandler
@@ -49,6 +50,31 @@ class EventsEndpointHandler(SearchHandler):
         query["portal_type"] = "imio.events.Event"
         query["review_state"] = "published"
         query["b_size"] = 10000
+
+        def cascading_agendas(initial_agenda):
+            def recursive_generator(agenda_UID):
+                obj = api.content.get(UID=agenda_UID)
+                populating_agendas = []
+                for rv in obj.populating_agendas:
+                    if rv.to_object is not None:
+                        obj = rv.to_object
+                        status = api.content.get_state(obj)
+                        if status == "published":
+                            populating_agendas.append(rv.to_object.UID())
+                for agenda_UID in populating_agendas:
+                    yield from recursive_generator(agenda_UID)
+                yield agenda_UID
+
+            yield from recursive_generator(initial_agenda)
+
+        # To cover cascading "populating_agendas" field
+        if "selected_agendas" in query:
+            selected_agendas = [
+                agenda_UID
+                for agenda_UID in cascading_agendas(query["selected_agendas"])
+            ]
+            all_agendas = list(set(selected_agendas))
+            query["selected_agendas"] = all_agendas
 
         # Only future events
         today = date.today().isoformat()
