@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.13 (unreleased)
+1.1.13 (2023-10-11)
 -------------------
 
 - WEB-3997 : Add cascading agendas subscriptions retrieval in endpoint to get events "by dependency"
