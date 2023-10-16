@@ -75,11 +75,11 @@ def removed_agenda(obj, event):
         # This happen when we try to remove plone object
         return
     for brain in brains:
-        event = brain.getObject()
-        event.selected_agendas = [
-            uid for uid in event.selected_agendas if uid != obj.UID()
+        event_obj = brain.getObject()
+        event_obj.selected_agendas = [
+            uid for uid in event_obj.selected_agendas if uid != obj.UID()
         ]
-        event.reindexObject(idxs=["selected_agendas"])
+        event_obj.reindexObject(idxs=["selected_agendas"])
     request = getRequest()
     entity = get_entity_for_obj(obj)
     reload_faceted_config(entity, request)
@@ -145,15 +145,15 @@ def mark_current_agenda_in_events_from_other_agendas(obj, event):
         agenda = api.content.get(UID=uid_agenda)
         event_brains = api.content.find(context=agenda, portal_type="imio.events.Event")
         for brain in event_brains:
-            event = brain.getObject()
+            event_obj = brain.getObject()
             if uid_agenda in uids_in_current_agenda:
-                event.selected_agendas.append(obj.UID())
-                event._p_changed = 1
+                event_obj.selected_agendas.append(obj.UID())
+                event_obj._p_changed = 1
             else:
-                event.selected_agendas = [
-                    item for item in event.selected_agendas if item != obj.UID()
+                event_obj.selected_agendas = [
+                    item for item in event_obj.selected_agendas if item != obj.UID()
                 ]
-            event.reindexObject(idxs=["selected_agendas"])
+            event_obj.reindexObject(idxs=["selected_agendas"])
     # Keep a copy of populating_agendas
     obj.old_populating_agendas = uids_in_current_agenda
 
