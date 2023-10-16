@@ -91,7 +91,7 @@ def added_event(obj, event):
     obj.recurrence = remove_zero_interval_from_recrule(obj.recurrence)
 
     container_agenda = get_agenda_for_event(obj)
-    set_uid_of_referrer_agendas(obj, event, container_agenda)
+    set_uid_of_referrer_agendas(obj, container_agenda)
     if not obj.is_geolocated:
         # geocode only if the user has not already changed geolocation
         geocode_object(obj)
@@ -121,7 +121,7 @@ def moved_event(obj, event):
         # We don't have anything to do if event is being removed
         return
     container_agenda = get_agenda_for_event(obj)
-    set_uid_of_referrer_agendas(obj, event, container_agenda)
+    set_uid_of_referrer_agendas(obj, container_agenda)
 
 
 def mark_current_agenda_in_events_from_other_agendas(obj, event):
@@ -158,7 +158,7 @@ def mark_current_agenda_in_events_from_other_agendas(obj, event):
     obj.old_populating_agendas = uids_in_current_agenda
 
 
-def set_uid_of_referrer_agendas(obj, event, container_agenda):
+def set_uid_of_referrer_agendas(obj, container_agenda):
     obj.selected_agendas = [container_agenda.UID()]
     rels = api.relation.get(target=container_agenda, relationship="populating_agendas")
     if not rels:
