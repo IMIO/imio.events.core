@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.14 (unreleased)
+1.1.14 (2023-10-17)
 -------------------
 
 - WEB-3997 : Fix recursive_generator if agenda A has a reference to agenda B and agenda B has a reference to agenda A
