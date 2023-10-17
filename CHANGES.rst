@@ -5,7 +5,8 @@ Changelog
 1.1.15 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-3997 : Fix : Add condition to avoid getting a broken "_broken_to_path" old/removed agenda
+  [boulch]
 
 
 1.1.14 (2023-10-17)

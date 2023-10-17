@@ -59,13 +59,14 @@ class EventsEndpointHandler(SearchHandler):
                 obj = api.content.get(UID=agenda_UID)
                 populating_agendas = []
                 for rv in obj.populating_agendas:
-                    if rv.to_object.UID() not in global_list:
-                        if rv.to_object is not None:
-                            obj = rv.to_object
-                            status = api.content.get_state(obj)
-                            if status == "published":
-                                populating_agendas.append(rv.to_object.UID())
-                                global_list.append(rv.to_object.UID())
+                    if hasattr(rv, "to_object"):
+                        if rv.to_object is not None and rv.to_object.UID() not in global_list:
+                            if rv.to_object is not None:
+                                obj = rv.to_object
+                                status = api.content.get_state(obj)
+                                if status == "published":
+                                    populating_agendas.append(rv.to_object.UID())
+                                    global_list.append(rv.to_object.UID())
                 for agenda_UID in populating_agendas:
                     yield from recursive_generator(agenda_UID)
                 yield agenda_UID
