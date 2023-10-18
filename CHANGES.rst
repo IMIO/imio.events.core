@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.15 (unreleased)
+1.1.15 (2023-10-18)
 -------------------
 
 - WEB-3997 : Fix : Initial agenda must be kept!
