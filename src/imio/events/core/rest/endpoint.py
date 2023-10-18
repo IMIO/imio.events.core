@@ -3,6 +3,7 @@
 from datetime import date
 from imio.events.core.utils import expand_occurences
 from imio.events.core.utils import get_start_date
+from imio.smartweb.common.utils import is_log_active
 from plone import api
 from plone.restapi.batching import HypermediaBatch
 from plone.restapi.interfaces import ISerializeToJson
@@ -117,14 +118,15 @@ class EventsEndpointHandler(SearchHandler):
         self.request.form["b_start"] = b_start
         batch = HypermediaBatch(self.request, sorted_expanded_occurences)
         tps7 = time.time()
-        logger.info(f"query : {results['@id']}")
-        logger.info(f"time constrain_query_by_path : {tps2 - tps1}")
-        logger.info(f"time _parse_query : {tps3 - tps2}")
-        logger.info(f"time catalog lazy_resultset : {tps4 - tps3}")
-        logger.info(f"time MultiAdapter fullobj : {tps5 - tps4}")
-        logger.info(f"time occurences : {tps6 - tps5}")
-        logger.info(f"time batch : {tps7 - tps6}")
-        logger.info(f"time (total) : {tps7 - tps1}")
+        if is_log_active():
+            logger.info(f"query : {results['@id']}")
+            logger.info(f"time constrain_query_by_path : {tps2 - tps1}")
+            logger.info(f"time _parse_query : {tps3 - tps2}")
+            logger.info(f"time catalog lazy_resultset : {tps4 - tps3}")
+            logger.info(f"time MultiAdapter fullobj : {tps5 - tps4}")
+            logger.info(f"time occurences : {tps6 - tps5}")
+            logger.info(f"time batch : {tps7 - tps6}")
+            logger.info(f"time (total) : {tps7 - tps1}")
 
         results = {}
         results["@id"] = batch.canonical_url
