@@ -11,6 +11,8 @@ from imio.events.core.tests.utils import make_named_image
 from imio.smartweb.common.utils import geocode_object
 from plone import api
 from plone.api.exc import InvalidParameterError
+from plone.app.contenttypes.behaviors.leadimage import ILeadImageBehavior
+from plone.app.imagecropping import PAI_STORAGE_KEY
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.z3cform.interfaces import IPloneFormLayer
@@ -22,6 +24,7 @@ from unittest import mock
 from z3c.form.interfaces import WidgetActionExecutionError
 from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
+from zope.annotation.interfaces import IAnnotations
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.component import createObject
 from zope.component import getUtility
@@ -258,6 +261,22 @@ class TestEvent(unittest.TestCase):
         event.reindexObject()
         modified(event)
         self.assertIn(self.agenda.UID(), event.selected_agendas)
+
+    def test_removing_old_cropping(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="event",
+        )
+        event.image = NamedBlobImage(**make_named_image())
+        view = event.restrictedTraverse("@@crop-image")
+        view._crop(fieldname="image", scale="portrait_affiche", box=(1, 1, 200, 200))
+        annotation = IAnnotations(event).get(PAI_STORAGE_KEY)
+        self.assertEqual(annotation, {"image_portrait_affiche": (1, 1, 200, 200)})
+
+        modified(event, Attributes(ILeadImageBehavior, "ILeadImageBehavior.image"))
+        annotation = IAnnotations(event).get(PAI_STORAGE_KEY)
+        self.assertEqual(annotation, {})
 
     def test_geolocation(self):
         attr = {"geocode.return_value": mock.Mock(latitude=1, longitude=2)}
