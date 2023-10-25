@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-1.1.16 (unreleased)
--------------------
+1.2 (2023-10-25)
+----------------
 
 - WEB-3985 : Use new portrait / paysage scales & logic
   [boulch, laulaz]
