@@ -5,7 +5,11 @@ Changelog
 1.1.16 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-3985 : Use new portrait / paysage scales & logic
+  [boulch, laulaz]
+
+- WEB-3985 : Remove old cropping information when image changes
+  [boulch, laulaz]
 
 
 1.1.15 (2023-10-18)
