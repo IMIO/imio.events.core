@@ -108,6 +108,9 @@ def modified_event(obj, event):
     if not hasattr(event, "descriptions") or not event.descriptions:
         return
     for d in event.descriptions:
+        if not IAttributes.providedBy(d):
+            # we do not have fields change description, but maybe a request
+            continue
         if d.interface is IAddress and d.attributes:
             # an address field has been changed
             geocode_object(obj)

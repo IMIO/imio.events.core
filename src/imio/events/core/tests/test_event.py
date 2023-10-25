@@ -12,6 +12,7 @@ from imio.smartweb.common.utils import geocode_object
 from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.contenttypes.behaviors.leadimage import ILeadImageBehavior
+from plone.app.dexterity.behaviors.metadata import IBasic
 from plone.app.imagecropping import PAI_STORAGE_KEY
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -271,6 +272,10 @@ class TestEvent(unittest.TestCase):
         event.image = NamedBlobImage(**make_named_image())
         view = event.restrictedTraverse("@@crop-image")
         view._crop(fieldname="image", scale="portrait_affiche", box=(1, 1, 200, 200))
+        annotation = IAnnotations(event).get(PAI_STORAGE_KEY)
+        self.assertEqual(annotation, {"image_portrait_affiche": (1, 1, 200, 200)})
+
+        modified(event, Attributes(IBasic, "IBasic.title"))
         annotation = IAnnotations(event).get(PAI_STORAGE_KEY)
         self.assertEqual(annotation, {"image_portrait_affiche": (1, 1, 200, 200)})
 
