@@ -6,6 +6,7 @@ from imio.events.core.utils import reload_faceted_config
 from imio.events.core.utils import remove_zero_interval_from_recrule
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
+from imio.smartweb.common.utils import remove_cropping
 from plone import api
 from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
@@ -107,10 +108,15 @@ def modified_event(obj, event):
     if not hasattr(event, "descriptions") or not event.descriptions:
         return
     for d in event.descriptions:
+        if not IAttributes.providedBy(d):
+            # we do not have fields change description, but maybe a request
+            continue
         if d.interface is IAddress and d.attributes:
             # an address field has been changed
             geocode_object(obj)
-            return
+        elif "ILeadImageBehavior.image" in d.attributes:
+            # we need to remove cropping information of previous image
+            remove_cropping(obj, "image", ["portrait_affiche", "paysage_affiche"])
 
 
 def moved_event(obj, event):
