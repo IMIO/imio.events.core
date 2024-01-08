@@ -50,7 +50,7 @@ class View(EventView, FolderView):
 
     def topics(self):
         topics = self.context.topics
-        if topics is None:
+        if not topics:
             return
         items = []
         for item in topics:
@@ -60,7 +60,7 @@ class View(EventView, FolderView):
 
     def iam(self):
         iam = self.context.iam
-        if iam is None:
+        if not iam:
             return
         items = []
         for item in iam:
