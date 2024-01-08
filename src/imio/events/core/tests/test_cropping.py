@@ -39,11 +39,11 @@ class TestCropping(unittest.TestCase):
         self.assertIsNotNone(adapter)
         self.assertEqual(
             adapter.get_scales("image", self.request),
-            ["portrait_affiche", "paysage_affiche"],
+            ["portrait_affiche", "paysage_affiche", "carre_affiche"],
         )
 
     def test_cropping_view(self):
         cropping_view = getMultiAdapter(
             (self.event, self.request), name="croppingeditor"
         )
-        self.assertEqual(len(list(cropping_view._scales("image"))), 2)
+        self.assertEqual(len(list(cropping_view._scales("image"))), 3)

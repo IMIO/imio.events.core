@@ -116,7 +116,9 @@ def modified_event(obj, event):
             geocode_object(obj)
         elif "ILeadImageBehavior.image" in d.attributes:
             # we need to remove cropping information of previous image
-            remove_cropping(obj, "image", ["portrait_affiche", "paysage_affiche"])
+            remove_cropping(
+                obj, "image", ["portrait_affiche", "paysage_affiche", "carre_affiche"]
+            )
 
 
 def moved_event(obj, event):

@@ -5,7 +5,8 @@ Changelog
 1.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- WEB-4041 : Handle new "carre" scale
+  [boulch]
 
 
 1.2 (2023-10-25)
