@@ -5,7 +5,8 @@ Changelog
 1.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- WEB-3802 : Get dates range for events in REST views. Comming from imio.smartweb.core React view
+  [boulch]
 
 
 1.2.1 (2024-01-09)

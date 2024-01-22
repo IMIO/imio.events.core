@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from datetime import date
 from imio.events.core.utils import expand_occurences
 from imio.events.core.utils import get_start_date
 from imio.smartweb.common.utils import is_log_active
@@ -90,9 +89,6 @@ class EventsEndpointHandler(SearchHandler):
             all_agendas = list(set(selected_agendas))
             query["selected_agendas"] = all_agendas
 
-        # Only future events
-        today = date.today().isoformat()
-        query["event_dates"] = {"query": today, "range": "min"}
         tps1 = time.time()
         self._constrain_query_by_path(query)
         tps2 = time.time()
