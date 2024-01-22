@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.2 (unreleased)
+1.2.2 (2024-01-22)
 ------------------
 
 - WEB-3802 : Get dates range for events in REST views. Comming from imio.smartweb.core React view
