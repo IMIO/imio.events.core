@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.3 (unreleased)
+1.2.3 (2024-01-24)
 ------------------
 
 - WEB-3802 : Manually filter dates to respect range passing into REST request.
