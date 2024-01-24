@@ -5,7 +5,8 @@ Changelog
 1.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- WEB-3802 : Manually filter dates to respect range passing into REST request.
+  [boulch]
 
 
 1.2.2 (2024-01-22)

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+from datetime import timezone
 from imio.events.core.utils import expand_occurences
 from imio.events.core.utils import get_start_date
 from imio.smartweb.common.utils import is_log_active
@@ -88,7 +90,6 @@ class EventsEndpointHandler(SearchHandler):
             ]
             all_agendas = list(set(selected_agendas))
             query["selected_agendas"] = all_agendas
-
         tps1 = time.time()
         self._constrain_query_by_path(query)
         tps2 = time.time()
@@ -114,6 +115,20 @@ class EventsEndpointHandler(SearchHandler):
         tps5 = time.time()
         expanded_occurences = expand_occurences(results.get("items"))
         sorted_expanded_occurences = sorted(expanded_occurences, key=get_start_date)
+        if self.request.form.get("event_dates.range") == "min:max":
+            filter_expanded_occurences = []
+            for occurrence in sorted_expanded_occurences:
+                min = self.request.form.get("event_dates.query")[0]
+                min = datetime.fromisoformat(min).replace(tzinfo=timezone.utc)
+                max = self.request.form.get("event_dates.query")[1]
+                max = datetime.strptime(max, "%Y-%m-%d")
+                max = max.replace(hour=23, minute=59, second=59).replace(
+                    tzinfo=timezone.utc
+                )
+                start = datetime.fromisoformat(occurrence["start"])
+                if min <= start <= max:
+                    filter_expanded_occurences.append(occurrence)
+            sorted_expanded_occurences = filter_expanded_occurences
         tps6 = time.time()
 
         # It's time to get real b_size/b_start from the smartweb query
