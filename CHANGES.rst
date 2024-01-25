@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.4 (unreleased)
+1.2.4 (2024-01-25)
 ------------------
 
 - WEB-3802 : Fix : Keep events occurrences when start date is smaller than min date but end date is greater than min date
