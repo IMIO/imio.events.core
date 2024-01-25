@@ -5,7 +5,8 @@ Changelog
 1.2.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- WEB-3802 : Fix : Keep events occurrences when start date is smaller than min date but end date is greater than min date
+  [boulch]
 
 
 1.2.3 (2024-01-24)

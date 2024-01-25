@@ -118,15 +118,16 @@ class EventsEndpointHandler(SearchHandler):
         if self.request.form.get("event_dates.range") == "min:max":
             filter_expanded_occurences = []
             for occurrence in sorted_expanded_occurences:
-                min = self.request.form.get("event_dates.query")[0]
-                min = datetime.fromisoformat(min).replace(tzinfo=timezone.utc)
-                max = self.request.form.get("event_dates.query")[1]
-                max = datetime.strptime(max, "%Y-%m-%d")
-                max = max.replace(hour=23, minute=59, second=59).replace(
-                    tzinfo=timezone.utc
+                min_date, max_date = self.request.form.get("event_dates.query")
+                min_date = datetime.fromisoformat(min_date).replace(tzinfo=timezone.utc)
+                max_date = (
+                    datetime.strptime(max_date, "%Y-%m-%d")
+                    .replace(hour=23, minute=59, second=59)
+                    .replace(tzinfo=timezone.utc)
                 )
-                start = datetime.fromisoformat(occurrence["start"])
-                if min <= start <= max:
+                start_date = datetime.fromisoformat(occurrence["start"])
+                end_date = datetime.fromisoformat(occurrence["end"])
+                if (min_date <= start_date <= max_date) or (end_date >= min_date):
                     filter_expanded_occurences.append(occurrence)
             sorted_expanded_occurences = filter_expanded_occurences
         tps6 = time.time()
