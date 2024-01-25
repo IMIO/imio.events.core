@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.5 (unreleased)
+1.2.5 (2024-01-25)
 ------------------
 
 -  WEB-3802 : Fix : Avoid noizy events occurrences. Occurences that begin later than min date with a valid end date.
