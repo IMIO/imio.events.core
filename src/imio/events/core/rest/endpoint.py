@@ -127,7 +127,9 @@ class EventsEndpointHandler(SearchHandler):
                 )
                 start_date = datetime.fromisoformat(occurrence["start"])
                 end_date = datetime.fromisoformat(occurrence["end"])
-                if (min_date <= start_date <= max_date) or (end_date >= min_date):
+                if (min_date <= start_date <= max_date) or (
+                    start_date <= min_date and end_date >= min_date
+                ):
                     filter_expanded_occurences.append(occurrence)
             sorted_expanded_occurences = filter_expanded_occurences
         tps6 = time.time()
