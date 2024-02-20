@@ -5,7 +5,8 @@ Changelog
 1.2.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- MWEBRCHA-13 : Add versioning on imio.events.Event
+  [boulch]
 
 
 1.2.5 (2024-01-25)

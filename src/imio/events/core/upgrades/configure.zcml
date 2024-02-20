@@ -19,6 +19,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="upgrade_1010_to_1011"
+      title="Upgrade core from 1010 to 1011"
+      directory="profiles/1010_to_1011"
+      description="Add versioning on imio.events.Event"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <genericsetup:upgradeStep
       title="Refresh faceted"
       description="Refresh faceted configurations on all entities / agendas"
@@ -114,5 +122,15 @@
       handler=".upgrades.add_dates_indexes"
       profile="imio.events.core:default"
       />
+
+  <genericsetup:upgradeSteps
+      source="1010"
+      destination="1011"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Add versioning on imio.events.Event"
+        import_profile="imio.events.core.upgrades:upgrade_1010_to_1011"
+        />
+  </genericsetup:upgradeSteps>
 
 </configure>

@@ -39,6 +39,7 @@
     <element value="plone.eventrecurrence"/>
     <element value="plone.eventcontact"/>
     <element value="plone.richtext"/>
+    <element value="plone.versioning"/>
     <element value="geolocatable"/>
     <element value="collective.taxonomy.generated.event_public"/>
     <element value="imio.smartweb.topics"/>

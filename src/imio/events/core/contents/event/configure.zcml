@@ -6,7 +6,7 @@
   <adapter factory=".serializer.EventJSONSummarySerializer" />
 
   <adapter
-      for=".content.Event"
+      for="imio.events.core.contents.IEvent"
       provides="imio.smartweb.common.interfaces.ICropping"
       factory=".content.EventCroppingProvider"
       />
