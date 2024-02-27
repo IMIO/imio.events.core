@@ -5,6 +5,9 @@ Changelog
 1.2.6 (unreleased)
 ------------------
 
+- WEB-4006 : Exclude some content types from search results
+  [remdub]
+
 - MWEBRCHA-13 : Add versioning on imio.events.Event
   [boulch]
 
