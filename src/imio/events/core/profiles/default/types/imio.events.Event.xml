@@ -45,6 +45,7 @@
     <element value="imio.smartweb.topics"/>
     <element value="imio.smartweb.iam"/>
     <element value="plone.categorization"/>
+    <element value="solr.fields" />
   </property>
 
 </object>

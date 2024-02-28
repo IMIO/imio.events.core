@@ -37,6 +37,7 @@
     <element value="plone.leadimage"/>
     <element value="plone.constraintypes" />
     <element value="eea.faceted.navigable"/>
+    <element value="solr.fields" />
   </property>
 
 </object>
