@@ -1,0 +1,13 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+  <browser:viewlet
+      name="imio.events.bring_event_link"
+      for="imio.events.core.contents.IEvent"
+      manager="plone.app.layout.viewlets.interfaces.IBelowContentTitle"
+      layer="imio.events.core.interfaces.IImioEventsCoreLayer"
+      template="event/button_to_bring_event.pt"
+      class="imio.events.core.viewlets.event.BringEventIntoAgendasViewlet"
+      permission="zope2.View"
+      />
+</configure>

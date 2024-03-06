@@ -5,6 +5,9 @@ Changelog
 1.2.6 (unreleased)
 ------------------
 
+- WEB-4068 : Adding events in any agenda of the current entity
+  [boulch]
+
 - MWEBRCHA-13 : Add versioning on imio.events.Event
   [boulch]
 
