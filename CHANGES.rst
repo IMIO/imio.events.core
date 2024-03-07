@@ -5,8 +5,8 @@ Changelog
 1.2.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- WEB-4088 : Add some odwb endpoints (for events , for entities)
+  [boulch]
 
 1.2.6 (2024-02-28)
 ------------------

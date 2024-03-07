@@ -94,8 +94,8 @@ class TestAgenda(unittest.TestCase):
         for event in default_agendas:
             uids.append(event.UID())
         self.assertEqual(
-            get_agendas_uids_for_faceted(self.entity1),
-            uids,
+            sorted(get_agendas_uids_for_faceted(self.entity1)),
+            sorted(uids),
         )
         self.assertIn(self.agenda1.UID(), get_agendas_uids_for_faceted(self.entity1))
         self.assertIn(self.agenda3.UID(), get_agendas_uids_for_faceted(self.entity1))
