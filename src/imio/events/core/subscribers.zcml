@@ -29,4 +29,12 @@
                    zope.lifecycleevent.interfaces.IObjectMovedEvent"
               handler=".subscribers.moved_event" />
 
+  <subscriber for="imio.events.core.contents.IEvent
+                   zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+              handler=".subscribers.removed_event" />
+
+  <subscriber for="imio.events.core.contents.IEvent
+                   Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+              handler=".subscribers.published_event_transition" />
+
 </configure>

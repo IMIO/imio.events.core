@@ -47,7 +47,26 @@ Examples
 Documentation
 -------------
 
-TODO
+
+    **ODWB endpoints:**
+
+    @odwb
+
+    - Push event(s) in odwb table : "iMio - Agenda - événements"
+
+    - some subscribers are called to push/remove event in odwb table
+
+    - We add an event in odwb table when it is published and remove it when it is unpublished (or deleted)
+
+    - When we duplicate an event, the copy of this event is not push to odwb until it is published
+
+    - When we move an event into another agenda, the event is updated in odwb table (the agenda title and its uid change)
+
+
+    @odwb_entities
+
+    - Push entities in odwb table : "iMio - Agenda - Entités"
+
 
 
 Translations

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from imio.events.core.rest.odwb_endpoint import OdwbEndpointGet
 from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_entity_for_obj
 from imio.events.core.utils import reload_faceted_config
@@ -8,6 +8,8 @@ from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
 from imio.smartweb.common.utils import remove_cropping
 from plone import api
+from plone.api.content import get_state
+from Products.DCWorkflow.interfaces import IAfterTransitionEvent
 from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
 from zope.component import getUtility
@@ -119,6 +121,9 @@ def modified_event(obj, event):
             remove_cropping(
                 obj, "image", ["portrait_affiche", "paysage_affiche", "carre_affiche"]
             )
+    request = getRequest()
+    endpoint = OdwbEndpointGet(obj, request)
+    endpoint.reply()
 
 
 def moved_event(obj, event):
@@ -130,6 +135,30 @@ def moved_event(obj, event):
         return
     container_agenda = get_agenda_for_event(obj)
     set_uid_of_referrer_agendas(obj, container_agenda)
+    # if oldParent is None, it means that the object is a duplicated object
+    if event.oldParent is not None and get_state(obj) == "published":
+        request = getRequest()
+        endpoint = OdwbEndpointGet(obj, request)
+        endpoint.reply()
+
+
+def removed_event(obj, event):
+    request = getRequest()
+    endpoint = OdwbEndpointGet(obj, request)
+    endpoint.removed()
+
+
+def published_event_transition(obj, event):
+    if not IAfterTransitionEvent.providedBy(event):
+        return
+    if event.new_state.id == "published":
+        request = getRequest()
+        endpoint = OdwbEndpointGet(obj, request)
+        endpoint.reply()
+    if event.new_state.id == "private" and event.old_state.id != event.new_state.id:
+        request = getRequest()
+        endpoint = OdwbEndpointGet(obj, request)
+        endpoint.removed()
 
 
 def mark_current_agenda_in_events_from_other_agendas(obj, event):
