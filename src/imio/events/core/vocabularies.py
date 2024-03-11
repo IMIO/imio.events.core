@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from AccessControl import Unauthorized
+from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
+from imio.events.core.contents import IEvent
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
@@ -136,3 +139,36 @@ class EventTypesVocabularyFactory:
 
 
 EventTypesVocabulary = EventTypesVocabularyFactory()
+
+
+class UserAgendasVocabularyFactory:
+
+    def __call__(self, context=None):
+        current_event = context
+        if not IEvent.providedBy(context) and context is not None:
+            # context is the form
+            current_event = context.context
+        site = api.portal.get()
+        user = site.portal_membership.getAuthenticatedMember()
+        results = []
+        permission = "imio.events.core: Add Event"
+        brains = api.content.find(object_provides=[IAgenda])
+        for brain in brains:
+            obj = brain.getObject()
+            try:
+                # Display only agendas where user has the permission to add an event and where event is not already in
+                if user.has_permission(permission, obj) and brain.UID not in getattr(
+                    current_event, "selected_agendas", []
+                ):
+                    results.append(
+                        SimpleTerm(
+                            value=brain.UID, token=brain.UID, title=brain.breadcrumb
+                        )
+                    )
+            except Unauthorized:
+                pass
+        sorted_results = sorted(results, key=lambda x: x.title)
+        return SimpleVocabulary(sorted_results)
+
+
+UserAgendasVocabulary = UserAgendasVocabularyFactory()

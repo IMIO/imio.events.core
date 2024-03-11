@@ -5,7 +5,8 @@ Changelog
 1.2.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- WEB-4068 : Adding events in any agenda of the current entity
+  [boulch]
 
 
 1.2.6 (2024-02-28)
