@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.7 (unreleased)
+1.2.7 (2024-03-11)
 ------------------
 
 - WEB-4068 : Adding events in any agenda of the current entity
