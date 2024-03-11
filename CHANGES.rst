@@ -2,11 +2,21 @@ Changelog
 =========
 
 
-1.2.6 (unreleased)
+1.2.7 (unreleased)
 ------------------
 
 - WEB-4068 : Adding events in any agenda of the current entity
   [boulch]
+
+
+1.2.6 (2024-02-28)
+------------------
+
+- WEB-4072, WEB-4073 : Enable solr.fields behavior on some content types
+  [remdub]
+
+- WEB-4006 : Exclude some content types from search results
+  [remdub]
 
 - MWEBRCHA-13 : Add versioning on imio.events.Event
   [boulch]
