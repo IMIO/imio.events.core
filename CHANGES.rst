@@ -5,7 +5,8 @@ Changelog
 1.2.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- WEB-4068 : Refactor "adding events in any agenda" : (update translations, add feature : "remove agenda")
+  [boulch]
 
 
 1.2.7 (2024-03-11)
