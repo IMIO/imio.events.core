@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.8 (unreleased)
+1.2.8 (2024-03-12)
 ------------------
 
 - WEB-4068 : Refactor "adding events in any agenda" : (update translations, add feature : "remove agenda")
