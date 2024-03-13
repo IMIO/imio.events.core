@@ -5,7 +5,8 @@ Changelog
 1.2.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- WEB-4068 : Add field to limit the new feature "adding events in any agenda" to some entities
+  [boulch]
 
 
 1.2.8 (2024-03-12)

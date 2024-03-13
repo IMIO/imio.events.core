@@ -35,11 +35,19 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
-    <genericsetup:registerProfile
+  <genericsetup:registerProfile
       name="upgrade_1012_to_1013"
       title="Upgrade core from 1012 to 1013"
       directory="profiles/1012_to_1013"
       description="Add solr.fields behavior to some content types"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:registerProfile
+      name="upgrade_1013_to_1014"
+      title="Upgrade core from 1013 to 1014"
+      directory="profiles/1013_to_1014"
+      description="Add new permission to manager : imio.events.core.BringEventIntoPersonnalAgenda"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
@@ -166,6 +174,16 @@
     <genericsetup:upgradeDepends
         title="Add solr.fields behavior to some content types"
         import_profile="imio.events.core.upgrades:upgrade_1012_to_1013"
+        />
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+      source="1013"
+      destination="1014"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Add new permission to manager : imio.events.core.BringEventIntoPersonnalAgenda"
+        import_profile="imio.events.core.upgrades:upgrade_1013_to_1014"
         />
   </genericsetup:upgradeSteps>
 

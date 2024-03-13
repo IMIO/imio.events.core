@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from imio.events.core.utils import get_entity_for_obj
 from imio.smartweb.common.utils import get_vocabulary
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
@@ -38,6 +39,16 @@ class BringEventIntoAgendasForm(AutoExtensibleForm, form.Form):
     ignoreContext = True
     enable_autofocus = False
     label = _("Add/Remove agenda(s)")
+
+    def update(self):
+        entity = get_entity_for_obj(self.context)
+        if entity.authorize_to_bring_event_anywhere is False:
+            api.portal.show_message(
+                _("You don't have rights to access this page."), self.request
+            )
+            self.request.response.redirect(self.context.absolute_url())
+            return False
+        super(BringEventIntoAgendasForm, self).update()
 
     def updateWidgets(self):
         agendas_to_display = []

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 from imio.smartweb.common.interfaces import ILocalManagerAware
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import schema
@@ -27,6 +28,21 @@ class IEntity(model.Schema):
             "List of events categories values available for this entity (one per line)"
         ),
         required=False,
+    )
+
+    directives.read_permission(
+        authorize_to_bring_event_anywhere="imio.events.core.BringEventIntoPersonnalAgenda"
+    )
+    directives.write_permission(
+        authorize_to_bring_event_anywhere="imio.events.core.BringEventIntoPersonnalAgenda"
+    )
+    authorize_to_bring_event_anywhere = schema.Bool(
+        title=_("Authorize to bring event anywhere"),
+        description=_(
+            "If selected, contributor of this entity can bring event in any agenda independently of agenda subscribing feature"
+        ),
+        required=False,
+        default=False,
     )
 
 
