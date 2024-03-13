@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.9 (unreleased)
+1.2.9 (2024-03-13)
 ------------------
 
 - WEB-4068 : Add field to limit the new feature "adding events in any agenda" to some entities
