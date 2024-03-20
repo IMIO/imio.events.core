@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from imio.events.core.viewlets.event import (
+    user_is_contributor_in_entity_which_authorize_to_bring_events,
+)
 from imio.events.core.utils import get_entity_for_obj
 from imio.smartweb.common.utils import get_vocabulary
 from imio.smartweb.locales import SmartwebMessageFactory as _
@@ -13,8 +16,6 @@ from z3c.form import form
 from z3c.form.button import buttonAndHandler
 from plone.supermodel import model
 
-import transaction
-
 
 class IBringEventIntoAgendasForm(model.Schema):
     """ """
@@ -22,9 +23,10 @@ class IBringEventIntoAgendasForm(model.Schema):
     directives.widget(
         "agendas",
         AjaxSelectFieldWidget,
-        source="imio.events.vocabulary.UserAgendas",
+        vocabulary="imio.events.vocabulary.UserAgendas",
         pattern_options={"multiple": True},
     )
+    directives.write_permission(agendas="cmf.SetOwnProperties")
     agendas = schema.List(
         title=_("Available agendas"),
         value_type=schema.Choice(source="imio.events.vocabulary.UserAgendas"),
@@ -41,26 +43,25 @@ class BringEventIntoAgendasForm(AutoExtensibleForm, form.Form):
     label = _("Add/Remove agenda(s)")
 
     def update(self):
-        entity = get_entity_for_obj(self.context)
-        if entity.authorize_to_bring_event_anywhere is False:
+        super(BringEventIntoAgendasForm, self).update()
+        if user_is_contributor_in_entity_which_authorize_to_bring_events is False:
             api.portal.show_message(
                 _("You don't have rights to access this page."), self.request
             )
             self.request.response.redirect(self.context.absolute_url())
             return False
-        super(BringEventIntoAgendasForm, self).update()
 
     def updateWidgets(self):
-        agendas_to_display = []
-        vocabulary = get_vocabulary("imio.events.vocabulary.UserAgendas")
-        # Loop to display only agenda where user has the permission (ex : to remove these agendas out of event)
-        for agenda_uid in self.context.selected_agendas:
-            if vocabulary.by_token.get(agenda_uid) is None:
-                # user can't remove this agenda because he has no permission on it so we don't display it
-                pass
-            agendas_to_display.append(agenda_uid)
-        self.fields["agendas"].field.default = agendas_to_display
         super(BringEventIntoAgendasForm, self).updateWidgets()
+        selectedItems = {}
+        self.selectedUID = []
+        vocabulary = get_vocabulary("imio.events.vocabulary.UserAgendas")
+
+        for term in vocabulary:
+            if term.value in self.context.selected_news_folders:
+                self.selectedUID.append(term.value)
+                selectedItems[term.value] = term.title
+        self.widgets["agendas"].value = ";".join(self.selectedUID)
 
     @buttonAndHandler(_("Submit"))
     def handle_submit(self, action):
@@ -69,11 +70,9 @@ class BringEventIntoAgendasForm(AutoExtensibleForm, form.Form):
             self.status = self.formErrorsMessage
             return
 
-        if len(data.get("agendas")) < len(self.fields["agendas"].field.default):
+        if len(data.get("agendas")) < len(self.selectedUID):
             # we want to remove agenda(s) out of this event
-            agendas_to_remove = list(
-                set(self.fields["agendas"].field.default) - set(data.get("agendas"))
-            )
+            agendas_to_remove = list(set(self.selectedUID) - set(data.get("agendas")))
             for agenda in agendas_to_remove:
                 self.context.selected_agendas.remove(agenda)
             success_message = _("Agenda(s) correctly removed.")
@@ -85,7 +84,6 @@ class BringEventIntoAgendasForm(AutoExtensibleForm, form.Form):
             success_message = _("Agenda(s) correctly added.")
 
         self.context.reindexObject(idxs=["selected_agendas"])
-        transaction.commit()
         self.status = success_message
         api.portal.show_message(_(self.status), self.request)
 

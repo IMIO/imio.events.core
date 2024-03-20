@@ -5,7 +5,8 @@ Changelog
 1.2.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4068 : Refactor / Fix some issues
+  [boulch]
 
 
 1.2.9 (2024-03-13)

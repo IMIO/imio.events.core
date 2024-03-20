@@ -146,22 +146,22 @@ class UserAgendasVocabularyFactory:
     def __call__(self, context=None):
         site = api.portal.get()
         user = site.portal_membership.getAuthenticatedMember()
-        results = []
+        terms = []
         permission = "imio.events.core: Add Event"
         brains = api.content.find(object_provides=[IAgenda])
         for brain in brains:
             obj = brain.getObject()
             try:
                 if user.has_permission(permission, obj):
-                    results.append(
+                    terms.append(
                         SimpleTerm(
                             value=brain.UID, token=brain.UID, title=brain.breadcrumb
                         )
                     )
             except Unauthorized:
                 pass
-        sorted_results = sorted(results, key=lambda x: x.title)
-        return SimpleVocabulary(sorted_results)
+        sorted_terms = sorted(terms, key=lambda x: x.title)
+        return SimpleVocabulary(sorted_terms)
 
 
 UserAgendasVocabulary = UserAgendasVocabularyFactory()
