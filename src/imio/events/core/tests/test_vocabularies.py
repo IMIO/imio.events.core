@@ -133,8 +133,8 @@ class TestVocabularies(unittest.TestCase):
         vocabulary = factory(self.portal)
         ordered_agendas = [a.title for a in vocabulary]
         titles = []
-        for news_folder in ag_entity1 + ag_entity2:
-            titles.append(f"{news_folder.aq_parent.Title()} » {news_folder.Title()}")
+        for agenda in ag_entity1 + ag_entity2:
+            titles.append(f"{agenda.aq_parent.Title()} » {agenda.Title()}")
         titles.sort()
         ordered_agendas.sort()
         self.assertEqual(ordered_agendas, titles)

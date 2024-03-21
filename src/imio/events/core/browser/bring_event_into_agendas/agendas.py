@@ -58,7 +58,7 @@ class BringEventIntoAgendasForm(AutoExtensibleForm, form.Form):
         vocabulary = get_vocabulary("imio.events.vocabulary.UserAgendas")
 
         for term in vocabulary:
-            if term.value in self.context.selected_news_folders:
+            if term.value in self.context.selected_agendas:
                 self.selectedUID.append(term.value)
                 selectedItems[term.value] = term.title
         self.widgets["agendas"].value = ";".join(self.selectedUID)

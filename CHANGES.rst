@@ -5,7 +5,8 @@ Changelog
 1.2.11 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix some issues (bad copy/paste!)
+  [boulch]
 
 
 1.2.10 (2024-03-21)
