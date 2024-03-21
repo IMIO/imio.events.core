@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.10 (unreleased)
+1.2.10 (2024-03-21)
 -------------------
 
 - WEB-4068 : Refactor / Fix some issues
