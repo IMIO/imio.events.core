@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.11 (unreleased)
+1.2.11 (2024-03-21)
 -------------------
 
 - Fix some issues (bad copy/paste!)
