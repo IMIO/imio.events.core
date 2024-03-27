@@ -65,7 +65,7 @@ def get_start_date(event):
     return datetime.fromisoformat(event["start"])
 
 
-def expand_occurences(events):
+def expand_occurences(events, range="min"):
     expanded_events = []
 
     for event in events:
@@ -82,10 +82,22 @@ def expand_occurences(events):
             expanded_events.append(event)
             continue
 
+        # optimize query with "until" to avoid to go through all recurrences
+        # if we want "future events", we get occurences to 5 years in the future
+        # if we want "past events", we get occurences to 1 year in the past
+        until = from_ = None
+        # for now min:max is only supported for future events
+        if range == "min" or range == "min:max":
+            from_ = datetime.now()
+            until = start_date + timedelta(days=365 * 5)
+        elif range == "max":
+            from_ = start_date - timedelta(days=365)
+            until = datetime.now()
         start_dates = recurrence_sequence_ical(
             start=start_date,
             recrule=event["recurrence"],
-            from_=datetime.now(),
+            from_=from_,
+            until=until,
         )
 
         if event["whole_day"] or event["open_end"]:
@@ -99,7 +111,15 @@ def expand_occurences(events):
             else:
                 new_event = copy.deepcopy(event)
                 new_event["start"] = json_compatible(occurence_start)
-                new_event["end"] = json_compatible(occurence_start + duration)
+                if event["recurrence"]:
+                    # compute time delta between start and end (regardless of the year/month/day)
+                    start_time = datetime.combine(datetime.today(), start_date.time())
+                    end_time = datetime.combine(datetime.today(), end_date.time())
+                    duration = end_time - start_time
+                    new_event["end"] = json_compatible(occurence_start + duration)
+                else:
+                    # events without reccurrence
+                    new_event["end"] = json_compatible(occurence_start + duration)
                 expanded_events.append(new_event)
     return expanded_events
 

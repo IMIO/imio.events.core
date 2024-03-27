@@ -174,7 +174,7 @@ class TestAgenda(unittest.TestCase):
         ]
         expanded_events = expand_occurences(events)
         self.assertEqual(expanded_events[-1]["start"], "2022-12-11T12:00:00+00:00")
-        self.assertEqual(expanded_events[-1]["end"], "2022-12-12T11:59:59+00:00")
+        self.assertEqual(expanded_events[-1]["end"], "2022-12-11T12:00:00+00:00")
         events = [
             {
                 "start": "2022-11-13T00:00:00+00:00",

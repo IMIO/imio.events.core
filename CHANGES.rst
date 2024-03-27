@@ -5,7 +5,8 @@ Changelog
 1.2.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- MWEBPM-8 : Add support for getting only past events
+  [boulch]
 
 
 1.2.11 (2024-03-21)
