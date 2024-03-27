@@ -5,6 +5,9 @@ Changelog
 1.2.12 (unreleased)
 -------------------
 
+- MWEBPM-9 : Add container_uid as metadata_field to retrieve agenda id/title in event serializer and set it in our json dataset
+  [boulch]
+
 - MWEBPM-8 : Add support for getting only past events
   [boulch]
 

@@ -3,6 +3,7 @@
 from imio.events.core.contents import IEvent
 from imio.events.core.interfaces import IImioEventsCoreLayer
 from imio.smartweb.common.rest.utils import get_restapi_query_lang
+from plone import api
 from plone.app.contentlisting.interfaces import IContentListingObject
 from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.interfaces import ISerializeToJsonSummary
@@ -45,8 +46,22 @@ class SerializeEventToJson(SerializeFolderToJson):
 class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
     def __call__(self):
         summary = super(EventJSONSummarySerializer, self).__call__()
-
         query = self.request.form
+        # To get agenda title and use it in carousel,...
+        if query.get("metadata_fields") is not None and "container_uid" in query.get(
+            "metadata_fields"
+        ):
+            agenda = None
+            container_uid = summary.get("container_uid")
+            # Agendas can be private (admin to access them). That doesn't stop events to be bring.
+            with api.env.adopt_user(username="admin"):
+                agenda = api.content.get(UID=container_uid)
+            if not agenda:
+                return summary
+            # To make a specific agenda css class in smartweb carousel common template
+            summary["usefull_container_id"] = agenda.id
+            # To display agenda title in smartweb carousel common template
+            summary["usefull_container_title"] = agenda.title
         lang = get_restapi_query_lang(query)
         if lang == "fr":
             # nothing to go, fr is the default language

@@ -118,6 +118,7 @@ class EventsEndpointHandler(SearchHandler):
         if "metadata_fields" not in self.request.form:
             self.request.form["metadata_fields"] = []
         self.request.form["metadata_fields"] += [
+            "container_uid",
             "recurrence",
             "whole_day",
             "first_start",
