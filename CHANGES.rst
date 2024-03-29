@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.12 (unreleased)
+1.2.12 (2024-03-29)
 -------------------
 
 - MWEBPM-9 : Add container_uid as metadata_field to retrieve agenda id/title in event serializer and set it in our json dataset
