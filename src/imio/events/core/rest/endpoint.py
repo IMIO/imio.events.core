@@ -93,6 +93,7 @@ class EventsEndpointHandler(SearchHandler):
             query["selected_agendas"] = all_agendas
         tps1 = time.time()
         self._constrain_query_by_path(query)
+        # self.request.form["path"] = query["path"]
         tps2 = time.time()
         query = self._parse_query(query)
         tps3 = time.time()
@@ -112,7 +113,6 @@ class EventsEndpointHandler(SearchHandler):
                 "max": date_string,
             }
             self.request.form["event_dates.range"] = "min:max"
-
         lazy_resultset = self.catalog.searchResults(**query)
         tps4 = time.time()
         if "metadata_fields" not in self.request.form:
@@ -136,7 +136,10 @@ class EventsEndpointHandler(SearchHandler):
         tps5 = time.time()
         expanded_occurences = expand_occurences(results.get("items"), range)
         tps6 = time.time()
-        if range is None or range == "min":
+        # range is None when we click on an occurence
+        if range is None:
+            sorted_expanded_occurences = expanded_occurences
+        if range == "min":
             filter_expanded_occurences = []
             for occurrence in expanded_occurences:
                 start_date = datetime.fromisoformat(occurrence["start"])

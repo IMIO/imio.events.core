@@ -16,6 +16,16 @@ from zope.interface import implementer
 from zope.interface import Interface
 
 
+def get_container_uid(event_uid, summary=None):
+    if summary is not None:
+        container_uid = summary.get("container_uid")
+        if container_uid:
+            return container_uid
+    brain = api.content.find(UID=event_uid)[0]
+    container_uid = getattr(brain, "container_uid", None)
+    return container_uid
+
+
 @implementer(ISerializeToJson)
 @adapter(IEvent, IImioEventsCoreLayer)
 class SerializeEventToJson(SerializeFolderToJson):
@@ -34,6 +44,22 @@ class SerializeEventToJson(SerializeFolderToJson):
             result["description"] = result[f"description_{lang}"]
             result["text"] = result[f"text_{lang}"]
 
+        # Getting agenda title/id to use it in rest views
+        if query.get("metadata_fields") is not None and "container_uid" in query.get(
+            "metadata_fields"
+        ):
+            agenda = None
+            event_uid = self.context.UID()
+            container_uid = get_container_uid(event_uid)
+            if container_uid is not None:
+                # Agendas can be private (admin to access them). That doesn't stop events to be bring.
+                with api.env.adopt_user(username="admin"):
+                    agenda = api.content.get(UID=container_uid)
+                # To make a specific agenda css class in smartweb carousel common template
+                result["usefull_container_id"] = agenda.id
+                # To display agenda title in smartweb carousel common template
+                result["usefull_container_title"] = agenda.title
+
         # maybe not necessary :
         result["title_fr"] = title
         result["description_fr"] = desc
@@ -48,11 +74,14 @@ class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
         summary = super(EventJSONSummarySerializer, self).__call__()
         query = self.request.form
         # To get agenda title and use it in carousel,...
-        if query.get("metadata_fields") is not None and "container_uid" in query.get(
-            "metadata_fields"
+        if (
+            query.get("metadata_fields") is not None
+            and "container_uid" in query.get("metadata_fields")
+            and IEvent.providedBy(self.context)
         ):
             agenda = None
-            container_uid = summary.get("container_uid")
+            event_uid = self.context.UID()
+            container_uid = get_container_uid(event_uid)
             # Agendas can be private (admin to access them). That doesn't stop events to be bring.
             with api.env.adopt_user(username="admin"):
                 agenda = api.content.get(UID=container_uid)

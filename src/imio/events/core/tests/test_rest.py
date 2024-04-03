@@ -74,6 +74,9 @@ class RestFunctionalTest(unittest.TestCase):
             "b_size": 10,
             "b_start": 0,
         }
+        # All tests below are done to retrieve FUTURE events
+        self.request.form["event_dates.range"] = "min"
+
         response = endpoint.search(query)
         items = response.get("items")
         # Assert private event are not presents

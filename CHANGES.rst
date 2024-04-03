@@ -5,7 +5,8 @@ Changelog
 1.2.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Getting agenda title/id to use it in rest views
+  [boulch]
 
 
 1.2.12 (2024-03-29)
