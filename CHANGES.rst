@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.13 (unreleased)
+1.2.13 (2024-04-04)
 -------------------
 
 - Getting agenda title/id to use it in rest views
