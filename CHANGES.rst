@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.14 (unreleased)
+1.2.14 (2024-04-04)
 -------------------
 
 - Fix serializer. Sometimes we have brain, sometines event, agenda or folder...
