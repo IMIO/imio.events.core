@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEvent
+from imio.events.core.contents import IFolder
 from imio.events.core.interfaces import IImioEventsCoreLayer
 from imio.smartweb.common.rest.utils import get_restapi_query_lang
 from plone import api
@@ -18,7 +20,7 @@ from zope.interface import Interface
 
 def get_container_uid(event_uid, summary=None):
     if summary is not None:
-        container_uid = summary.get("container_uid")
+        container_uid = summary.get("UID") or summary.get("container_uid")
         if container_uid:
             return container_uid
     brain = api.content.find(UID=event_uid)[0]
@@ -74,14 +76,21 @@ class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
         summary = super(EventJSONSummarySerializer, self).__call__()
         query = self.request.form
         # To get agenda title and use it in carousel,...
-        if (
-            query.get("metadata_fields") is not None
-            and "container_uid" in query.get("metadata_fields")
-            and IEvent.providedBy(self.context)
+        if query.get("metadata_fields") is not None and "container_uid" in query.get(
+            "metadata_fields"
         ):
             agenda = None
-            event_uid = self.context.UID()
-            container_uid = get_container_uid(event_uid)
+            if IEvent.providedBy(self.context):
+                event_uid = self.context.UID()
+                container_uid = get_container_uid(event_uid)
+            elif IAgenda.providedBy(self.context) or IFolder.providedBy(self.context):
+                container_uid = get_container_uid(None, summary)
+            elif IEvent.providedBy(self.context.getObject()):
+                # context can be a brain
+                event_uid = self.context.UID
+                container_uid = get_container_uid(event_uid)
+            else:
+                container_uid = get_container_uid(None, summary)
             # Agendas can be private (admin to access them). That doesn't stop events to be bring.
             with api.env.adopt_user(username="admin"):
                 agenda = api.content.get(UID=container_uid)

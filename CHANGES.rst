@@ -5,8 +5,8 @@ Changelog
 1.2.14 (unreleased)
 -------------------
 
-- Nothing changed yet.
-
+- Fix serializer. Sometimes we have brain, sometines event, agenda or folder...
+  [boulch]
 
 1.2.13 (2024-04-04)
 -------------------
