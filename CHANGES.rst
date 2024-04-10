@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.15 (unreleased)
+1.2.15 (2024-04-10)
 -------------------
 
 - Fix : Keep events where start date is earlier than current date and end date is later than current date (when no period defined)
