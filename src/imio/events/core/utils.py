@@ -8,7 +8,6 @@ from imio.events.core.contents import IEntity
 from imio.smartweb.common.faceted.utils import configure_faceted
 from plone import api
 from plone.event.recurrence import recurrence_sequence_ical
-from plone.event.utils import pydt
 from plone.restapi.serializer.converters import json_compatible
 from Products.CMFPlone.utils import parent
 from pytz import utc
@@ -65,6 +64,7 @@ def get_start_date(event):
     return datetime.fromisoformat(event["start"])
 
 
+# just expand occurences. No filtering here
 def expand_occurences(events, range="min"):
     expanded_events = []
 
@@ -86,10 +86,10 @@ def expand_occurences(events, range="min"):
         # if we want "future events", we get occurences to 5 years in the future
         # if we want "past events", we get occurences to 1 year in the past
         until = from_ = None
+        until = start_date + timedelta(days=365 * 5)
         # for now min:max is only supported for future events
-        if range == "min" or range == "min:max":
+        if range == "min:max":
             from_ = datetime.now()
-            until = start_date + timedelta(days=365 * 5)
         elif range == "max":
             from_ = start_date - timedelta(days=365)
             until = datetime.now()
@@ -106,21 +106,13 @@ def expand_occurences(events, range="min"):
             duration = end_date - start_date
 
         for occurence_start in start_dates:
-            if pydt(start_date.replace(microsecond=0)) == occurence_start:
-                expanded_events.append(event)
-            else:
-                new_event = copy.deepcopy(event)
-                new_event["start"] = json_compatible(occurence_start)
-                if event["recurrence"]:
-                    # compute time delta between start and end (regardless of the year/month/day)
-                    start_time = datetime.combine(datetime.today(), start_date.time())
-                    end_time = datetime.combine(datetime.today(), end_date.time())
-                    duration = end_time - start_time
-                    new_event["end"] = json_compatible(occurence_start + duration)
-                else:
-                    # events without reccurrence
-                    new_event["end"] = json_compatible(occurence_start + duration)
-                expanded_events.append(new_event)
+            new_event = copy.deepcopy(event)
+            start_time = datetime.combine(datetime.today(), start_date.time())
+            end_time = datetime.combine(datetime.today(), end_date.time())
+            duration = end_time - start_time
+            new_event["start"] = json_compatible(occurence_start)
+            new_event["end"] = json_compatible(occurence_start + duration)
+            expanded_events.append(new_event)
     return expanded_events
 
 

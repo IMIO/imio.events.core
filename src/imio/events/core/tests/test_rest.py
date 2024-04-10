@@ -74,6 +74,18 @@ class RestFunctionalTest(unittest.TestCase):
             "b_size": 10,
             "b_start": 0,
         }
+
+        # start in past , end in future
+        event4 = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="event4",
+            title="Event 4",
+        )
+        event4.start = datetime(2023, 3, 1, 0, 0)
+        event4.end = datetime(2023, 4, 27, 0, 0)
+        event4.reindexObject()
+
         # All tests below are done to retrieve FUTURE events
         self.request.form["event_dates.range"] = "min"
 
@@ -88,19 +100,37 @@ class RestFunctionalTest(unittest.TestCase):
         items = response.get("items")
         self.assertEqual(len(items), 1)
 
+        # Assert event that began in past and end in future are presents
+        api.content.transition(event4, "publish")
+        response = endpoint.search(query)
+        items = response.get("items")
+        self.assertEqual(len(items), 2)
+        api.content.transition(event4, "retract")
+
         # Assert events occurrences are presents
         api.content.transition(event2, "publish")
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 1 + event2_nb_occurences)
 
-        # Assert passed event aren't get anymore
+        # Assert passed event aren't get anymore (start_date and end_date are in the past)
         # But future occurrences of this event are kept
         event2.start = datetime(2023, 3, 16, 0, 0)
         event2.reindexObject()
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 3)
+
+        event4.start = datetime(2023, 3, 1, 0, 0)
+        event4.end = datetime(2023, 3, 29, 0, 0)
+        event4.recurrence = f"RRULE:FREQ=WEEKLY;COUNT=5"
+        api.content.transition(event4, "publish")
+        event4.reindexObject()
+        response = endpoint.search(query)
+        items = response.get("items")
+        self.assertEqual(len(items), 5)
+        api.content.transition(event4, "retract")
+        event4.reindexObject()
 
         # Assert first_start index was updated
         item = list(

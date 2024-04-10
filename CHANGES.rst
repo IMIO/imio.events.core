@@ -5,7 +5,8 @@ Changelog
 1.2.15 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix : Keep events where start date is earlier than current date and end date is later than current date (when no period defined)
+  [boulch]
 
 
 1.2.14 (2024-04-04)

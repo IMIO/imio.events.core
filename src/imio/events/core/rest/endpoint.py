@@ -143,8 +143,9 @@ class EventsEndpointHandler(SearchHandler):
             filter_expanded_occurences = []
             for occurrence in expanded_occurences:
                 start_date = datetime.fromisoformat(occurrence["start"])
+                end_date = datetime.fromisoformat(occurrence["end"])
                 current_date = datetime.now(timezone.utc)
-                if start_date >= current_date:
+                if start_date >= current_date or end_date >= current_date:
                     filter_expanded_occurences.append(occurrence)
             sorted_expanded_occurences = sorted(
                 filter_expanded_occurences, key=get_start_date
