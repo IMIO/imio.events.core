@@ -120,6 +120,11 @@ class TestIndexer(unittest.TestCase):
         brain = api.content.find(UID=event.UID())[0]
         indexes = catalog.getIndexDataForRID(brain.getRID())
         self.assertEqual(indexes.get("category_title"), "Balade et découverte")
+        event.local_category = "Local category"
+        event.reindexObject()
+        brain = api.content.find(UID=event.UID())[0]
+        indexes = catalog.getIndexDataForRID(brain.getRID())
+        self.assertEqual(indexes.get("category_title"), "Local category")
 
     def test_selected_agendas_index(self):
         event1 = api.content.create(

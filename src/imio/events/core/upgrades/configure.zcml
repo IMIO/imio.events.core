@@ -187,4 +187,14 @@
         />
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+      source="1014"
+      destination="1015"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeStep
+        title="Reindex catalog for category_title (local category OR category)"
+        handler=".upgrades.reindex_catalog"
+        />
+  </genericsetup:upgradeSteps>
+
 </configure>
