@@ -3,7 +3,6 @@
 from AccessControl import Unauthorized
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
-from imio.events.core.contents import IEvent
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot

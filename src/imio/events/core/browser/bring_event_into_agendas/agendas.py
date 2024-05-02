@@ -3,7 +3,6 @@
 from imio.events.core.viewlets.event import (
     user_is_contributor_in_entity_which_authorize_to_bring_events,
 )
-from imio.events.core.utils import get_entity_for_obj
 from imio.smartweb.common.utils import get_vocabulary
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api

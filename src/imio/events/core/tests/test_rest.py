@@ -123,7 +123,7 @@ class RestFunctionalTest(unittest.TestCase):
 
         event4.start = datetime(2023, 3, 1, 0, 0)
         event4.end = datetime(2023, 3, 29, 0, 0)
-        event4.recurrence = f"RRULE:FREQ=WEEKLY;COUNT=5"
+        event4.recurrence = "RRULE:FREQ=WEEKLY;COUNT=5"
         api.content.transition(event4, "publish")
         event4.reindexObject()
         response = endpoint.search(query)
