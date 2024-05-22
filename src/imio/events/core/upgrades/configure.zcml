@@ -51,6 +51,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="upgrade_1015_to_1016"
+      title="Upgrade core from 1015 to 1016"
+      directory="profiles/1015_to_1016"
+      description="Add two new registry key to store push keys for ODWB"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <genericsetup:upgradeStep
       title="Refresh faceted"
       description="Refresh faceted configurations on all entities / agendas"
@@ -194,6 +202,16 @@
     <genericsetup:upgradeStep
         title="Reindex catalog for category_title (local category OR category)"
         handler=".upgrades.reindex_catalog"
+        />
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+      source="1015"
+      destination="1016"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Add two new registry key to store push keys for ODWB"
+        import_profile="imio.events.core.upgrades:upgrade_1015_to_1016"
         />
   </genericsetup:upgradeSteps>
 

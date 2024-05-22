@@ -36,4 +36,16 @@
       </value>
     </record>
 
+  <record name="imio.events.core.odwb_entites-des-agendas-en-wallonie_pushkey">
+    <field type="plone.registry.field.TextLine">
+      <title>ODWB : Entit&#233;s des agendas en Wallonie - pushkey</title>
+    </field>
+  </record>
+
+  <record name="imio.events.core.odwb_evenements-en-wallonie_pushkey">
+    <field type="plone.registry.field.TextLine">
+      <title>ODWB : Evenements en Wallonie - pushkey</title>
+    </field>
+  </record>
+
 </registry>

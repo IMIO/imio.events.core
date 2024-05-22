@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from imio.events.core.rest.odwb_endpoint import OdwbEndpointGet
 from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_entity_for_obj
 from imio.events.core.utils import reload_faceted_config
@@ -8,6 +8,8 @@ from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.common.utils import geocode_object
 from imio.smartweb.common.utils import remove_cropping
 from plone import api
+from plone.api.content import get_state
+from Products.DCWorkflow.interfaces import IAfterTransitionEvent
 from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
 from zope.component import getUtility
@@ -69,12 +71,44 @@ def modified_agenda(obj, event):
     mark_current_agenda_in_events_from_other_agendas(obj, event)
 
 
+# def will_remove_agenda(obj, event):
+#     import pdb; pdb.set_trace()
+#     count = len(obj.items())
+#     if count > 1:
+#         request = getRequest()
+#         msg = f"Agenda '{obj.title}' can't be removed because it contains {count} events."
+#         api.portal.show_message(msg, request)
+#         # portal_url = getToolByName(obj, 'portal_url')
+#         # portal = portal_url.getPortalObject()
+#         obj_url = obj.absolute_url()
+#         # Redirect back to the object's URL
+#         request.response.redirect(obj_url)
+#         # Prevent the object from being removed
+#         raise ValueError(msg)
+# request = getRequest()
+# count = len(obj.items())
+# import pdb; pdb.set_trace()
+# if count > 1:
+#     msg = f"Agenda {obj.Title()} can't be removed because it contains {count} events"
+#     try:
+#         raise ValueError(
+#             msg
+#         )
+#     except ValueError as e:
+#         api.portal.show_message(_(msg), request)
+#         request.response.redirect(obj.absolute_url())
+#         import transaction
+#         transaction.abort()
+#         return
+
+
 def removed_agenda(obj, event):
     try:
         brains = api.content.find(selected_agendas=obj.UID())
     except api.exc.CannotGetPortalError:
         # This happen when we try to remove plone object
         return
+    # We remove reference to this agenda out of all events
     for brain in brains:
         event_obj = brain.getObject()
         event_obj.selected_agendas = [
@@ -119,6 +153,10 @@ def modified_event(obj, event):
             remove_cropping(
                 obj, "image", ["portrait_affiche", "paysage_affiche", "carre_affiche"]
             )
+    if get_state(obj) == "published":
+        request = getRequest()
+        endpoint = OdwbEndpointGet(obj, request)
+        endpoint.reply()
 
 
 def moved_event(obj, event):
@@ -130,6 +168,30 @@ def moved_event(obj, event):
         return
     container_agenda = get_agenda_for_event(obj)
     set_uid_of_referrer_agendas(obj, container_agenda)
+    # if oldParent is None, it means that the object is a duplicated object
+    if event.oldParent is not None and get_state(obj) == "published":
+        request = getRequest()
+        endpoint = OdwbEndpointGet(obj, request)
+        endpoint.reply()
+
+
+def removed_event(obj, event):
+    request = getRequest()
+    endpoint = OdwbEndpointGet(obj, request)
+    endpoint.remove()
+
+
+def published_event_transition(obj, event):
+    if not IAfterTransitionEvent.providedBy(event):
+        return
+    if event.new_state.id == "published":
+        request = getRequest()
+        endpoint = OdwbEndpointGet(obj, request)
+        endpoint.reply()
+    if event.new_state.id == "private" and event.old_state.id != event.new_state.id:
+        request = getRequest()
+        endpoint = OdwbEndpointGet(obj, request)
+        endpoint.remove()
 
 
 def mark_current_agenda_in_events_from_other_agendas(obj, event):

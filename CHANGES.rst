@@ -5,6 +5,9 @@ Changelog
 1.2.17 (unreleased)
 -------------------
 
+- WEB-4088 : Add some odwb endpoints (for events , for entities)
+  [boulch]
+
 - WEB-4108 : Prevent removing calendar if there is at least 1 event in it.
   [boulch]
 
