@@ -5,7 +5,8 @@ Changelog
 1.2.17 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4108 : Prevent removing calendar if there is at least 1 event in it.
+  [boulch]
 
 
 1.2.16 (2024-05-02)
