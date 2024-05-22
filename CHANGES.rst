@@ -2,11 +2,87 @@ Changelog
 =========
 
 
-1.2.7 (unreleased)
-------------------
+1.2.17 (unreleased)
+-------------------
 
 - WEB-4088 : Add some odwb endpoints (for events , for entities)
   [boulch]
+
+- WEB-4108 : Prevent removing calendar if there is at least 1 event in it.
+  [boulch]
+
+
+1.2.16 (2024-05-02)
+-------------------
+
+- WEB-4101 : Use local category (if any) instead of category in `category_title` indexer
+  [laulaz]
+
+
+1.2.15 (2024-04-10)
+-------------------
+
+- Fix : Keep events where start date is earlier than current date and end date is later than current date (when no period defined)
+  [boulch]
+
+
+1.2.14 (2024-04-04)
+-------------------
+
+- Fix serializer. Sometimes we have brain, sometines event, agenda or folder...
+  [boulch]
+
+1.2.13 (2024-04-04)
+-------------------
+
+- Getting agenda title/id to use it in rest views
+  [boulch]
+
+
+1.2.12 (2024-03-29)
+-------------------
+
+- MWEBPM-9 : Add container_uid as metadata_field to retrieve agenda id/title in event serializer and set it in our json dataset
+  [boulch]
+
+- MWEBPM-8 : Add support for getting only past events
+  [boulch]
+
+
+1.2.11 (2024-03-21)
+-------------------
+
+- Fix some issues (bad copy/paste!)
+  [boulch]
+
+
+1.2.10 (2024-03-21)
+-------------------
+
+- WEB-4068 : Refactor / Fix some issues
+  [boulch]
+
+
+1.2.9 (2024-03-13)
+------------------
+
+- WEB-4068 : Add field to limit the new feature "adding events in any agenda" to some entities
+  [boulch]
+
+
+1.2.8 (2024-03-12)
+------------------
+
+- WEB-4068 : Refactor "adding events in any agenda" : (update translations, add feature : "remove agenda")
+  [boulch]
+
+
+1.2.7 (2024-03-11)
+------------------
+
+- WEB-4068 : Adding events in any agenda of the current entity
+  [boulch]
+
 
 1.2.6 (2024-02-28)
 ------------------

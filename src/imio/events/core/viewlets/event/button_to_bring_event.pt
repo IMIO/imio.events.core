@@ -1,0 +1,10 @@
+<div class="bring_event_into_agendas"
+     tal:condition="view/available">
+    <a tal:attributes="href string:${context/absolute_url}/@@bring_event_into_agendas_form"
+       class="btn btn-primary"
+       i18n:domain="imio.smartweb"
+       i18n:translate=""
+       title="Add/Remove agenda(s)">
+       Add/Remove agenda(s)
+    </a>
+</div>

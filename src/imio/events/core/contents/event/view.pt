@@ -16,7 +16,7 @@
     </style>
 
     <h1 class="documentFirstHeading" tal:content="context/Title" />
-
+    <div id="viewlet-below-content-title" tal:content="structure provider:plone.belowcontenttitle" />
     <p class="documentDescription" tal:content="structure context/@@description" />
 
     <tal:check tal:condition="view/has_leadimage"

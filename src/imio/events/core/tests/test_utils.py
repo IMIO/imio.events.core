@@ -94,8 +94,8 @@ class TestAgenda(unittest.TestCase):
         for event in default_agendas:
             uids.append(event.UID())
         self.assertEqual(
-            sorted(get_agendas_uids_for_faceted(self.entity1)),
-            sorted(uids),
+            get_agendas_uids_for_faceted(self.entity1).sort(),
+            uids.sort(),
         )
         self.assertIn(self.agenda1.UID(), get_agendas_uids_for_faceted(self.entity1))
         self.assertIn(self.agenda3.UID(), get_agendas_uids_for_faceted(self.entity1))
@@ -143,7 +143,7 @@ class TestAgenda(unittest.TestCase):
             }
         ]
         expanded_events = expand_occurences(events)
-        self.assertEqual(len(expanded_events), 3)
+        self.assertEqual(len(expanded_events), 5)
 
         # test occurences data
         events = [
@@ -174,7 +174,7 @@ class TestAgenda(unittest.TestCase):
         ]
         expanded_events = expand_occurences(events)
         self.assertEqual(expanded_events[-1]["start"], "2022-12-11T12:00:00+00:00")
-        self.assertEqual(expanded_events[-1]["end"], "2022-12-12T11:59:59+00:00")
+        self.assertEqual(expanded_events[-1]["end"], "2022-12-11T12:00:00+00:00")
         events = [
             {
                 "start": "2022-11-13T00:00:00+00:00",

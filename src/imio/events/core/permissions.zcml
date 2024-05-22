@@ -22,4 +22,9 @@
       title="imio.events.core: Add Folder"
       />
 
+  <permission
+      id="imio.events.core.BringEventIntoPersonnalAgenda"
+      title="imio.events.core: Bring Event into personnal agenda"
+      />
+
 </configure>

@@ -1,0 +1,13 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <browser:page
+      name="bring_event_into_agendas_form"
+      for="imio.events.core.contents.IEvent"
+      class=".agendas.BringEventIntoAgendasForm"
+      permission="zope2.Public"
+      layer="imio.events.core.interfaces.IImioEventsCoreLayer"
+      />
+
+</configure>

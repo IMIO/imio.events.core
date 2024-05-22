@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+from datetime import timedelta
 from datetime import timezone
 from imio.events.core.utils import expand_occurences
 from imio.events.core.utils import get_start_date
@@ -92,14 +93,32 @@ class EventsEndpointHandler(SearchHandler):
             query["selected_agendas"] = all_agendas
         tps1 = time.time()
         self._constrain_query_by_path(query)
+        # self.request.form["path"] = query["path"]
         tps2 = time.time()
         query = self._parse_query(query)
         tps3 = time.time()
+        range = self.request.form.get("event_dates.range")
+
+        # Try to optimize the query
+        if range == "max":
+            query["b_size"] = 1000
+            now = datetime.now(timezone.utc)
+            one_year_ago = now - timedelta(days=365)
+            date_string = now.strftime("%Y-%m-%d")
+            one_year_ago_string = one_year_ago.strftime("%Y-%m-%d")
+            query["event_dates"]["query"] = [one_year_ago_string, date_string]
+            query["event_dates"]["range"] = "min:max"
+            self.request.form["event_dates.query"] = {
+                "min": one_year_ago_string,
+                "max": date_string,
+            }
+            self.request.form["event_dates.range"] = "min:max"
         lazy_resultset = self.catalog.searchResults(**query)
         tps4 = time.time()
         if "metadata_fields" not in self.request.form:
             self.request.form["metadata_fields"] = []
         self.request.form["metadata_fields"] += [
+            "container_uid",
             "recurrence",
             "whole_day",
             "first_start",
@@ -109,15 +128,41 @@ class EventsEndpointHandler(SearchHandler):
         # ISerializeToJson use a default request batch so we force a "full" b_size and a "zero" b_start
         self.request.form["b_size"] = 10000
         self.request.form["b_start"] = 0
+
+        # To do : cache all datas and get from cache ?
         results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(
             fullobjects=fullobjects
         )
         tps5 = time.time()
-        expanded_occurences = expand_occurences(results.get("items"))
-        sorted_expanded_occurences = sorted(expanded_occurences, key=get_start_date)
-        if self.request.form.get("event_dates.range") == "min:max":
+        expanded_occurences = expand_occurences(results.get("items"), range)
+        tps6 = time.time()
+        # range is None when we click on an occurence
+        if range is None:
+            sorted_expanded_occurences = expanded_occurences
+        if range == "min":
             filter_expanded_occurences = []
-            for occurrence in sorted_expanded_occurences:
+            for occurrence in expanded_occurences:
+                start_date = datetime.fromisoformat(occurrence["start"])
+                end_date = datetime.fromisoformat(occurrence["end"])
+                current_date = datetime.now(timezone.utc)
+                if start_date >= current_date or end_date >= current_date:
+                    filter_expanded_occurences.append(occurrence)
+            sorted_expanded_occurences = sorted(
+                filter_expanded_occurences, key=get_start_date
+            )
+        if range == "max":
+            filter_expanded_occurences = []
+            for occurrence in expanded_occurences:
+                end_date = datetime.fromisoformat(occurrence["end"])
+                current_date = datetime.now(timezone.utc)
+                if end_date < current_date:
+                    filter_expanded_occurences.append(occurrence)
+            sorted_expanded_occurences = sorted(
+                filter_expanded_occurences, key=get_start_date, reverse=True
+            )
+        if range == "min:max":
+            filter_expanded_occurences = []
+            for occurrence in expanded_occurences:
                 min_date, max_date = self.request.form.get("event_dates.query")
                 min_date = datetime.fromisoformat(min_date).replace(tzinfo=timezone.utc)
                 max_date = (
@@ -131,14 +176,14 @@ class EventsEndpointHandler(SearchHandler):
                     start_date <= min_date and end_date >= min_date
                 ):
                     filter_expanded_occurences.append(occurrence)
-            sorted_expanded_occurences = filter_expanded_occurences
-        tps6 = time.time()
-
+            sorted_expanded_occurences = sorted(
+                filter_expanded_occurences, key=get_start_date
+            )
+        tps7 = time.time()
         # It's time to get real b_size/b_start from the smartweb query
         self.request.form["b_size"] = b_size
         self.request.form["b_start"] = b_start
         batch = HypermediaBatch(self.request, sorted_expanded_occurences)
-        tps7 = time.time()
         if is_log_active():
             logger.info(f"query : {results['@id']}")
             logger.info(f"time constrain_query_by_path : {tps2 - tps1}")
