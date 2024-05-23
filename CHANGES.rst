@@ -5,6 +5,9 @@ Changelog
 1.2.17 (unreleased)
 -------------------
 
+- Fix Topics & Categories in SearchableText translated indexes
+  [laulaz]
+
 - WEB-4088 : Add some odwb endpoints (for events , for entities)
   [boulch]
 

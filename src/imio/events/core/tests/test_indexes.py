@@ -211,6 +211,26 @@ class TestIndexer(unittest.TestCase):
             ],
         )
 
+        event.title_nl = "Titel"
+        event.description_nl = "Descriptie"
+        event.text_nl = RichTextValue("<p>Tekst</p>", "text/html", "text/html")
+        event.reindexObject()
+
+        brain = api.content.find(UID=event.UID())[0]
+        indexes = catalog.getIndexDataForRID(brain.getRID())
+        self.assertEqual(
+            indexes.get("SearchableText_nl"),
+            [
+                "titel",
+                "descriptie",
+                "tekst",
+                "landbouw",
+                "wandeling",
+                "en",
+                "ontdekking",
+            ],
+        )
+
     def test_event_dates_index(self):
         event = api.content.create(
             container=self.agenda,
