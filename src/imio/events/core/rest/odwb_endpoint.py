@@ -8,6 +8,9 @@ from imio.events.core.contents import IEvent
 from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_entity_for_obj
 from imio.smartweb.common.rest.odwb import OdwbBaseEndpointGet
+from imio.smartweb.common.utils import (
+    activate_sending_data_to_odwb_for_staging as odwb_staging,
+)
 from plone import api
 from plone.formwidget.geolocation.geolocation import Geolocation
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
@@ -21,8 +24,12 @@ logger = logging.getLogger("imio.events.core")
 
 class OdwbEndpointGet(OdwbBaseEndpointGet):
     def __init__(self, context, request):
-        pushkey = "imio.events.core.odwb_evenements-en-wallonie_pushkey"
-        imio_service = "evenements-en-wallonie"
+        imio_service = (
+            "evenements-en-wallonie"
+            if not odwb_staging()
+            else "staging-evenements-en-wallonie"
+        )
+        pushkey = f"imio.events.core.odwb_{imio_service}_pushkey"
         super(OdwbEndpointGet, self).__init__(context, request, imio_service, pushkey)
 
     def reply(self):
@@ -162,8 +169,12 @@ class EventEncoder(json.JSONEncoder):
 class OdwbEntitiesEndpointGet(OdwbBaseEndpointGet):
 
     def __init__(self, context, request):
-        pushkey = "imio.events.core.odwb_entites-des-agendas-en-wallonie_pushkey"
-        imio_service = "entites-des-agendas-en-wallonie"
+        imio_service = (
+            "entites-des-agendas-en-wallonie"
+            if not odwb_staging()
+            else "staging-entites-des-agendas-en-wallonie"
+        )
+        pushkey = f"imio.events.core.odwb_{imio_service}_pushkey"
         super(OdwbEntitiesEndpointGet, self).__init__(
             context, request, imio_service, pushkey
         )

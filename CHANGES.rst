@@ -5,6 +5,9 @@ Changelog
 1.2.17 (unreleased)
 -------------------
 
+- WEB-4088 : Cover use case for sending data in odwb for a staging environment
+  [boulch]
+
 - Fix Topics & Categories in SearchableText translated indexes
   [laulaz]
 

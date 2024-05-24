@@ -15,4 +15,16 @@
     </field>
   </record>
 
+  <record name="imio.events.core.odwb_staging-entites-des-agendas-en-wallonie_pushkey">
+    <field type="plone.registry.field.TextLine">
+      <title>ODWB : Entit&#233;s des agendas en Wallonie (STAGING) - pushkey</title>
+    </field>
+  </record>
+
+  <record name="imio.events.core.odwb_staging-evenements-en-wallonie_pushkey">
+    <field type="plone.registry.field.TextLine">
+      <title>ODWB : Evenements en Wallonie (STAGING) - pushkey</title>
+    </field>
+  </record>
+
 </registry>
