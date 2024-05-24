@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.19 (unreleased)
+1.2.19 (2024-05-24)
 -------------------
 
 - Fix naming of two fields for odwb
