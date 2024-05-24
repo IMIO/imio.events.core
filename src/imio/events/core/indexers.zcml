@@ -47,8 +47,38 @@
       />
 
   <adapter
+      name="local_category_nl"
+      factory=".indexers.local_category_nl"
+      />
+
+  <adapter
+      name="local_category_de"
+      factory=".indexers.local_category_de"
+      />
+
+  <adapter
+      name="local_category_en"
+      factory=".indexers.local_category_en"
+      />
+
+  <adapter
       name="category_title"
-      factory=".indexers.category_title"
+      factory=".indexers.category_title_fr"
+      />
+
+  <adapter
+      name="category_title_nl"
+      factory=".indexers.category_title_nl"
+      />
+
+  <adapter
+      name="category_title_de"
+      factory=".indexers.category_title_de"
+      />
+
+  <adapter
+      name="category_title_en"
+      factory=".indexers.category_title_en"
       />
 
   <adapter

@@ -3,12 +3,38 @@
 
 from imio.smartweb.common.interfaces import ILocalManagerAware
 from imio.smartweb.locales import SmartwebMessageFactory as _
+from collective.z3cform.datagridfield.datagridfield import DataGridFieldFactory
+from collective.z3cform.datagridfield.row import DictRow
 from plone import schema
 from plone.app.z3cform.widget import SelectFieldWidget
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
 from zope.interface import implementer
+from zope.interface import Interface
+
+
+class ILocalCategoryRowSchema(Interface):
+
+    fr = schema.TextLine(
+        title=_("French"),
+        required=True,
+    )
+
+    nl = schema.TextLine(
+        title=_("Dutch"),
+        required=False,
+    )
+
+    de = schema.TextLine(
+        title=_("Deutsch"),
+        required=False,
+    )
+
+    en = schema.TextLine(
+        title=_("English"),
+        required=False,
+    )
 
 
 class IEntity(model.Schema):
@@ -22,12 +48,16 @@ class IEntity(model.Schema):
     )
 
     model.fieldset("categorization", fields=["local_categories"])
-    local_categories = schema.Text(
+    local_categories = schema.List(
         title=_("Specific events categories"),
         description=_(
             "List of events categories values available for this entity (one per line)"
         ),
+        value_type=DictRow(title="Value", schema=ILocalCategoryRowSchema),
         required=False,
+    )
+    directives.widget(
+        "local_categories", DataGridFieldFactory, allow_reorder=True, auto_append=False
     )
 
     directives.read_permission(

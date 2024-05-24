@@ -35,7 +35,7 @@ EventsCategoriesVocabulary = EventsCategoriesVocabularyFactory()
 
 
 class EventsLocalCategoriesVocabularyFactory:
-    def __call__(self, context=None):
+    def __call__(self, context=None, lang="fr"):
         if IPloneSiteRoot.providedBy(context):
             # ex: call on @types or @vocabularies from RESTAPI
             return SimpleVocabulary([])
@@ -45,8 +45,8 @@ class EventsLocalCategoriesVocabularyFactory:
         if not obj.local_categories:
             return SimpleVocabulary([])
 
-        values = obj.local_categories.splitlines()
-        terms = [SimpleTerm(value=t, token=t, title=t) for t in values]
+        values = {cat["fr"]: cat[lang] or cat["fr"] for cat in obj.local_categories}
+        terms = [SimpleTerm(value=k, token=k, title=v) for k, v in values.items()]
         return SimpleVocabulary(terms)
 
 

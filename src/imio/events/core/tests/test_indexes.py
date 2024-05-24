@@ -28,7 +28,7 @@ def search_all_from_vocabulary(vocabulary, context, catalog):
     return output
 
 
-class TestIndexer(unittest.TestCase):
+class TestIndexes(unittest.TestCase):
     layer = IMIO_EVENTS_CORE_INTEGRATION_TESTING
 
     def setUp(self):
@@ -40,7 +40,12 @@ class TestIndexer(unittest.TestCase):
             container=self.portal,
             type="imio.events.Entity",
             id="imio.events.Entity",
-            local_categories="Foo\r\nbaz\r\nbar",
+            local_categories=[
+                {"fr": "Foo", "nl": "", "de": "", "en": ""},
+                {"fr": "baz", "nl": "", "de": "", "en": ""},
+                {"fr": "bar", "nl": "", "de": "", "en": ""},
+                {"fr": "Local category", "nl": "", "de": "", "en": ""},
+            ],
         )
         self.agenda = api.content.create(
             container=self.entity,
@@ -120,11 +125,18 @@ class TestIndexer(unittest.TestCase):
         brain = api.content.find(UID=event.UID())[0]
         indexes = catalog.getIndexDataForRID(brain.getRID())
         self.assertEqual(indexes.get("category_title"), "Balade et découverte")
+        metadatas = catalog.getMetadataForRID(brain.getRID())
+        self.assertEqual(metadatas.get("category_title"), "Balade et découverte")
+        self.assertEqual(metadatas.get("category_title_nl"), "Wandeling en ontdekking")
+        self.assertEqual(
+            metadatas.get("category_title_de"), "Spaziergang und Entdeckung"
+        )
+        self.assertEqual(metadatas.get("category_title_en"), "Stroll and discovery")
         event.local_category = "Local category"
         event.reindexObject()
         brain = api.content.find(UID=event.UID())[0]
         indexes = catalog.getIndexDataForRID(brain.getRID())
-        self.assertEqual(indexes.get("category_title"), "Local category")
+        self.assertEqual(indexes.get("category_title"), "Balade et découverte")
 
     def test_selected_agendas_index(self):
         event1 = api.content.create(

@@ -59,6 +59,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="upgrade_1016_to_1017"
+      title="Upgrade core from 1016 to 1017"
+      directory="profiles/1016_to_1017"
+      description="Add metadatas for (local) categories translations"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <genericsetup:upgradeStep
       title="Refresh faceted"
       description="Refresh faceted configurations on all entities / agendas"
@@ -212,6 +220,28 @@
     <genericsetup:upgradeDepends
         title="Add two new registry key to store push keys for ODWB"
         import_profile="imio.events.core.upgrades:upgrade_1015_to_1016"
+        />
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+      source="1016"
+      destination="1017"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Install collective.z3cform.datagridfield"
+        import_profile="collective.z3cform.datagridfield:default"
+        />
+    <genericsetup:upgradeStep
+        title="Migrate local_categories to datagridfield"
+        handler=".upgrades.migrate_local_categories"
+        />
+    <genericsetup:upgradeDepends
+        title="Add metadatas for (local) categories translations"
+        import_profile="imio.events.core.upgrades:upgrade_1016_to_1017"
+        />
+    <genericsetup:upgradeStep
+        title="Reindex catalog"
+        handler=".upgrades.reindex_catalog"
         />
   </genericsetup:upgradeSteps>
 

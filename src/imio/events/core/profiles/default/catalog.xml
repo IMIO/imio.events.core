@@ -55,6 +55,9 @@
 
   <column value="category"/>
   <column value="category_title"/>
+  <column value="category_title_nl"/>
+  <column value="category_title_de"/>
+  <column value="category_title_en"/>
   <column value="category_and_topics"/>
   <column value="container_uid"/>
   <column value="event_dates"/>
@@ -66,6 +69,10 @@
   <column value="description_nl"/>
   <column value="description_de"/>
   <column value="description_en"/>
+  <column value="local_category"/>
+  <column value="local_category_nl"/>
+  <column value="local_category_de"/>
+  <column value="local_category_en"/>
   <column value="first_start"/>
   <column value="first_end"/>
 

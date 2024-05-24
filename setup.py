@@ -59,6 +59,7 @@ setup(
         "plone.app.imagecropping",
         "collective.geolocationbehavior",
         "collective.taxonomy",
+        "collective.z3cform.datagridfield",
         "eea.facetednavigation",
         "imio.smartweb.common",
         "imio.smartweb.locales",

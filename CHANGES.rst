@@ -5,6 +5,10 @@ Changelog
 1.2.17 (unreleased)
 -------------------
 
+- WEB-4101 : Handle (local) categories translations with datagrid field and
+  new indexes. French value is used as identifier for local categories.
+  [laulaz]
+
 - WEB-4088 : Cover use case for sending data in odwb for a staging environment
   [boulch]
 

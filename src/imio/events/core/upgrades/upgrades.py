@@ -110,3 +110,18 @@ def add_dates_indexes(context):
     if must_reindex:
         logger.info("Reindexing catalog for new metadatas")
         catalog.clearFindAndRebuild()
+
+
+def migrate_local_categories(context):
+    brains = api.content.find(portal_type=["imio.events.Entity"])
+    for brain in brains:
+        obj = brain.getObject()
+        if obj.local_categories:
+            categories = obj.local_categories.splitlines()
+            datagrid_categories = [
+                {"fr": cat, "nl": "", "de": "", "en": ""} for cat in categories
+            ]
+            obj.local_categories = datagrid_categories
+            logger.info(
+                "Categories migrated to Datagrid for entity {}".format(obj.Title())
+            )

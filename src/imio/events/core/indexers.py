@@ -12,6 +12,8 @@ from plone.app.event.base import expand_events
 from plone.app.event.base import RET_MODE_ACCESSORS
 from plone.app.textfield.value import IRichTextValue
 from Products.CMFPlone.utils import safe_unicode
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 
 import copy
 
@@ -31,14 +33,58 @@ def translated_in_en(obj):
     return bool(obj.title_en)
 
 
-@indexer(IEvent)
-def category_title(obj):
-    if obj.local_category is not None:
-        return obj.local_category
+def get_category_title(obj, lang):
     if obj.category is not None:
         return translate_vocabulary_term(
-            "imio.events.vocabulary.EventsCategories", obj.category
+            "imio.events.vocabulary.EventsCategories", obj.category, lang
         )
+    raise AttributeError
+
+
+@indexer(IEvent)
+def category_title_fr(obj):
+    return get_category_title(obj, "fr")
+
+
+@indexer(IEvent)
+def category_title_nl(obj):
+    return get_category_title(obj, "nl")
+
+
+@indexer(IEvent)
+def category_title_de(obj):
+    return get_category_title(obj, "de")
+
+
+@indexer(IEvent)
+def category_title_en(obj):
+    return get_category_title(obj, "en")
+
+
+def get_local_category(obj, lang):
+    if not obj.local_category:
+        raise AttributeError
+    factory = getUtility(
+        IVocabularyFactory, "imio.events.vocabulary.EventsLocalCategories"
+    )
+    vocabulary = factory(obj, lang=lang)
+    term = vocabulary.getTerm(obj.local_category)
+    return term.title
+
+
+@indexer(IEvent)
+def local_category_nl(obj):
+    return get_local_category(obj, "nl")
+
+
+@indexer(IEvent)
+def local_category_de(obj):
+    return get_local_category(obj, "de")
+
+
+@indexer(IEvent)
+def local_category_en(obj):
+    return get_local_category(obj, "en")
 
 
 @indexer(IEvent)

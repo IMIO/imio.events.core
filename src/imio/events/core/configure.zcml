@@ -3,6 +3,7 @@
 
   <include package="collective.geolocationbehavior" />
   <include package="collective.taxonomy" />
+  <include package="collective.z3cform.datagridfield" />
   <include package="eea.facetednavigation" />
   <include package="plone.app.content" />
   <include package="plone.app.imagecropping" />

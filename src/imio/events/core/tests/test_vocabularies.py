@@ -36,7 +36,7 @@ class TestVocabularies(unittest.TestCase):
             container=self.portal,
             type="imio.events.Entity",
             id="imio.events.Entity",
-            local_categories="",
+            local_categories=[],
         )
 
         factory = getUtility(
@@ -52,7 +52,11 @@ class TestVocabularies(unittest.TestCase):
             container=self.portal,
             type="imio.events.Entity",
             id="imio.events.Entity",
-            local_categories="Foo\r\nbaz\r\nbar",
+            local_categories=[
+                {"fr": "Foo", "nl": "", "de": "", "en": ""},
+                {"fr": "baz", "nl": "", "de": "", "en": ""},
+                {"fr": "bar", "nl": "", "de": "", "en": ""},
+            ],
         )
         agenda = api.content.create(
             container=entity,
