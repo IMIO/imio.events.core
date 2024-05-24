@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.17 (unreleased)
+1.2.17 (2024-05-24)
 -------------------
 
 - WEB-4101 : Handle (local) categories translations with datagrid field and
