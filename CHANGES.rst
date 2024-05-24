@@ -5,7 +5,8 @@ Changelog
 1.2.18 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- improves odwb fields nomenclature
+  [boulch]
 
 
 1.2.17 (2024-05-24)

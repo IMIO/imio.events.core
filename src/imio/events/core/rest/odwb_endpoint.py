@@ -81,69 +81,67 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
 class Event:
 
     def __init__(self, context):
-        self.attendees = context.attendees if hasattr(context, "attendees") else ()
-        self.category = context.category
-        self.city = context.city
-        self.street_number_complement = context.complement
-        self.contact_email = context.contact_email
-        self.contact_name = context.contact_name
-        self.contact_phone = context.contact_phone
-        self.country = context.country
-        # DateTime(2024/02/14 13:59:7.829612 GMT+1),
-        self.creation_date = context.creation_date
-        self.description_fr = context.description
-        self.description_de = context.description_de
-        self.description_en = context.description_en
-        self.description_nl = context.description_nl
-        # DateTime(2024/02/14 13:59:00 GMT+1),
-        self.effective_date = context.effective_date
-        # datetime.datetime(2024, 2, 14, 13, 0, tzinfo=<UTC>),
-        self.end = context.end
-        self.event_type = context.event_type  # event-driven,
-        self.event_url = context.event_url
-        self.exclude_from_nav = context.exclude_from_nav
-        self.expiration_date = context.expiration_date
-        self.facebook_url = context.facebook
-        self.free_entry = context.free_entry
-        self.geolocation = context.geolocation
-        self.latitude = context.geolocation.latitude if context.geolocation else None
-        self.longitude = context.geolocation.longitude if context.geolocation else None
-        self.iam = context.iam
-        # 2126b6ef314a4b3d9712732d5f036afc,
+        # ODWB fields = imio.events.core fields
         self.id = context.id
-        self.instagram_url = context.instagram
-        self.language = context.language
-        self.local_category = context.local_category
-        # DateTime(2024/02/14 15:51:52.128648 GMT+1),
-        self.modification_date = context.modification_date
-        self.street_number = context.number
-        self.online_participation = context.online_participation
-        self.open_end = context.open_end
+        self.start_datetime = context.start
+        self.end_datetime = context.end
         self.recurrence = context.recurrence
-        self.reduced_mobility_facilities = context.reduced_mobility_facilities
-        # datetime.datetime(2024, 2, 14, 12, 0, tzinfo=<UTC>),
-        self.start = context.start
-        self.street = context.street
-        self.subjects = context.subject
-        self.taxonomy_event_public = context.taxonomy_event_public
-        self.text_fr = context.text.raw if context.text else None
-        self.text_de = context.text_de.raw if context.text_de else None
-        self.text_en = context.text_en.raw if context.text_en else None
-        self.text_nl = context.text_nl.raw if context.text_nl else None
-        self.ticket_url = context.ticket_url
-        self.title_fr = context.title
-        self.title_de = context.title_de
-        self.title_en = context.title_en
-        self.title_nl = context.title_nl
+        self.whole_day = context.whole_day
+        self.open_end = context.open_end
+        self.title = context.title
+        self.description = context.description
+        self.category = context.category
         self.topics = context.topics
+        self.target_audience = context.local_category
+        self.attendees = context.attendees if hasattr(context, "attendees") else ()
+        self.text = context.text.raw if context.text else None
+        self.reduced_mobility_facilities = context.reduced_mobility_facilities
+        self.free_entry = context.free_entry
+        self.coordinates = context.geolocation
+        self.address_street_name = context.street
+        self.address_house_number = context.number
+        self.address_postal_code = context.zipcode
+        self.address_city = context.city
+        self.address_country = context.country
+        self.online_meeting_url = context.online_participation
+        self.contact_name = context.contact_name
+        self.contact_email = context.contact_email
+        self.contact_phone = context.contact_phone
+        self.ticket_url = context.ticket_url
+        self.event_url = context.event_url
+        self.facebook_url = context.facebook
+        self.instagram_url = context.instagram
         self.twitter_url = context.twitter
         self.video_url = context.video_url
-        self.whole_day = context.whole_day
-        self.zipcode = context.zipcode
-        self.agenda_uid = get_agenda_for_event(context).UID()
-        self.agenda_title = get_agenda_for_event(context).Title()
-        self.entity_uid = get_entity_for_obj(context).UID()
-        self.entity_title = get_entity_for_obj(context).Title()
+        self.owner_id = get_entity_for_obj(context).UID()
+        self.owner_name = get_entity_for_obj(context).Title()
+        self.owner_diary_id = get_agenda_for_event(context).UID()
+        self.owner_diary_name = get_agenda_for_event(context).Title()
+        self.creation_date = context.creation_date
+        self.modification_date = context.modification_date
+
+        # In a first time, We don't send these fields to ODWB
+        # self.street_number_complement = context.complement
+        # self.description_de = context.description_de
+        # self.description_en = context.description_en
+        # self.description_nl = context.description_nl
+        # self.effective_date = context.effective_date
+        # self.event_type = context.event_type  # event-driven,
+        # self.exclude_from_nav = context.exclude_from_nav
+        # self.expiration_date = context.expiration_date
+        # self.latitude = context.geolocation.latitude if context.geolocation else None
+        # self.longitude = context.geolocation.longitude if context.geolocation else None
+        # self.iam = context.iam
+        # self.language = context.language
+        # self.local_category = context.local_category
+        # self.subjects = context.subject
+        # self.taxonomy_event_public = context.taxonomy_event_public
+        # self.text_de = context.text_de.raw if context.text_de else None
+        # self.text_en = context.text_en.raw if context.text_en else None
+        # self.text_nl = context.text_nl.raw if context.text_nl else None
+        # self.title_de = context.title_de
+        # self.title_en = context.title_en
+        # self.title_nl = context.title_nl
 
     def to_json(self):
         return json.dumps(self.__dict__, cls=EventEncoder)
