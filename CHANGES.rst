@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.18 (unreleased)
+1.2.18 (2024-05-24)
 -------------------
 
 - improves odwb fields nomenclature
