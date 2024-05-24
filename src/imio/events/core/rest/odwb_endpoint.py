@@ -117,8 +117,8 @@ class Event:
         self.owner_name = get_entity_for_obj(context).Title()
         self.owner_diary_id = get_agenda_for_event(context).UID()
         self.owner_diary_name = get_agenda_for_event(context).Title()
-        self.creation_date = context.creation_date
-        self.modification_date = context.modification_date
+        self.creation_datetime = context.creation_date
+        self.modification_datetime = context.modification_date
 
         # In a first time, We don't send these fields to ODWB
         # self.street_number_complement = context.complement

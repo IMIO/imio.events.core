@@ -5,7 +5,8 @@ Changelog
 1.2.19 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix naming of two fields for odwb
+  [boulch]
 
 
 1.2.18 (2024-05-24)
