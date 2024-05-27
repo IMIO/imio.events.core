@@ -7,6 +7,9 @@
   <index name="category_title" meta_type="FieldIndex">
     <indexed_attr value="category_title"/>
   </index>
+  <index name="local_category" meta_type="FieldIndex">
+    <indexed_attr value="local_category"/>
+  </index>
   <index name="category_and_topics" meta_type="KeywordIndex">
     <indexed_attr value="category_and_topics"/>
   </index>

@@ -5,7 +5,8 @@ Changelog
 1.2.20 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4101 : Add index for local category search
+  [laulaz]
 
 
 1.2.19 (2024-05-24)
