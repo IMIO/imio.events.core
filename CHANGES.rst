@@ -5,7 +5,9 @@ Changelog
 1.2.21 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4101 : Calculate `search-filters` JSON based on `@events` search results logic.
+  We need to refactor & test (more) this module.
+  [laulaz]
 
 
 1.2.20 (2024-05-27)

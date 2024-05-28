@@ -6,9 +6,18 @@ from imio.events.core.rest.endpoint import EventsEndpointHandler
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
+from plone.memoize.interfaces import ICacheChooser
 from plone import api
+from zope.component import getUtility
 
 import unittest
+
+
+def clear_search_cache(query):
+    cache_key = EventsEndpointHandler._cache_key("func", "instance", query)
+    cache = getUtility(ICacheChooser)(cache_key)
+    storage = cache.ramcache._getStorage()._data
+    del storage["imio.events.core.rest.endpoint.search"]
 
 
 class RestFunctionalTest(unittest.TestCase):
@@ -36,6 +45,7 @@ class RestFunctionalTest(unittest.TestCase):
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 0)
+        clear_search_cache(query)
 
     @freeze_time("2023-03-18")
     def test_get_events_from_agenda(self):
@@ -93,12 +103,14 @@ class RestFunctionalTest(unittest.TestCase):
         items = response.get("items")
         # Assert private event are not presents
         self.assertEqual(len(items), 0)
+        clear_search_cache(query)
 
         # Assert published event are presents
         api.content.transition(event1, "publish")
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 1)
+        clear_search_cache(query)
 
         # Assert event that began in past and end in future are presents
         api.content.transition(event4, "publish")
@@ -106,12 +118,14 @@ class RestFunctionalTest(unittest.TestCase):
         items = response.get("items")
         self.assertEqual(len(items), 2)
         api.content.transition(event4, "retract")
+        clear_search_cache(query)
 
         # Assert events occurrences are presents
         api.content.transition(event2, "publish")
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 1 + event2_nb_occurences)
+        clear_search_cache(query)
 
         # Assert passed event aren't get anymore (start_date and end_date are in the past)
         # But future occurrences of this event are kept
@@ -120,6 +134,7 @@ class RestFunctionalTest(unittest.TestCase):
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 3)
+        clear_search_cache(query)
 
         event4.start = datetime(2023, 3, 1, 0, 0)
         event4.end = datetime(2023, 3, 29, 0, 0)
@@ -131,6 +146,7 @@ class RestFunctionalTest(unittest.TestCase):
         self.assertEqual(len(items), 5)
         api.content.transition(event4, "retract")
         event4.reindexObject()
+        clear_search_cache(query)
 
         # Assert first_start index was updated
         item = list(
@@ -142,6 +158,7 @@ class RestFunctionalTest(unittest.TestCase):
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 4)
+        clear_search_cache(query)
 
         # Assert list is sorted by start date
         format_str = "%Y-%m-%dT%H:%M:%S%z"
@@ -150,7 +167,7 @@ class RestFunctionalTest(unittest.TestCase):
         self.assertEqual(max(dates), dates[-1])
 
     @freeze_time("2023-03-18")
-    def test_bashing_events_from_agenda(self):
+    def test_batching_events_from_agenda(self):
         event1 = api.content.create(
             container=self.agenda,
             type="imio.events.Event",
@@ -195,6 +212,7 @@ class RestFunctionalTest(unittest.TestCase):
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 5)
+        clear_search_cache(query)
 
         query = {
             "b_size": 3,
@@ -203,6 +221,7 @@ class RestFunctionalTest(unittest.TestCase):
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 3)
+        clear_search_cache(query)
 
         query = {
             "b_size": 3,
@@ -211,3 +230,4 @@ class RestFunctionalTest(unittest.TestCase):
         response = endpoint.search(query)
         items = response.get("items")
         self.assertEqual(len(items), 2)
+        clear_search_cache(query)

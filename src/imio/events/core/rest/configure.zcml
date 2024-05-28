@@ -13,6 +13,15 @@
       />
 
   <plone:service
+      method="GET"
+      for="zope.interface.Interface"
+      factory=".endpoint.SearchFiltersGet"
+      name="@search-filters"
+      permission="zope2.View"
+      layer="imio.events.core.interfaces.IImioEventsCoreLayer"
+      />
+
+  <plone:service
       name="@odwb"
       method="GET"
       accept="application/json"

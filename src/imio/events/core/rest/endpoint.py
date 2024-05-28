@@ -5,8 +5,10 @@ from datetime import timedelta
 from datetime import timezone
 from imio.events.core.utils import expand_occurences
 from imio.events.core.utils import get_start_date
+from imio.smartweb.common.rest.search_filters import SearchFiltersHandler
 from imio.smartweb.common.utils import is_log_active
 from plone import api
+from plone.memoize import ram
 from plone.restapi.batching import HypermediaBatch
 from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.search.handler import SearchHandler
@@ -18,6 +20,26 @@ import logging
 import time
 
 logger = logging.getLogger("imio.events.core")
+
+
+class SearchFiltersGet(Service):
+    """
+    This is a temporary shortcut to calculate search-filters based on @events
+    search results logic. We need to refactor & test (more) this module.
+    """
+
+    def reply(self):
+        query = self.request.form.copy()
+        if "metadata_fields" not in query:
+            return {}
+        query = unflatten_dotted_dict(query)
+        results = EventsEndpointHandler(self.context, self.request).search(query)
+        UIDs = [item["UID"] for item in results["items"]]
+        query = {
+            "UID": UIDs,
+            "metadata_fields": ["category", "local_category", "topics"],
+        }
+        return SearchFiltersHandler(self.context, self.request).search(query)
 
 
 class EventsEndpointGet(Service):
@@ -34,6 +56,10 @@ class EventsEndpointHandler(SearchHandler):
     # So we ignore these values but we must stock these to use it ...
     ignored_params = ["b_size", "b_start"]
 
+    def _cache_key(func, instance, query):
+        return (query, time.time() // 60)
+
+    @ram.cache(_cache_key)
     def search(self, query=None):
         if query is None:
             query = {}
