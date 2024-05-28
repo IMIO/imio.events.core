@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.21 (unreleased)
+1.2.21 (2024-05-28)
 -------------------
 
 - WEB-4101 : Calculate `search-filters` JSON based on `@events` search results logic.
