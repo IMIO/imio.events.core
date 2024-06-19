@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.23 (unreleased)
+1.2.23 (2024-06-19)
 -------------------
 
 - Add events lead image (preview scale) for odwb and some logs
