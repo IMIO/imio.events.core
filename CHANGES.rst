@@ -5,7 +5,8 @@ Changelog
 1.2.23 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Refactor items_to_delete : Added translations / Corrected result of number of items
+  [boulch]
 
 
 1.2.22 (2024-06-06)
