@@ -8,6 +8,7 @@ from imio.events.core.contents import IEvent
 from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_entity_for_obj
 from imio.smartweb.common.rest.odwb import OdwbBaseEndpointGet
+from imio.smartweb.common.utils import is_log_active
 from imio.smartweb.common.utils import (
     activate_sending_data_to_odwb_for_staging as odwb_staging,
 )
@@ -36,6 +37,8 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
         if not super(OdwbEndpointGet, self).available():
             return
         url = f"{self.odwb_api_push_url}/{self.odwb_imio_service}/temps_reel/push/?pushkey={self.odwb_pushkey}"
+        if is_log_active():
+            logger.info(f"ODWB push url: {url}")
         self.__datas__ = self.get_events()
         batched_lst = [
             self.__datas__[i : i + 1000] for i in range(0, len(self.__datas__), 1000)
@@ -72,6 +75,8 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
             event = Event(self.context)
             lst_events.append(json.loads(event.to_json()))
         url = f"{self.odwb_api_push_url}/{self.odwb_imio_service}/temps_reel/delete/?pushkey={self.odwb_pushkey}"
+        if is_log_active():
+            logger.info(f"ODWB delete url: {url}")
         payload = json.dumps(lst_events)
         headers = {"Content-Type": "application/json"}
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -90,6 +95,7 @@ class Event:
         self.open_end = context.open_end
         self.title = context.title
         self.description = context.description
+        self.image = f"{context.absolute_url()}/@@images/image/preview"
         self.category = context.category
         self.topics = context.topics
         self.target_audience = context.local_category
@@ -192,6 +198,8 @@ class OdwbEntitiesEndpointGet(OdwbBaseEndpointGet):
             lst_entities.append(entity)
         self.__datas__ = lst_entities
         url = f"{self.odwb_api_push_url}/{self.odwb_imio_service}/temps_reel/push/?pushkey={self.odwb_pushkey}"
+        if is_log_active():
+            logger.info(f"ODWB push url: {url}")
         payload = json.dumps(lst_entities)
         headers = {"Content-Type": "application/json"}
         response = requests.request("POST", url, headers=headers, data=payload)

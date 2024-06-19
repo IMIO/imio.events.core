@@ -5,6 +5,9 @@ Changelog
 1.2.23 (unreleased)
 -------------------
 
+- Add events lead image (preview scale) for odwb and some logs
+  [boulch]
+
 - Refactor items_to_delete : Added translations / Corrected result of number of items
   [boulch]
 
