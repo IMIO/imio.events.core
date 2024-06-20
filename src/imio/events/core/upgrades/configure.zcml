@@ -75,6 +75,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="upgrade_1018_to_1019"
+      title="Upgrade core from 1018 to 1019"
+      directory="profiles/1018_to_1019"
+      description="Unpublish events in private agendas and remove workflow out of Agenda / Folder"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <genericsetup:upgradeStep
       title="Refresh faceted"
       description="Refresh faceted configurations on all entities / agendas"
@@ -264,6 +272,24 @@
     <genericsetup:upgradeStep
         title="Reindex catalog"
         handler=".upgrades.reindex_catalog"
+        />
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+      source="1018"
+      destination="1019"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeStep
+        title="Unpublish events in private agendas"
+        handler=".upgrades.unpublish_events_in_private_agendas"
+        />
+    <genericsetup:upgradeDepends
+        title="Remove imio.events.Agenda / imio.events.Folder workflows"
+        import_profile="imio.events.core.upgrades:upgrade_1018_to_1019"
+        />
+    <genericsetup:upgradeStep
+        title="Reindex agendas and folders"
+        handler=".upgrades.reindex_agendas_and_folders"
         />
   </genericsetup:upgradeSteps>
 

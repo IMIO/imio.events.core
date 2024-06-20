@@ -41,14 +41,12 @@ def added_entity(obj, event):
         title="Administration communale",
         id="administration-communale",
     )
-    api.content.transition(agenda_ac, transition="publish")
     agenda_all = api.content.create(
         container=obj,
         type="imio.events.Agenda",
         title="Agenda général",
         id="agenda-general",
     )
-    api.content.transition(agenda_all, transition="publish")
     intids = getUtility(IIntIds)
     setattr(
         agenda_all,
@@ -154,6 +152,7 @@ def published_event_transition(obj, event):
     if not IAfterTransitionEvent.providedBy(event):
         return
     if event.new_state.id == "published":
+        # import pdb; pdb.set_trace()
         request = getRequest()
         endpoint = OdwbEndpointGet(obj, request)
         endpoint.reply()

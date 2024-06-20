@@ -125,3 +125,25 @@ def migrate_local_categories(context):
             logger.info(
                 "Categories migrated to Datagrid for entity {}".format(obj.Title())
             )
+
+
+def unpublish_events_in_private_agendas(context):
+    brains = api.content.find(
+        portal_type=["imio.events.Agenda"], review_state="private"
+    )
+    for brain in brains:
+        evt_brains = api.content.find(
+            context=brain.getObject(),
+            portal_type=["imio.events.Event"],
+            review_state="published",
+        )
+        for evt_brain in evt_brains:
+            event = evt_brain.getObject()
+            api.content.transition(event, "retract")
+            logger.info("Event {} go to private status".format(event.absolute_url()))
+
+
+def reindex_agendas_and_folders(context):
+    brains = api.content.find(portal_type=["imio.events.Agenda", "imio.events.Folder"])
+    for brain in brains:
+        brain.getObject().reindexObject()

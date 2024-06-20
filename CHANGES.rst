@@ -5,7 +5,8 @@ Changelog
 1.2.24 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4088 : Use one state workflow for imio.events.Agenda / imio.events.Folder
+  [boulch]
 
 
 1.2.23 (2024-06-19)
