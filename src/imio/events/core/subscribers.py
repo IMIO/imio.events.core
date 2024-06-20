@@ -71,37 +71,6 @@ def modified_agenda(obj, event):
     mark_current_agenda_in_events_from_other_agendas(obj, event)
 
 
-# def will_remove_agenda(obj, event):
-#     import pdb; pdb.set_trace()
-#     count = len(obj.items())
-#     if count > 1:
-#         request = getRequest()
-#         msg = f"Agenda '{obj.title}' can't be removed because it contains {count} events."
-#         api.portal.show_message(msg, request)
-#         # portal_url = getToolByName(obj, 'portal_url')
-#         # portal = portal_url.getPortalObject()
-#         obj_url = obj.absolute_url()
-#         # Redirect back to the object's URL
-#         request.response.redirect(obj_url)
-#         # Prevent the object from being removed
-#         raise ValueError(msg)
-# request = getRequest()
-# count = len(obj.items())
-# import pdb; pdb.set_trace()
-# if count > 1:
-#     msg = f"Agenda {obj.Title()} can't be removed because it contains {count} events"
-#     try:
-#         raise ValueError(
-#             msg
-#         )
-#     except ValueError as e:
-#         api.portal.show_message(_(msg), request)
-#         request.response.redirect(obj.absolute_url())
-#         import transaction
-#         transaction.abort()
-#         return
-
-
 def removed_agenda(obj, event):
     try:
         brains = api.content.find(selected_agendas=obj.UID())
