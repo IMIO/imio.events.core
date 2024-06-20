@@ -36,6 +36,6 @@ class DeleteActionView(BaseDeleteActionView):
                 mapping={"val1": obj.Title(), "val2": count},
             )
             msg = translate(txt, context=self.request)
-            self.errors.append(_(msg))
+            self.errors.append(msg)
             return
         return super(DeleteActionView, self).action(obj)
