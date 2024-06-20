@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.24 (unreleased)
+1.2.24 (2024-06-20)
 -------------------
 
 - WEB-4088 : Use one state workflow for imio.events.Agenda / imio.events.Folder
