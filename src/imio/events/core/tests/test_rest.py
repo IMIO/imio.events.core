@@ -8,6 +8,7 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.memoize.interfaces import ICacheChooser
 from plone import api
+from unittest.mock import patch
 from zope.component import getUtility
 
 import unittest
@@ -167,7 +168,8 @@ class RestFunctionalTest(unittest.TestCase):
         self.assertEqual(max(dates), dates[-1])
 
     @freeze_time("2023-03-18")
-    def test_batching_events_from_agenda(self):
+    @patch("requests.post")
+    def test_batching_events_from_agenda(self, m):
         event1 = api.content.create(
             container=self.agenda,
             type="imio.events.Event",
@@ -200,7 +202,6 @@ class RestFunctionalTest(unittest.TestCase):
         event3.end = datetime(2023, 3, 25, 23, 59)
         event3.reindexObject()
         endpoint = EventsEndpointHandler(self.portal, self.request)
-
         api.content.transition(event1, "publish")
         api.content.transition(event2, "publish")
         api.content.transition(event3, "publish")
