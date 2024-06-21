@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.25 (unreleased)
+1.2.25 (2024-06-21)
 -------------------
 
 - WEB-4088 : Use transaction commit hook to be sure event object is available before odwb call
