@@ -5,7 +5,8 @@ Changelog
 1.2.26 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4121 : Add logs if container_uid is None
+  [boulch]
 
 
 1.2.25 (2024-06-21)

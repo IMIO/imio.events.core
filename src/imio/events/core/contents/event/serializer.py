@@ -5,6 +5,7 @@ from imio.events.core.contents import IEvent
 from imio.events.core.contents import IFolder
 from imio.events.core.interfaces import IImioEventsCoreLayer
 from imio.smartweb.common.rest.utils import get_restapi_query_lang
+from imio.smartweb.common.utils import is_log_active
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListingObject
 from plone.restapi.interfaces import ISerializeToJson
@@ -19,12 +20,18 @@ from zope.interface import implementer
 from zope.interface import Interface
 from zope.schema.interfaces import IVocabularyFactory
 
+import logging
+
+logger = logging.getLogger("imio.events.core")
+
 
 def get_container_uid(event_uid, summary=None):
     if summary is not None:
         container_uid = summary.get("UID") or summary.get("container_uid")
         if container_uid:
             return container_uid
+    if event_uid is None:
+        return None
     brain = api.content.find(UID=event_uid)[0]
     container_uid = getattr(brain, "container_uid", None)
     return container_uid
@@ -103,6 +110,12 @@ class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
                 container_uid = get_container_uid(event_uid)
             else:
                 container_uid = get_container_uid(None, summary)
+            if container_uid is None:
+                if is_log_active():
+                    logger.info(f"container_uid is None ?")
+                    logger.info(f"QUERY_STRING: {self.request.QUERY_STRING}")
+                    logger.info(f"summary: {summary}")
+                return summary
             # Agendas can be private (admin to access them). That doesn't stop events to be bring.
             with api.env.adopt_user(username="admin"):
                 agenda = api.content.get(UID=container_uid)
