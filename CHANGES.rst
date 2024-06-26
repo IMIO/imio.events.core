@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.26 (unreleased)
+1.2.26 (2024-06-26)
 -------------------
 
 - WEB-4121 : Add logs if container_uid is None
