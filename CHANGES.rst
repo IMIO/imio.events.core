@@ -5,7 +5,8 @@ Changelog
 1.2.27 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4130 : Fix bug which forbid to remove events
+  [boulch]
 
 
 1.2.26 (2024-06-26)
