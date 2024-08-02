@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.27 (unreleased)
+1.2.27 (2024-08-02)
 -------------------
 
 - WEB-4130 : Fix bug which forbid to remove events
