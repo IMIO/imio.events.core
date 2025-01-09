@@ -1,6 +1,10 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:plone="http://namespaces.plone.org/plone">
+    xmlns:cache="http://namespaces.zope.org/cache"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+<include package=".search" />
 
   <plone:service
       name="@events"
@@ -40,5 +44,11 @@
       permission="zope2.View"
       layer="imio.events.core.interfaces.IImioEventsCoreLayer"
       />
+
+  <cache:rulesetType
+    name="imio.events.core.rest"
+    title="imio.events.core rest endpoints"
+    description="rest endpoints overriden by imio.events.core"
+    />
 
 </configure>
