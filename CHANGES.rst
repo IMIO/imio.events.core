@@ -5,7 +5,8 @@ Changelog
 1.2.29 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4206 : Remove wcatoken from query parameters when using @events endpoint
+  [remdub]
 
 
 1.2.28 (2025-01-09)

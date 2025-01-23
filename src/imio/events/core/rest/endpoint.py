@@ -44,6 +44,7 @@ class SearchFiltersGet(Service):
 
 class EventsEndpointGet(Service):
     def reply(self):
+        self.request.form.pop("wcatoken", None)
         query = self.request.form.copy()
         query = unflatten_dotted_dict(query)
         return EventsEndpointHandler(self.context, self.request).search(query)
