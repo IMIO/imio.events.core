@@ -5,7 +5,8 @@ Changelog
 1.2.29 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Migrate to Plone 6.0.14
+  [boulch]
 
 
 1.2.28 (2025-01-09)
