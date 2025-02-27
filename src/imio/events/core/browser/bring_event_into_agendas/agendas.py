@@ -23,7 +23,7 @@ class IBringEventIntoAgendasForm(model.Schema):
         "agendas",
         TranslatedAjaxSelectWidget,
         vocabulary="imio.events.vocabulary.UserAgendas",
-        pattern_options={"multiple": True},
+        pattern_options={"multiple": True, "minimumInputLength": 3},
     )
     directives.write_permission(agendas="cmf.SetOwnProperties")
     agendas = schema.List(

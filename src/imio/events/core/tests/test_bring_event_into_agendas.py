@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from imio.events.core.testing import IMIO_EVENTS_CORE_FUNCTIONAL_TESTING
+from imio.events.core import vocabularies
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -76,6 +77,7 @@ class TestEvent(unittest.TestCase):
                 TEST_USER_PASSWORD,
             ),
         )
+        vocabularies.ENABLE_CACHE = False
         browser.open(
             f"{self.event2.absolute_url()}/@@bring_event_into_agendas_form/@@getVocabulary?name=imio.events.vocabulary.UserAgendas&field=agendas"
         )
