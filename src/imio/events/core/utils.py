@@ -65,16 +65,15 @@ def get_start_date(event):
 
 
 # just expand occurences. No filtering here
+
 def expand_occurences(events, range="min"):
     expanded_events = []
 
     for event in events:
-        start_date = dateutil.parser.parse(event["first_start"])
-        start_date = start_date.astimezone(utc)
-        end_date = dateutil.parser.parse(event["first_end"])
-        end_date = end_date.astimezone(utc)
+        start_date = dateutil.parser.parse(event["first_start"]).astimezone(utc)
+        end_date = dateutil.parser.parse(event["first_end"]).astimezone(utc)
 
-        # Ensure event start/end are in same date format than other json dates
+        # Mise à jour des dates en format JSON
         event["start"] = json_compatible(start_date)
         event["end"] = json_compatible(end_date)
 
@@ -82,37 +81,39 @@ def expand_occurences(events, range="min"):
             expanded_events.append(event)
             continue
 
-        # optimize query with "until" to avoid to go through all recurrences
-        # if we want "future events", we get occurences to 5 years in the future
-        # if we want "past events", we get occurences to 1 year in the past
-        until = from_ = None
-        until = start_date + timedelta(days=365 * 5)
-        # for now min:max is only supported for future events
-        if range == "min:max":
-            from_ = datetime.now()
+        # Définition des bornes temporelles
+        from_, until = datetime.now(utc), start_date + timedelta(days=365 * 5)
+        if range == "min":
+            from_ = None
+        elif range == "min:max":
+            from_ = datetime.now() # min(start_date, datetime.now(utc))
         elif range == "max":
-            from_ = start_date - timedelta(days=365)
-            until = datetime.now()
+            from_, until = start_date - timedelta(days=365), datetime.now(utc)
+               
         start_dates = recurrence_sequence_ical(
             start=start_date,
             recrule=event["recurrence"],
             from_=from_,
             until=until,
         )
-
         if event["whole_day"] or event["open_end"]:
             duration = timedelta(hours=23, minutes=59, seconds=59)
         else:
             duration = end_date - start_date
 
+        # Création des nouvelles occurrences avec conservation de l'heure originale
         for occurence_start in start_dates:
-            new_event = copy.deepcopy(event)
+            occurence_start = occurence_start.replace(hour=start_date.hour, minute=start_date.minute, second=start_date.second)  # 🔥 On s'assure que l'heure est correcte
             start_time = datetime.combine(datetime.today(), start_date.time())
             end_time = datetime.combine(datetime.today(), end_date.time())
             duration = end_time - start_time
-            new_event["start"] = json_compatible(occurence_start)
-            new_event["end"] = json_compatible(occurence_start + duration)
+            new_event = {
+                **event,
+                "start": json_compatible(occurence_start),
+                "end": json_compatible(occurence_start + duration),
+            }
             expanded_events.append(new_event)
+
     return expanded_events
 
 
