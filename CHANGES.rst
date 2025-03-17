@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.29 (unreleased)
+1.2.29 (2025-03-17)
 -------------------
 
 - Cache the UserAgendas vocabulary and set pattern_options to start the AJAX query after 3 characters
