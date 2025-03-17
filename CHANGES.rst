@@ -5,6 +5,9 @@ Changelog
 1.2.29 (unreleased)
 -------------------
 
+- Cache the UserAgendas vocabulary and set pattern_options to start the AJAX query after 3 characters
+  [boulch]
+
 - Update Python classifiers to be compatible with Python 3.12
   [remdub]
 

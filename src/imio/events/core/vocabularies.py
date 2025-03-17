@@ -5,12 +5,24 @@ from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
+from plone.memoize import ram
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.CMFPlone.utils import parent
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from zope.interface import provider
+
+import time
+
+
+ENABLE_CACHE = True
+
+
+def _cache_key(func, context):
+    user = api.user.get_current()
+    return f"user_{user.getId()}_{int(time.time() / 10)}"  # Changes every 30s
 
 
 class EventsCategoriesVocabularyFactory:
@@ -140,23 +152,42 @@ class EventTypesVocabularyFactory:
 EventTypesVocabulary = EventTypesVocabularyFactory()
 
 
+@provider(IVocabularyFactory)
 class UserAgendasVocabularyFactory:
 
-    def __call__(self, context=None):
+    if ENABLE_CACHE is True:
+
+        def __call__(self, context=None):
+            return self.call(context)
+
+    else:
+
+        @ram.cache(_cache_key)
+        def __call__(self, context=None):
+            return self.call(context)
+
+    def call(self, context=None):
         site = api.portal.get()
         user = site.portal_membership.getAuthenticatedMember()
-        terms = []
         permission = "imio.events.core: Add Event"
+        # Get search query from request
+        request = api.portal.getRequest()
+        search_query = request.form.get("query", "").lower() if request else ""
+        terms = []
+
         brains = api.content.find(object_provides=[IAgenda])
         for brain in brains:
-            obj = brain.getObject()
             try:
-                if user.has_permission(permission, obj):
-                    terms.append(
-                        SimpleTerm(
-                            value=brain.UID, token=brain.UID, title=brain.breadcrumb
+                title = brain.breadcrumb.lower()
+                if not search_query or search_query in title:
+                    obj = brain.getObject()
+                    if user.has_permission(permission, obj):
+                        print(title)
+                        terms.append(
+                            SimpleTerm(
+                                value=brain.UID, token=brain.UID, title=brain.breadcrumb
+                            )
                         )
-                    )
             except Unauthorized:
                 pass
         sorted_terms = sorted(terms, key=lambda x: x.title)
