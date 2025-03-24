@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.30 (unreleased)
+1.2.30 (2025-03-24)
 -------------------
 
 - Refactor events endpoint. Try to improve performances : Enhance cache management,
