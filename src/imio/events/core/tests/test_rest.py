@@ -14,11 +14,32 @@ from zope.component import getUtility
 import unittest
 
 
+# def clear_search_cache(query):
+#     cache_key = EventsEndpointHandler._cache_key("func", "instance", query)
+#     cache = getUtility(ICacheChooser)(cache_key)
+#     storage = cache.ramcache._getStorage()._data
+#     del storage["imio.events.core.rest.endpoint.search"]
+
+
 def clear_search_cache(query):
-    cache_key = EventsEndpointHandler._cache_key("func", "instance", query)
+    # Générer la clé de cache correcte
+    cache_key, _ = EventsEndpointHandler._cache_key(
+        None, None, query
+    )  # Ignorer `func` et `instance`
+
+    # Récupérer l'instance de cache
     cache = getUtility(ICacheChooser)(cache_key)
-    storage = cache.ramcache._getStorage()._data
-    del storage["imio.events.core.rest.endpoint.search"]
+
+    # Vérifier si la clé est présente et la supprimer proprement
+    try:
+        storage = cache.ramcache._getStorage()._data
+        del storage["imio.events.core.rest.endpoint.search"]
+        # cache.ramcache.invalidate(cache_key)
+    except KeyError:
+        import pdb
+
+        pdb.set_trace()
+        pass  # La clé n'existe pas, donc rien à faire
 
 
 class RestFunctionalTest(unittest.TestCase):

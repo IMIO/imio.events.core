@@ -14,7 +14,6 @@ from pytz import utc
 from zope.component import getMultiAdapter
 from zope.interface import noLongerProvides
 
-import copy
 import dateutil
 import os
 
@@ -69,10 +68,8 @@ def expand_occurences(events, range="min"):
     expanded_events = []
 
     for event in events:
-        start_date = dateutil.parser.parse(event["first_start"])
-        start_date = start_date.astimezone(utc)
-        end_date = dateutil.parser.parse(event["first_end"])
-        end_date = end_date.astimezone(utc)
+        start_date = dateutil.parser.parse(event["first_start"]).astimezone(utc)
+        end_date = dateutil.parser.parse(event["first_end"]).astimezone(utc)
 
         # Ensure event start/end are in same date format than other json dates
         event["start"] = json_compatible(start_date)
@@ -106,7 +103,7 @@ def expand_occurences(events, range="min"):
             duration = end_date - start_date
 
         for occurence_start in start_dates:
-            new_event = copy.deepcopy(event)
+            new_event = {**event}
             start_time = datetime.combine(datetime.today(), start_date.time())
             end_time = datetime.combine(datetime.today(), end_date.time())
             duration = end_time - start_time

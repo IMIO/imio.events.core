@@ -5,7 +5,9 @@ Changelog
 1.2.30 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Refactor events endpoint. Try to improve performances : Enhance cache management,
+  less dates transformations, Use a generator to get occurrences,Remove deepcopy to manage occurrences,...
+  [boulch])
 
 
 1.2.29 (2025-03-17)
