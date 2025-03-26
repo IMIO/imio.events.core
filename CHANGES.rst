@@ -5,13 +5,14 @@ Changelog
 1.2.31 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4234 : Continue refactoring endpoint. Correct a bug with batching.
+  [boulch]
 
 
 1.2.30 (2025-03-24)
 -------------------
 
-- Refactor events endpoint. Try to improve performances : Enhance cache management,
+- WEB-4234 : Refactor events endpoint. Try to improve performances : Enhance cache management,
   less dates transformations, Use a generator to get occurrences,Remove deepcopy to manage occurrences,...
   [boulch])
 

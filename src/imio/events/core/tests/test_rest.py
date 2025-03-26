@@ -33,12 +33,9 @@ def clear_search_cache(query):
     # Vérifier si la clé est présente et la supprimer proprement
     try:
         storage = cache.ramcache._getStorage()._data
-        del storage["imio.events.core.rest.endpoint.search"]
+        del storage["imio.events.core.rest.endpoint._perform_search"]
         # cache.ramcache.invalidate(cache_key)
     except KeyError:
-        import pdb
-
-        pdb.set_trace()
         pass  # La clé n'existe pas, donc rien à faire
 
 

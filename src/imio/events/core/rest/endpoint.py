@@ -53,8 +53,6 @@ class EventsEndpointGet(Service):
 
 class EventsEndpointHandler(SearchHandler):
 
-    ignored_params = ["b_size", "b_start"]
-
     def _cache_key(func, instance, query):
         query_str = json.dumps(
             query, sort_keys=True
@@ -62,9 +60,44 @@ class EventsEndpointHandler(SearchHandler):
         query_hash = hashlib.md5(
             query_str.encode("utf-8")
         ).hexdigest()  # Hash MD5 pour éviter une clé trop longue
-        return (query_hash, time.time() // 60)  # Expire toutes les 60 secondes
+        return (query_hash, time.time() // 180)
 
     @ram.cache(_cache_key)
+    def _perform_search(self, query):
+        """Cette méthode effectue la recherche et l'expansion des occurrences avant le tri."""
+        fullobjects = query.get("fullobjects", True)
+        query["portal_type"] = "imio.events.Event"
+        query["review_state"] = "published"
+        query["b_size"] = 5000
+
+        if "selected_agendas" in query:
+            query["selected_agendas"] = sorted(
+                set(self.get_cascading_agendas(query["selected_agendas"]))
+            )
+
+        self._constrain_query_by_path(query)
+        query = self._parse_query(query)
+        range_type = self.request.form.get("event_dates.range")
+        if range_type == "max":
+            self.optimize_max_range(query)
+        lazy_resultset = self.catalog.searchResults(**query)
+
+        if "metadata_fields" not in self.request.form:
+            self.request.form["metadata_fields"] = []
+        self.request.form["metadata_fields"] += [
+            "container_uid",
+            "recurrence",
+            "whole_day",
+            "first_start",
+            "first_end",
+            "open_end",
+        ]
+        self.request.form["b_size"] = query["b_size"]
+        self.request.form["b_start"] = 0
+        results = self.get_serialized_results(lazy_resultset, fullobjects)
+        expanded_occurrences = expand_occurences(results.get("items"), range_type)
+        return expanded_occurrences, range_type
+
     def search(self, query=None):
         tps1 = time.time()
         if not query:
@@ -72,57 +105,31 @@ class EventsEndpointHandler(SearchHandler):
 
         b_size = query.pop("b_size", 20)
         b_start = query.pop("b_start", 0)
-        fullobjects = query.pop("fullobjects", False)
-
-        query["portal_type"] = "imio.events.Event"
-        query["review_state"] = "published"
-        query["b_size"] = 10000
-
-        if "selected_agendas" in query:
-            query["selected_agendas"] = list(
-                set(self.get_cascading_agendas(query["selected_agendas"]))
-            )
-
-        self._constrain_query_by_path(query)
-        query = self._parse_query(query)
-
-        range_type = self.request.form.get("event_dates.range")
-        if range_type == "max":
-            self.optimize_max_range(query)
-
-        lazy_resultset = self.catalog.searchResults(**query)
-
-        self.request.form.setdefault("metadata_fields", []).extend(
-            [
-                "container_uid",
-                "recurrence",
-                "whole_day",
-                "first_start",
-                "first_end",
-                "open_end",
-            ]
-        )
-
-        results = self.get_serialized_results(lazy_resultset, fullobjects)
-
-        expanded_occurrences = expand_occurences(results.get("items"), range_type)
+        # Appel à la nouvelle méthode pour obtenir les résultats de la recherche avant le tri et l'expansion
+        # expanded_occurrences, range_type, b_size, b_start = self._perform_search(query)
+        expanded_occurrences, range_type = self._perform_search(query)
         sorted_occurrences = self.filter_and_sort_occurrences(
             expanded_occurrences, range_type
         )
-        self.request.form["b_size"] = b_size
+
         self.request.form["b_start"] = b_start
+        self.request.form["b_size"] = b_size
+        if len(expanded_occurrences) < int(b_size):
+            self.request.form["b_size"] = str(len(expanded_occurrences))
+
         batch = HypermediaBatch(self.request, sorted_occurrences)
 
         if is_log_active():
             logger.info(f"query : {results['@id']}")
         tps2 = time.time()
         logger.info(f"time (total) : {tps2 - tps1}")
-        return {
+        results = {
             "@id": batch.canonical_url,
             "items_total": batch.items_total,
             "batching": batch.links if batch.links else None,
             "items": list(batch),
         }
+        return results
 
     def get_cascading_agendas(self, initial_agenda):
         global_list = []
@@ -212,8 +219,6 @@ class EventsEndpointHandler(SearchHandler):
             return (
                 (min_date <= start_date <= max_date)
                 or (start_date <= min_date and end_date >= min_date)
-                or (
-                    start_date <= max_date and end_date >= max_date
-                )  # 🔥 Ajout de cette condition
+                or (start_date <= max_date and end_date >= max_date)
             )
         return True
