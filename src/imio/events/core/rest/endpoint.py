@@ -65,7 +65,11 @@ class EventsEndpointHandler(SearchHandler):
     @ram.cache(_cache_key)
     def _perform_search(self, query):
         """Cette méthode effectue la recherche et l'expansion des occurrences avant le tri."""
-        fullobjects = query.get("fullobjects", True)
+        if "fullobjects" in query:
+            fullobjects = True
+            del query["fullobjects"]
+        else:
+            fullobjects = False
         query["portal_type"] = "imio.events.Event"
         query["review_state"] = "published"
         query["b_size"] = 5000
@@ -94,7 +98,9 @@ class EventsEndpointHandler(SearchHandler):
         ]
         self.request.form["b_size"] = query["b_size"]
         self.request.form["b_start"] = 0
-        results = self.get_serialized_results(lazy_resultset, fullobjects)
+        results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(
+            fullobjects=fullobjects
+        )
         expanded_occurrences = expand_occurences(results.get("items"), range_type)
         return expanded_occurrences, range_type
 
@@ -161,11 +167,6 @@ class EventsEndpointHandler(SearchHandler):
             "query": [one_year_ago.isoformat(), now.isoformat()],
             "range": "min:max",
         }
-
-    def get_serialized_results(self, lazy_resultset, fullobjects):
-        return getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(
-            fullobjects=fullobjects
-        )
 
     def filter_and_sort_occurrences(self, occurrences, range_type):
         if not range_type:
