@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.31 (unreleased)
+1.2.31 (2025-03-28)
 -------------------
 
 - WEB-4234 : Continue refactoring endpoint. Correct a bug with batching.
