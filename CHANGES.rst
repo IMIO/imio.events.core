@@ -5,8 +5,8 @@ Changelog
 1.2.32 (unreleased)
 -------------------
 
-- Nothing changed yet.
-
+- Add some logs
+  [boulch]
 
 1.2.31 (2025-03-28)
 -------------------

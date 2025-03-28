@@ -46,7 +46,8 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
         for elem in batched_lst:
             payload = json.dumps(elem)
             response_text = self.odwb_query(url, payload)
-            logger.info(response_text)
+            if is_log_active():
+                logger.info(response_text)
         return response_text
 
     def get_events(self):

@@ -182,7 +182,6 @@ class UserAgendasVocabularyFactory:
                 if not search_query or search_query in title:
                     obj = brain.getObject()
                     if user.has_permission(permission, obj):
-                        print(title)
                         terms.append(
                             SimpleTerm(
                                 value=brain.UID, token=brain.UID, title=brain.breadcrumb

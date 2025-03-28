@@ -72,7 +72,9 @@ class EventsEndpointHandler(SearchHandler):
             fullobjects = False
         query["portal_type"] = "imio.events.Event"
         query["review_state"] = "published"
-        query["b_size"] = 5000
+        query["b_size"] = 800
+        # query["only_active"] = True
+        # query["path"] = {'query': '/Plone', 'depth': 3}
 
         if "selected_agendas" in query:
             query["selected_agendas"] = sorted(
@@ -105,7 +107,8 @@ class EventsEndpointHandler(SearchHandler):
         return expanded_occurrences, range_type
 
     def search(self, query=None):
-        tps1 = time.time()
+        if is_log_active():
+            tps1 = time.time()
         if not query:
             return {"items": []}
 
@@ -126,9 +129,9 @@ class EventsEndpointHandler(SearchHandler):
         batch = HypermediaBatch(self.request, sorted_occurrences)
 
         if is_log_active():
-            logger.info(f"query : {results['@id']}")
-        tps2 = time.time()
-        logger.info(f"time (total) : {tps2 - tps1}")
+            tps2 = time.time()
+            logger.info(f"=====> query : {results['@id']}")
+            logger.info(f"=====> time (total) : {tps2 - tps1}")
         results = {
             "@id": batch.canonical_url,
             "items_total": batch.items_total,
@@ -189,24 +192,29 @@ class EventsEndpointHandler(SearchHandler):
             "min:max": lambda occ: self.is_within_range(occ),
         }.get(range_type, lambda occ: True)
 
-        # DEBUG : log all events occurrences that not conserved (excluded)
-        # excluded_occurrences = []
-        # filtered_occurrences = []
-        # for occ in occurrences:
-        #     if filter_func(occ):
-        #         filtered_occurrences.append(occ)
-        #     else:
-        #         excluded_occurrences.append(occ)
+        if is_log_active():
+            # DEBUG : log all events occurrences that not conserved (excluded)
+            excluded_occurrences = []
+            filtered_occurrences = []
+            for occ in occurrences:
+                if filter_func(occ):
+                    filtered_occurrences.append(occ)
+                else:
+                    excluded_occurrences.append(occ)
 
-        # if excluded_occurrences:
-        #     import pdb; pdb.set_trace()
-        #     logger.warning(f"Événements exclus ({range_type}): {excluded_occurrences}")
-        # return sorted(filtered_occurrences, key=get_start_date, reverse=(range_type == "max"))
-        return sorted(
-            filter(filter_func, occurrences),
-            key=get_start_date,
-            reverse=(range_type == "max"),
-        )
+            if excluded_occurrences:
+                logger.warning(
+                    f"=====> Événements exclus ({range_type}): {excluded_occurrences}"
+                )
+            return sorted(
+                filtered_occurrences, key=get_start_date, reverse=(range_type == "max")
+            )
+        else:
+            return sorted(
+                filter(filter_func, occurrences),
+                key=get_start_date,
+                reverse=(range_type == "max"),
+            )
 
     def is_within_range(self, occurrence):
         min_date, max_date = self.request.form.get("event_dates.query", [None, None])
