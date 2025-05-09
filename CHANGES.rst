@@ -5,6 +5,9 @@ Changelog
 1.2.32 (unreleased)
 -------------------
 
+- WEB-4234  : Refactor agenda subscription (so => events indexing). Try to avoid latency
+  [boulch]
+
 - Add some logs
   [boulch]
 

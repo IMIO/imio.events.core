@@ -80,10 +80,10 @@ def expand_occurences(events, range="min"):
             continue
 
         # optimize query with "until" to avoid to go through all recurrences
-        # if we want "future events", we get occurences to 5 years in the future
+        # if we want "future events", we get occurences to 1 years in the future
         # if we want "past events", we get occurences to 1 year in the past
         until = from_ = None
-        until = start_date + timedelta(days=365 * 5)
+        until = start_date + timedelta(days=365)
         # for now min:max is only supported for future events
         if range == "min:max":
             from_ = datetime.now()
