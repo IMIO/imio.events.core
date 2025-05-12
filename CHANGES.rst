@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.32 (unreleased)
+1.2.32 (2025-05-12)
 -------------------
 
 - WEB-4234  : Refactor agenda subscription (so => events indexing). Try to avoid latency
