@@ -5,7 +5,8 @@ Changelog
 1.2.33 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4234  : Avoid using fullobjects in events endpoint. Increase events time caching. Reduce b_size.
+  [boulch]
 
 
 1.2.32 (2025-05-12)

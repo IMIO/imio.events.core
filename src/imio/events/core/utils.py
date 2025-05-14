@@ -71,6 +71,20 @@ def expand_occurences(events, range="min"):
         start_date = dateutil.parser.parse(event["first_start"]).astimezone(utc)
         end_date = dateutil.parser.parse(event["first_end"]).astimezone(utc)
 
+        event["geolocation"] = {
+            "latitude": event.get("latitude", ""),
+            "longitude": event.get("longitude", ""),
+        }
+        if event.get("image_scales", None):
+            id_event = event["@id"]
+            event["image_scales"]["image"][0][
+                "download"
+            ] = f"{id_event}{event["image_scales"]["image"][0]["download"]}"
+            scales = event["image_scales"]["image"][0]["scales"]
+            for k, v in scales.items():
+                v["download"] = f"{id_event}{v["download"]}"
+            event["image"] = event["image_scales"]["image"][0]
+            del event["image_scales"]
         # Ensure event start/end are in same date format than other json dates
         event["start"] = json_compatible(start_date)
         event["end"] = json_compatible(end_date)
@@ -78,7 +92,6 @@ def expand_occurences(events, range="min"):
         if not event["recurrence"]:
             expanded_events.append(event)
             continue
-
         # optimize query with "until" to avoid to go through all recurrences
         # if we want "future events", we get occurences to 1 years in the future
         # if we want "past events", we get occurences to 1 year in the past

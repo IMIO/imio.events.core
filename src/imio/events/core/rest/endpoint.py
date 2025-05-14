@@ -60,21 +60,17 @@ class EventsEndpointHandler(SearchHandler):
         query_hash = hashlib.md5(
             query_str.encode("utf-8")
         ).hexdigest()  # Hash MD5 pour éviter une clé trop longue
-        return (query_hash, time.time() // 180)
+        return (query_hash, time.time() // 240)
 
     @ram.cache(_cache_key)
     def _perform_search(self, query):
         """Cette méthode effectue la recherche et l'expansion des occurrences avant le tri."""
         if "fullobjects" in query:
-            fullobjects = True
             del query["fullobjects"]
-        else:
-            fullobjects = False
+        fullobjects = False
         query["portal_type"] = "imio.events.Event"
         query["review_state"] = "published"
-        query["b_size"] = 800
-        # query["only_active"] = True
-        # query["path"] = {'query': '/Plone', 'depth': 3}
+        query["b_size"] = 400
 
         if "selected_agendas" in query:
             query["selected_agendas"] = sorted(
