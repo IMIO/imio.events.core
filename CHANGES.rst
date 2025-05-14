@@ -5,6 +5,15 @@ Changelog
 1.2.33 (unreleased)
 -------------------
 
+- Upgrade dev environment to Plone 6.1.1
+  [boulch]
+
+- Update Python classifiers to be compatible with Python 3.13
+  [boulch]
+
+- Update Python classifiers to be compatible with Python 3.12
+  [boulch]
+
 - WEB-4234  : Avoid using fullobjects in events endpoint. Increase events time caching. Reduce b_size.
   [boulch]
 
