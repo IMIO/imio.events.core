@@ -77,12 +77,12 @@ def expand_occurences(events, range="min"):
         }
         if event.get("image_scales", None):
             id_event = event["@id"]
-            event["image_scales"]["image"][0][
-                "download"
-            ] = f"{id_event}{event["image_scales"]["image"][0]["download"]}"
+            url_image = {event["image_scales"]["image"][0]["download"]}
+            event["image_scales"]["image"][0]["download"] = f"{id_event}{url_image}"
             scales = event["image_scales"]["image"][0]["scales"]
             for k, v in scales.items():
-                v["download"] = f"{id_event}{v["download"]}"
+                download = v["download"]
+                v["download"] = f"{id_event}{download}"
             event["image"] = event["image_scales"]["image"][0]
             del event["image_scales"]
         # Ensure event start/end are in same date format than other json dates
