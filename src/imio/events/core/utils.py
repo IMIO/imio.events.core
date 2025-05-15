@@ -68,9 +68,12 @@ def expand_occurences(events, range="min"):
     expanded_events = []
 
     for event in events:
-        start_date = dateutil.parser.parse(event["first_start"]).astimezone(utc)
-        end_date = dateutil.parser.parse(event["first_end"]).astimezone(utc)
-
+        if event is None:
+            continue
+        first_start = event.get("first_start") or event.get("start")
+        first_end = event.get("first_end") or event.get("end")
+        start_date = dateutil.parser.parse(first_start).astimezone(utc)
+        end_date = dateutil.parser.parse(first_end).astimezone(utc)
         event["geolocation"] = {
             "latitude": event.get("latitude", ""),
             "longitude": event.get("longitude", ""),

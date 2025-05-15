@@ -3,7 +3,11 @@ Changelog
 
 
 1.2.33 (unreleased)
--------------------
+----
+
+- WEB-4234  : Fix LookupError when querying on events without fullobjects=1 in querystring
+  (old/bad occurences refer to old event UID)
+  [boulch]
 
 - WEB-4234  : Avoid using fullobjects in events endpoint. Increase events time caching. Reduce b_size.
   [boulch]

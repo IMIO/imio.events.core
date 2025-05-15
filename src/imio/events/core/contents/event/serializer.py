@@ -92,30 +92,47 @@ class SerializeEventToJson(SerializeFolderToJson):
 @adapter(Interface, IImioEventsCoreLayer)
 class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
     def __call__(self):
-        summary = super(EventJSONSummarySerializer, self).__call__()
+        summary = None
+        try:
+            summary = super(EventJSONSummarySerializer, self).__call__()
+        except Exception as e:  # pragma: no cover
+            # occurence on a old/ bad referenced event wich not exist anymore
+            # in the catalog. We don't want to raise an error here.
+            pass
         query = self.request.form
         # To get agenda title and use it in carousel,...
         if query.get("metadata_fields") is not None and "container_uid" in query.get(
             "metadata_fields"
         ):
             agenda = None
-            if IEvent.providedBy(self.context):
-                event_uid = self.context.UID()
-                container_uid = get_container_uid(event_uid)
-            elif IAgenda.providedBy(self.context) or IFolder.providedBy(self.context):
-                container_uid = get_container_uid(None, summary)
-            elif IEvent.providedBy(self.context.getObject()):
-                # context can be a brain
-                event_uid = self.context.UID
-                container_uid = get_container_uid(event_uid)
-            else:
-                container_uid = get_container_uid(None, summary)
-            if container_uid is None:
+            try:
+                if IEvent.providedBy(self.context):
+                    event_uid = self.context.UID()
+                    container_uid = get_container_uid(event_uid)
+                elif IAgenda.providedBy(self.context) or IFolder.providedBy(
+                    self.context
+                ):
+                    container_uid = get_container_uid(None, summary)
+                elif IEvent.providedBy(self.context.getObject()):
+                    # context can be a brain
+                    event_uid = self.context.UID
+                    container_uid = get_container_uid(event_uid)
+                else:
+                    container_uid = get_container_uid(None, summary)
+                if container_uid is None:
+                    if is_log_active():
+                        logger.info(f"container_uid is None ?")
+                        logger.info(f"QUERY_STRING: {self.request.QUERY_STRING}")
+                        logger.info(f"summary: {summary}")
+                    return summary
+            except Exception as e:
+                # occurence on a old/ bad referenced event wich not exist anymore
+                # in the catalog. We don't want to raise an error here.
                 if is_log_active():
-                    logger.info(f"container_uid is None ?")
-                    logger.info(f"QUERY_STRING: {self.request.QUERY_STRING}")
-                    logger.info(f"summary: {summary}")
+                    logger.info(f"object doesn't exist anymore ?! {self.context.UID}")
+                container_uid = get_container_uid(None, summary)
                 return summary
+
             # Agendas can be private (admin to access them). That doesn't stop events to be bring.
             with api.env.adopt_user(username="admin"):
                 agenda = api.content.get(UID=container_uid)
