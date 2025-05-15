@@ -2,16 +2,12 @@ Changelog
 =========
 
 
-1.2.33 (unreleased)
-----
+1.2.34 (unreleased)
+-------------------
 
 - WEB-4234  : Fix LookupError when querying on events without fullobjects=1 in querystring
   (old/bad occurences refer to old event UID)
   [boulch]
-1.2.34 (unreleased)
--------------------
-
-- Nothing changed yet.
 
 
 1.2.33 (2025-05-14)
