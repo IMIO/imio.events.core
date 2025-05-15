@@ -8,6 +8,23 @@ Changelog
 - WEB-4234  : Fix LookupError when querying on events without fullobjects=1 in querystring
   (old/bad occurences refer to old event UID)
   [boulch]
+1.2.34 (unreleased)
+-------------------
+
+- Nothing changed yet.
+
+
+1.2.33 (2025-05-14)
+-------------------
+
+- Upgrade dev environment to Plone 6.1.1
+  [boulch]
+
+- Update Python classifiers to be compatible with Python 3.13
+  [boulch]
+
+- Update Python classifiers to be compatible with Python 3.12
+  [boulch]
 
 - WEB-4234  : Avoid using fullobjects in events endpoint. Increase events time caching. Reduce b_size.
   [boulch]
