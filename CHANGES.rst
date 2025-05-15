@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.34 (unreleased)
+1.2.34 (2025-05-15)
 -------------------
 
 - WEB-4234  : Fix LookupError when querying on events without fullobjects=1 in querystring
