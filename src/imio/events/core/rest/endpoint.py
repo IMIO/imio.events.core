@@ -126,8 +126,8 @@ class EventsEndpointHandler(SearchHandler):
 
         if is_log_active():
             tps2 = time.time()
-            logger.info(f"=====> query : {results['@id']}")
-            logger.info(f"=====> time (total) : {tps2 - tps1}")
+            logger.info(f"search =====> query : {results['@id']}")
+            logger.info(f"search =====> time (total) : {tps2 - tps1}")
         results = {
             "@id": batch.canonical_url,
             "items_total": batch.items_total,
