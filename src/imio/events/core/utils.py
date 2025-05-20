@@ -6,12 +6,15 @@ from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
 from imio.smartweb.common.faceted.utils import configure_faceted
+from imio.smartweb.common.vocabularies import IAmVocabulary
+from imio.smartweb.common.vocabularies import TopicsVocabulary
 from plone import api
 from plone.event.recurrence import recurrence_sequence_ical
 from plone.restapi.serializer.converters import json_compatible
 from Products.CMFPlone.utils import parent
 from pytz import utc
 from zope.component import getMultiAdapter
+from zope.i18n import translate
 from zope.interface import noLongerProvides
 
 import dateutil
@@ -63,10 +66,36 @@ def get_start_date(event):
     return datetime.fromisoformat(event["start"])
 
 
+# If we want to further optimize the retrieval of a single event without using fullobjects=1
+# , then this function will be useful.
+def hydrate_ids_for(field_name, event, vocabulary):
+    current_lang = event.get("language", "fr")
+    raw_ids = event.get(field_name, [])
+    result = []
+    if not raw_ids:
+        return raw_ids
+    for term_id in raw_ids:
+        term = vocabulary.getTermByToken(term_id)
+        result.append(
+            {
+                "title": translate(term.title, target_language=current_lang),
+                "token": term.token,
+            }
+        )
+    return result
+
+
+# If we want to further optimize the retrieval of a single event without using fullobjects=1
+# , then this function will be useful.
+# def get_gallery_images(event):
+#     pass
+
+
 # just expand occurences. No filtering here
 def expand_occurences(events, range="min"):
     expanded_events = []
-
+    # iam_vocabulary = IAmVocabulary()
+    # topics_vocabulary = TopicsVocabulary()
     for event in events:
         if event is None:
             continue
@@ -78,6 +107,11 @@ def expand_occurences(events, range="min"):
             "latitude": event.get("latitude", ""),
             "longitude": event.get("longitude", ""),
         }
+
+        # without fullobjects
+        # event["iam"] = hydrate_ids_for("iam", event, iam_vocabulary)
+        # event["topics"] = hydrate_ids_for("topics", event, topics_vocabulary)
+
         if event.get("image_scales", None):
             id_event = event["@id"]
             url_image = {event["image_scales"]["image"][0]["download"]}

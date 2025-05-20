@@ -5,7 +5,8 @@ Changelog
 1.2.35 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Use fullobjects=1 when we want to get only one event
+  [boulch]
 
 
 1.2.34 (2025-05-15)

@@ -68,6 +68,9 @@ class EventsEndpointHandler(SearchHandler):
         if "fullobjects" in query:
             del query["fullobjects"]
         fullobjects = False
+        if query.get("UID", None):
+            fullobjects = True
+
         query["portal_type"] = "imio.events.Event"
         query["review_state"] = "published"
         query["b_size"] = 400
