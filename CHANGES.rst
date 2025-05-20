@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.35 (unreleased)
+1.2.35 (2025-05-20)
 -------------------
 
 - Use fullobjects=1 when we want to get only one event
