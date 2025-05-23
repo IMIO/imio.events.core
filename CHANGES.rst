@@ -5,7 +5,8 @@ Changelog
 1.2.36 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4264 : Fix has_leadmage metadata_field
+  [boulch]
 
 
 1.2.35 (2025-05-20)

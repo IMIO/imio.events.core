@@ -107,7 +107,9 @@ def expand_occurences(events, range="min"):
             "latitude": event.get("latitude", ""),
             "longitude": event.get("longitude", ""),
         }
-
+        event["has_leadimage"] = False
+        if event.get("image", None):
+            event["has_leadimage"] = True
         # without fullobjects
         # event["iam"] = hydrate_ids_for("iam", event, iam_vocabulary)
         # event["topics"] = hydrate_ids_for("topics", event, topics_vocabulary)
