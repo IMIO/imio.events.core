@@ -107,7 +107,6 @@ def expand_occurences(events, range="min"):
             "latitude": event.get("latitude", ""),
             "longitude": event.get("longitude", ""),
         }
-
         # without fullobjects
         # event["iam"] = hydrate_ids_for("iam", event, iam_vocabulary)
         # event["topics"] = hydrate_ids_for("topics", event, topics_vocabulary)
@@ -122,6 +121,9 @@ def expand_occurences(events, range="min"):
                 v["download"] = f"{id_event}{download}"
             event["image"] = event["image_scales"]["image"][0]
             del event["image_scales"]
+        event["has_leadimage"] = False
+        if event.get("image", None):
+            event["has_leadimage"] = True
         # Ensure event start/end are in same date format than other json dates
         event["start"] = json_compatible(start_date)
         event["end"] = json_compatible(end_date)
