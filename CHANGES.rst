@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.37 (unreleased)
+1.2.37 (2025-05-27)
 -------------------
 
 - WEB-4270 : Mark event as dirty when modifying selected agendas
