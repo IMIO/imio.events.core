@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.36 (unreleased)
+1.2.36 (2025-05-27)
 -------------------
 
 - WEB-4264 : Fix has_leadmage metadata_field
