@@ -5,7 +5,9 @@ Changelog
 1.2.37 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4270 : Mark event as dirty when modifying selected agendas
+  Ensures that initial values in the TranslatedAjaxSelectWidget are correctly updated
+  [remdub]
 
 
 1.2.36 (2025-05-27)

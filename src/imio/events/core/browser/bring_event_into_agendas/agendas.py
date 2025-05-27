@@ -83,6 +83,7 @@ class BringEventIntoAgendasForm(AutoExtensibleForm, form.Form):
             success_message = _("Agenda(s) correctly added.")
 
         self.context.reindexObject(idxs=["selected_agendas"])
+        self.context._p_changed = 1
         self.status = success_message
         api.portal.show_message(_(self.status), self.request)
 
