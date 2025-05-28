@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.38 (unreleased)
+1.2.38 (2025-05-28)
 -------------------
 
 - WEB-4251 : Fix bug when we get a whole day event. On the day, these events don't appear!
