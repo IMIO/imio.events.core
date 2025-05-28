@@ -127,7 +127,9 @@ def expand_occurences(events, range="min"):
         # Ensure event start/end are in same date format than other json dates
         event["start"] = json_compatible(start_date)
         event["end"] = json_compatible(end_date)
-
+        if event["whole_day"] or event["open_end"]:
+            duration = timedelta(hours=23, minutes=59, seconds=59)
+            event["end"] = json_compatible(start_date + duration)
         if not event["recurrence"]:
             expanded_events.append(event)
             continue
@@ -148,11 +150,6 @@ def expand_occurences(events, range="min"):
             from_=from_,
             until=until,
         )
-
-        if event["whole_day"] or event["open_end"]:
-            duration = timedelta(hours=23, minutes=59, seconds=59)
-        else:
-            duration = end_date - start_date
 
         for occurence_start in start_dates:
             new_event = {**event}

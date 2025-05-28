@@ -5,7 +5,8 @@ Changelog
 1.2.38 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4251 : Fix bug when we get a whole day event. On the day, these events don't appear!
+  [boulch]
 
 
 1.2.37 (2025-05-27)
