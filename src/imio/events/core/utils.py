@@ -113,8 +113,10 @@ def expand_occurences(events, range="min"):
 
         if event.get("image_scales", None):
             id_event = event["@id"]
-            url_image = {event["image_scales"]["image"][0]["download"]}
-            event["image_scales"]["image"][0]["download"] = f"{id_event}{url_image}"
+            url_image = event["image_scales"]["image"][0]["download"]
+            event["image_scales"]["image"][0][
+                "download"
+            ] = url_image  # f"{id_event}{url_image}"
             scales = event["image_scales"]["image"][0]["scales"]
             for k, v in scales.items():
                 download = v["download"]

@@ -5,7 +5,8 @@ Changelog
 1.2.39 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- CITI-8 : Fix images for citizen space in e-guichet
+  [boulch]
 
 
 1.2.38 (2025-05-28)
