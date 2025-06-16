@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.39 (unreleased)
+1.2.39 (2025-06-16)
 -------------------
 
 - CITI-8 : Fix images for citizen space in e-guichet
