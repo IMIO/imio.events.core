@@ -5,7 +5,8 @@ Changelog
 1.2.40 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- SUP-45270 : Don't set end date when undetermined end date is set to True (open_end property)
+  [boulch]
 
 
 1.2.39 (2025-06-16)
