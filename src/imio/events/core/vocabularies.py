@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collective.taxonomy.interfaces import ITaxonomy
 from AccessControl import Unauthorized
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
@@ -8,6 +9,7 @@ from plone import api
 from plone.memoize import ram
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.CMFPlone.utils import parent
+from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
@@ -194,3 +196,21 @@ class UserAgendasVocabularyFactory:
 
 
 UserAgendasVocabulary = UserAgendasVocabularyFactory()
+
+
+class EventPublicDeVocabularyFactory:
+    def __call__(self, context=None):
+        sm = getSiteManager()
+        event_public_taxo = sm.queryUtility(
+            ITaxonomy, name="collective.taxonomy.event_public"
+        )
+        if not event_public_taxo:
+            return SimpleVocabulary([])
+        categories_voca = event_public_taxo.makeVocabulary("de").inv_data
+        terms = [
+            SimpleTerm(value=k, token=k, title=v) for k, v in categories_voca.items()
+        ]
+        return SimpleVocabulary(terms)
+
+
+EventPublicDeVocabulary = EventPublicDeVocabularyFactory()

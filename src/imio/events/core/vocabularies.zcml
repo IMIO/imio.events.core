@@ -37,4 +37,10 @@
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+  <utility
+    name="imio.events.vocabulary.EventPublicDe"
+    component=".vocabularies.EventPublicDeVocabulary"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />    
+
 </configure>

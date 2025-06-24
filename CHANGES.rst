@@ -5,6 +5,9 @@ Changelog
 1.2.40 (unreleased)
 -------------------
 
+- WEB-4278 : Create translated (de) collective.taxonomy.event_public taxonomy as EventPublicDe vocabulary for e-guichet (citizen project)
+  [boulch]
+
 - SUP-45270 : Don't set end date when undetermined end date is set to True (open_end property)
   [boulch]
 
