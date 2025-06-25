@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.40 (unreleased)
+1.2.40 (2025-06-25)
 -------------------
 
 - WEB-4278 : Create translated (de) collective.taxonomy.event_public taxonomy as EventPublicDe vocabulary for e-guichet (citizen project)
