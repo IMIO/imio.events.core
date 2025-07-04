@@ -5,7 +5,8 @@ Changelog
 1.2.41 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- SUP-45754 : Fix (another) bug when we get whole day events
+  [boulch]
 
 
 1.2.40 (2025-06-25)
