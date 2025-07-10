@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.42 (unreleased)
+1.2.42 (2025-07-10)
 -------------------
 
 - CITI-10 : Add new translated (de) vocabularies for e-guichet
