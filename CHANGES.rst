@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.41 (unreleased)
+1.2.41 (2025-07-10)
 -------------------
 
 - SUP-45754 : Fix (another) bug when we get whole day events
