@@ -11,6 +11,7 @@ from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.CMFPlone.utils import parent
 from zope.component import getSiteManager
 from zope.component import getUtility
+from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -48,6 +49,23 @@ class EventsCategoriesVocabularyFactory:
 EventsCategoriesVocabulary = EventsCategoriesVocabularyFactory()
 
 
+class EventsCategoriesDeVocabularyFactory:
+    def __call__(self, context=None):
+        vocabulary = EventsCategoriesVocabularyFactory()(context)
+        translated_terms = [
+            SimpleTerm(
+                value=term.value,
+                token=term.token,
+                title=translate(term.title, target_language="de"),
+            )
+            for term in vocabulary
+        ]
+        return SimpleVocabulary(translated_terms)
+
+
+EventsCategoriesDeVocabulary = EventsCategoriesDeVocabularyFactory()
+
+
 class EventsLocalCategoriesVocabularyFactory:
     def __call__(self, context=None, lang="fr"):
         if IPloneSiteRoot.providedBy(context):
@@ -65,6 +83,23 @@ class EventsLocalCategoriesVocabularyFactory:
 
 
 EventsLocalCategoriesVocabulary = EventsLocalCategoriesVocabularyFactory()
+
+
+class EventsLocalCategoriesDeVocabularyFactory:
+    def __call__(self, context=None, lang="fr"):
+        vocabulary = EventsLocalCategoriesVocabularyFactory()(context)
+        translated_terms = [
+            SimpleTerm(
+                value=term.value,
+                token=term.token,
+                title=translate(term.title, target_language="de"),
+            )
+            for term in vocabulary
+        ]
+        return SimpleVocabulary(translated_terms)
+
+
+EventsLocalCategoriesDeVocabulary = EventsLocalCategoriesDeVocabularyFactory()
 
 
 class EventsCategoriesAndTopicsVocabularyFactory:

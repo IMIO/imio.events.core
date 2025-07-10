@@ -8,10 +8,22 @@
     />
 
   <utility
+    name="imio.events.vocabulary.EventsCategoriesDe"
+    component=".vocabularies.EventsCategoriesDeVocabulary"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />    
+
+  <utility
     name="imio.events.vocabulary.EventsLocalCategories"
     component=".vocabularies.EventsLocalCategoriesVocabulary"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
+
+  <utility
+    name="imio.events.vocabulary.EventsLocalCategoriesDe"
+    component=".vocabularies.EventsLocalCategoriesDeVocabulary"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />    
 
   <utility
     name="imio.events.vocabulary.EventsCategoriesAndTopicsVocabulary"

@@ -5,7 +5,8 @@ Changelog
 1.2.42 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- CITI-10 : Add new translated (de) vocabularies for e-guichet
+  [boulch]
 
 
 1.2.41 (2025-07-10)
