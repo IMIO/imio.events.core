@@ -44,6 +44,12 @@
     />
 
   <utility
+    name="imio.events.vocabulary.EventTypesDe"
+    component=".vocabularies.EventTypesDeVocabulary"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+  <utility
     name="imio.events.vocabulary.UserAgendas"
     component=".vocabularies.UserAgendasVocabulary"
     provides="zope.schema.interfaces.IVocabularyFactory"

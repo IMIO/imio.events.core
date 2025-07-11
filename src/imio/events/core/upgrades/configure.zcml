@@ -83,6 +83,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="upgrade_1019_to_1020"
+      title="Upgrade core from 1019 to 1020"
+      directory="profiles/1019_to_1020"
+      description="Update event_public taxonomy (add DE translations)"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />      
+
   <genericsetup:upgradeStep
       title="Refresh faceted"
       description="Refresh faceted configurations on all entities / agendas"
@@ -290,6 +298,16 @@
     <genericsetup:upgradeStep
         title="Reindex agendas and folders"
         handler=".upgrades.reindex_agendas_and_folders"
+        />
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+      source="1019"
+      destination="1020"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Update event_public taxonomy (add DE translations)"
+        import_profile="imio.events.core.upgrades:upgrade_1019_to_1020"
         />
   </genericsetup:upgradeSteps>
 

@@ -5,7 +5,8 @@ Changelog
 1.2.43 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- CITI-10 : Add (de) translation for event_public taxonomy and for event types vocabulary
+  [boulch]
 
 
 1.2.42 (2025-07-10)
