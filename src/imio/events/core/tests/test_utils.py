@@ -143,7 +143,7 @@ class TestAgenda(unittest.TestCase):
             }
         ]
         expanded_events = expand_occurences(events)
-        self.assertEqual(len(expanded_events), 5)
+        self.assertEqual(len(expanded_events), 3)
 
         # test occurences data
         events = [

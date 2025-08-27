@@ -6,6 +6,7 @@ from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
 from imio.smartweb.common.faceted.utils import configure_faceted
+from imio.smartweb.common.utils import is_log_active
 from imio.smartweb.common.vocabularies import IAmVocabulary
 from imio.smartweb.common.vocabularies import TopicsVocabulary
 from plone import api
@@ -18,7 +19,10 @@ from zope.i18n import translate
 from zope.interface import noLongerProvides
 
 import dateutil
+import logging
 import os
+
+logger = logging.getLogger("imio.events.core")
 
 
 def get_entity_for_obj(obj):
@@ -143,9 +147,12 @@ def expand_occurences(events, range="min"):
         # optimize query with "until" to avoid to go through all recurrences
         # if we want "future events", we get occurences to 1 years in the future
         # if we want "past events", we get occurences to 1 year in the past
-        until = from_ = None
+        until = from_ = None  # datetime.now()
         until = start_date + timedelta(days=365)
         # for now min:max is only supported for future events
+        if range == "min":
+            from_ = datetime.now()
+            until = from_ + timedelta(days=365)
         if range == "min:max":
             from_ = datetime.now()
         elif range == "max":
@@ -157,7 +164,10 @@ def expand_occurences(events, range="min"):
             from_=from_,
             until=until,
         )
-
+        if is_log_active():
+            logger.warning(
+                f"FROM = {from_} , UNTIL = {until} , range = {range}, start_date = {start_date}, recrule = {event['recurrence']}"
+            )
         for occurence_start in start_dates:
             new_event = {**event}
             start_time = datetime.combine(datetime.today(), start_date.time())

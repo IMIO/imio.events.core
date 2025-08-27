@@ -175,6 +175,8 @@ class EventsEndpointHandler(SearchHandler):
             return occurrences
 
         current_date = datetime.now(timezone.utc)
+        if is_log_active():
+            logger.warning(f"Occurrences before filtering: {len(occurrences)}")
         filter_func = {
             "min": lambda occ: datetime.fromisoformat(occ["start"]) >= current_date
             or (
@@ -196,6 +198,9 @@ class EventsEndpointHandler(SearchHandler):
             excluded_occurrences = []
             filtered_occurrences = []
             for occ in occurrences:
+                logger.warning(
+                    "{} {} {}".format(occ["title"], occ["start"], occ["end"])
+                )
                 if filter_func(occ):
                     filtered_occurrences.append(occ)
                 else:
@@ -205,15 +210,18 @@ class EventsEndpointHandler(SearchHandler):
                 logger.warning(
                     f"=====> Événements exclus ({range_type}): {excluded_occurrences}"
                 )
-            return sorted(
+            sorted_occurrences = sorted(
                 filtered_occurrences, key=get_start_date, reverse=(range_type == "max")
             )
+            logger.warning(f"Occurrences after filtering: {len(sorted_occurrences)}")
+            return sorted_occurrences
         else:
-            return sorted(
+            sorted_occurrences = sorted(
                 filter(filter_func, occurrences),
                 key=get_start_date,
                 reverse=(range_type == "max"),
             )
+            return sorted_occurrences
 
     def is_within_range(self, occurrence):
         min_date, max_date = self.request.form.get("event_dates.query", [None, None])
