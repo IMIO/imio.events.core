@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.43 (unreleased)
+1.2.43 (2025-09-08)
 -------------------
 
 - SUP-46571: Correct handling of "min" range for event recurrences
