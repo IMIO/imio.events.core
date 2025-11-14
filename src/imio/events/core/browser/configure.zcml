@@ -78,17 +78,10 @@
 
   <browser:page
       name="fc-delete"
-      for="imio.events.core.contents.IAgenda"
+      for="Products.CMFCore.interfaces._content.IFolderish"
       class=".actions.DeleteActionView"
       permission="cmf.ListFolderContents"
       layer="imio.events.core.interfaces.IImioEventsCoreLayer"
       />
 
-  <browser:page
-      name="fc-delete"
-      for="imio.events.core.contents.IFolder"
-      class=".actions.DeleteActionView"
-      permission="cmf.ListFolderContents"
-      layer="imio.events.core.interfaces.IImioEventsCoreLayer"
-      />
 </configure>

@@ -5,6 +5,10 @@ Changelog
 1.2.44 (unreleased)
 -------------------
 
+- SUP-38561 : Refactored deletion checks: ignore news items when counting
+  apply restriction only to news folders or folders containing items.
+  [boulch]
+
 - Migrate to Plone 6.1.3
   [boulch]
 
