@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.44 (unreleased)
+1.2.44 (2025-11-14)
 -------------------
 
 - SUP-38561 : Refactored deletion checks: ignore news items when counting
