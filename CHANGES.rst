@@ -5,7 +5,8 @@ Changelog
 1.2.45 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4300 : Add upgrade step to delete plone.eventattendees behavior.
+  [thomlamb]
 
 
 1.2.44 (2025-11-14)

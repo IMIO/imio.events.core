@@ -89,7 +89,15 @@
       directory="profiles/1019_to_1020"
       description="Update event_public taxonomy (add DE translations)"
       provides="Products.GenericSetup.interfaces.EXTENSION"
-      />      
+      />
+
+  <genericsetup:registerProfile
+      name="upgrade_1020_to_1021"
+      title="Upgrade core from 1020 to 1021"
+      directory="profiles/1020_to_1021"
+      description="Remove plone.eventattendees behavior from Event content type"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
 
   <genericsetup:upgradeStep
       title="Refresh faceted"
@@ -308,6 +316,16 @@
     <genericsetup:upgradeDepends
         title="Update event_public taxonomy (add DE translations)"
         import_profile="imio.events.core.upgrades:upgrade_1019_to_1020"
+        />
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+      source="1020"
+      destination="1021"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Remove plone.eventattendees behavior from Event"
+        import_profile="imio.events.core.upgrades:upgrade_1020_to_1021"
         />
   </genericsetup:upgradeSteps>
 
