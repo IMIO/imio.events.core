@@ -5,6 +5,9 @@ Changelog
 1.2.45 (unreleased)
 -------------------
 
+- WEB-4257 : improve tests to avoid data leak in some requests
+  [boulch]
+
 - WEB-4300 : Add upgrade step to delete plone.eventattendees behavior.
   [thomlamb]
 

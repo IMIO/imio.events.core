@@ -80,7 +80,7 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
             logger.info(f"ODWB delete url: {url}")
         payload = json.dumps(lst_events)
         headers = {"Content-Type": "application/json"}
-        response = requests.request("POST", url, headers=headers, data=payload)
+        response = requests.post(url, headers=headers, data=payload)
         return response.text
 
 
@@ -203,5 +203,5 @@ class OdwbEntitiesEndpointGet(OdwbBaseEndpointGet):
             logger.info(f"ODWB push url: {url}")
         payload = json.dumps(lst_entities)
         headers = {"Content-Type": "application/json"}
-        response = requests.request("POST", url, headers=headers, data=payload)
+        response = requests.post(url, headers=headers, data=payload)
         return response.text

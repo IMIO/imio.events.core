@@ -69,8 +69,15 @@ class RestFunctionalTest(unittest.TestCase):
         response = endpoint.reply()
         self.assertEqual(response, "ODWB : Unexpected error occurred")
 
-    @patch("requests.post")
-    def test_get_events_to_send_to_odwb(self, m):
+    @patch(
+        "imio.smartweb.common.rest.odwb.api.portal.get_registry_record",
+        return_value="KAMOULOX_KEY",
+    )
+    @patch("imio.smartweb.common.rest.odwb.requests.post")
+    def test_get_events_to_send_to_odwb(self, m_post, m_reg):
+        fake_response = MagicMock()
+        fake_response.text = "KAMOULOX"
+        m_post.return_value = fake_response
         event = api.content.create(
             container=self.agenda,
             type="imio.events.Event",
@@ -105,6 +112,9 @@ class RestFunctionalTest(unittest.TestCase):
         endpoint.reply()
         # 1 (published) event is returned on self.portal
         self.assertEqual(len(endpoint.__datas__), 1)
+        m_post.assert_called()
+        called_url = m_post.call_args.args[0]
+        self.assertIn("https://www.odwb.be/api/push/1.0", called_url)
 
         api.content.transition(event2, "publish")
         endpoint = OdwbEndpointGet(self.portal, self.request)
@@ -126,8 +136,15 @@ class RestFunctionalTest(unittest.TestCase):
         # 1 (published) event is returned on self.agenda
         self.assertEqual(len(endpoint.__datas__), 1)
 
-    @patch("requests.post")
-    def test_get_entities_to_send_to_odwb(self, m):
+    @patch(
+        "imio.smartweb.common.rest.odwb.api.portal.get_registry_record",
+        return_value="KAMOULOX_KEY",
+    )
+    @patch("imio.events.core.rest.odwb_endpoint.requests.post")
+    def test_get_entities_to_send_to_odwb(self, m_post, m_reg):
+        fake_response = MagicMock()
+        fake_response.text = "KAMOULOX"
+        m_post.return_value = fake_response
         api.content.create(
             container=self.portal,
             type="imio.events.Entity",
@@ -139,6 +156,9 @@ class RestFunctionalTest(unittest.TestCase):
         endpoint.reply()
         # 2 entities are returned on self.portal (entities are automaticly published)
         self.assertEqual(len(endpoint.__datas__), 2)
+        m_post.assert_called()
+        called_url = m_post.call_args.args[0]
+        self.assertIn("https://www.odwb.be/api/push/1.0", called_url)
 
         api.content.transition(self.entity, "reject")
         endpoint = OdwbEntitiesEndpointGet(self.portal, self.request)
