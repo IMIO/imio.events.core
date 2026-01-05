@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.45 (unreleased)
+1.2.45 (2026-01-05)
 -------------------
 
 - WEB-4257 : improve tests to avoid data leak in some requests
