@@ -439,7 +439,7 @@ class TestEvent(unittest.TestCase):
     def test_timespan_invariant(self):
         request = TestRequest(
             form={
-                "form.widgets.IBasic.title": "My Event",
+                "form.widgets.IIASmartTitle.title": "My Event",
                 "form.widgets.event_type": "event-driven",
                 "form.widgets.ticket_url": "https://www.kamoulox.be",
                 "form.widgets.IEventBasic.start": "2023-09-01T22:00",
@@ -456,7 +456,7 @@ class TestEvent(unittest.TestCase):
 
         request = TestRequest(
             form={
-                "form.widgets.IBasic.title": "My Event",
+                "form.widgets.IIASmartTitle.title": "My Event",
                 "form.widgets.event_type": "event-driven",
                 "form.widgets.ticket_url": "https://www.kamoulox.be",
                 "form.widgets.IEventBasic.start": "2023-09-01T22:00",
@@ -481,7 +481,7 @@ class TestEvent(unittest.TestCase):
         event.end = datetime(2024, 9, 1, 22, 00, tzinfo=utc_timezone)
         request = TestRequest(
             form={
-                "form.widgets.IBasic.title": "My Event",
+                "form.widgets.IIASmartTitle.title": "My Event",
                 "form.widgets.event_type": "event-driven",
                 "form.widgets.IEventBasic.start": "2023-09-01T22:00",
                 "form.widgets.IEventBasic.end": "2050-09-01T22:00",

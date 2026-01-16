@@ -99,6 +99,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="upgrade_1021_to_1022"
+      title="Upgrade core from 1021 to 1022"
+      directory="profiles/1021_to_1022"
+      description="Remove useless plone.IBasic beahavior. Replace with imio.smartweb.ia.title behavior"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />      
+
   <genericsetup:upgradeStep
       title="Refresh faceted"
       description="Refresh faceted configurations on all entities / agendas"
@@ -328,5 +336,15 @@
         import_profile="imio.events.core.upgrades:upgrade_1020_to_1021"
         />
   </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+      source="1021"
+      destination="1022"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Remove useless plone.IBasic beahavior. Replace with imio.smartweb.ia.title behavior"
+        import_profile="imio.events.core.upgrades:upgrade_1021_to_1022"
+        />
+  </genericsetup:upgradeSteps>  
 
 </configure>

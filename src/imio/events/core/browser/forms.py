@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from imio.events.core.ia.browser.categorization_button_edit import IACategorizeEditForm
+from imio.events.core.ia.browser.categorization_button_add import IACategorizeAddForm
 
-from imio.smartweb.common.browser.forms import CustomAddForm
-from imio.smartweb.common.browser.forms import CustomEditForm
+# from imio.smartweb.common.browser.forms import CustomAddForm
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.dexterity.browser.add import DefaultAddView
 from plone.dexterity.events import EditFinishedEvent
@@ -14,7 +15,7 @@ from z3c.form.interfaces import WidgetActionExecutionError
 from zope.event import notify
 
 
-class EventCustomEditForm(CustomEditForm):
+class EventCustomEditForm(IACategorizeEditForm):
     @button.buttonAndHandler(DMF_("Save"), name="save")
     def handleApply(self, action):
         data, errors = self.extractData()
@@ -38,7 +39,7 @@ class EventCustomEditForm(CustomEditForm):
 EventCustomEditView = layout.wrap_form(EventCustomEditForm)
 
 
-class EventCustomAddForm(CustomAddForm):
+class EventCustomAddForm(IACategorizeAddForm):
     portal_type = "imio.events.Event"
 
     @button.buttonAndHandler(DMF_("Save"), name="save")

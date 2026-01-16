@@ -99,7 +99,7 @@ class ITranslations(IENTranslations, IDETranslations, INLTranslations):
 class IEvent(IAddress, ITranslations):
     """Marker interface and Dexterity Python Schema for Event"""
 
-    directives.order_before(event_type="IBasic.title")
+    directives.order_before(event_type="IIASmartTitle.title")
     directives.widget(event_type=RadioFieldWidget)
     event_type = schema.Choice(
         title=_("Event type"),
