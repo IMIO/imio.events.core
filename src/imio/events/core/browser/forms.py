@@ -5,6 +5,8 @@ from imio.events.core.ia.browser.categorization_button_add import IACategorizeAd
 # from imio.smartweb.common.browser.forms import CustomAddForm
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.dexterity.browser.add import DefaultAddView
+from plone.dexterity.events import AddCancelledEvent
+from plone.dexterity.events import EditCancelledEvent
 from plone.dexterity.events import EditFinishedEvent
 from plone.dexterity.i18n import MessageFactory as DMF_
 from plone.z3cform import layout
@@ -35,6 +37,12 @@ class EventCustomEditForm(IACategorizeEditForm):
         self.request.response.redirect(self.nextURL())
         notify(EditFinishedEvent(self.context))
 
+    @button.buttonAndHandler(DMF_("Cancel"), name="cancel")
+    def handleCancel(self, action):
+        IStatusMessage(self.request).addStatusMessage(DMF_("Edit cancelled"), "info")
+        self.request.response.redirect(self.nextURL())
+        notify(EditCancelledEvent(self.context))
+
 
 EventCustomEditView = layout.wrap_form(EventCustomEditForm)
 
@@ -61,6 +69,14 @@ class EventCustomAddForm(IACategorizeAddForm):
             # mark only as finished if we get the new object
             self._finishedAdd = True
             IStatusMessage(self.request).addStatusMessage(self.success_message, "info")
+
+    @button.buttonAndHandler(DMF_("Cancel"), name="cancel")
+    def handleCancel(self, action):
+        IStatusMessage(self.request).addStatusMessage(
+            DMF_("Add New Item operation cancelled"), "info"
+        )
+        self.request.response.redirect(self.nextURL())
+        notify(AddCancelledEvent(self.context))
 
 
 class EventCustomAddView(DefaultAddView):
