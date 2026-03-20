@@ -127,16 +127,16 @@ class EventsEndpointHandler(SearchHandler):
 
         batch = HypermediaBatch(self.request, sorted_occurrences)
 
-        if is_log_active():
-            tps2 = time.time()
-            logger.info(f"search =====> query : {results['@id']}")
-            logger.info(f"search =====> time (total) : {tps2 - tps1}")
         results = {
             "@id": batch.canonical_url,
             "items_total": batch.items_total,
             "batching": batch.links if batch.links else None,
             "items": list(batch),
         }
+        if is_log_active():
+            tps2 = time.time()
+            logger.info(f"search =====> query : {results['@id']}")
+            logger.info(f"search =====> time (total) : {tps2 - tps1}")
         return results
 
     def get_cascading_agendas(self, initial_agenda):

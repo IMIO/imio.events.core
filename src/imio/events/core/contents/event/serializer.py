@@ -91,60 +91,19 @@ class SerializeEventToJson(SerializeFolderToJson):
 @implementer(ISerializeToJsonSummary)
 @adapter(Interface, IImioEventsCoreLayer)
 class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
-    def __call__(self):
-        summary = None
-        try:
-            summary = super(EventJSONSummarySerializer, self).__call__()
-        except Exception:  # pragma: no cover
-            # occurence on a old/ bad referenced event wich not exist anymore
-            # in the catalog. We don't want to raise an error here.
-            pass
-        query = self.request.form
-        # To get agenda title and use it in carousel,...
-        if query.get("metadata_fields") is not None and "container_uid" in query.get(
-            "metadata_fields"
-        ):
-            agenda = None
-            try:
-                if IEvent.providedBy(self.context):
-                    container_uid = get_container_uid(self.context)
-                elif IAgenda.providedBy(self.context) or IFolder.providedBy(
-                    self.context
-                ):
-                    container_uid = get_container_uid(None, summary)
-                elif getattr(self.context, "portal_type", None) == "imio.events.Event":
-                    # context is a brain — container_uid is already in the metadata
-                    container_uid = getattr(self.context, "container_uid", None)
-                else:
-                    container_uid = get_container_uid(None, summary)
-                if container_uid is None:
-                    if is_log_active():
-                        logger.info("Container_uid is None ?")
-                        logger.info(f"QUERY_STRING: {self.request.QUERY_STRING}")
-                        logger.info(f"summary: {summary}")
-                    return summary
-            except Exception:
-                # occurence on a old/ bad referenced event wich not exist anymore
-                # in the catalog. We don't want to raise an error here.
-                if is_log_active():
-                    logger.info(f"object doesn't exist anymore ?! {self.context.UID}")
-                container_uid = get_container_uid(None, summary)
-                return summary
+    def _get_container_uid_for_context(self, summary):
+        """Return container_uid based on context type."""
+        if IEvent.providedBy(self.context):
+            return get_container_uid(self.context)
+        if IAgenda.providedBy(self.context) or IFolder.providedBy(self.context):
+            return get_container_uid(None, summary)
+        if getattr(self.context, "portal_type", None) == "imio.events.Event":
+            # context is a brain — container_uid is already in the metadata
+            return getattr(self.context, "container_uid", None)
+        return get_container_uid(None, summary)
 
-            # Agendas can be private (admin to access them). That doesn't stop events to be bring.
-            with api.env.adopt_user(username="admin"):
-                agenda = api.content.get(UID=container_uid)
-            if not agenda:
-                return summary
-            # To make a specific agenda css class in smartweb carousel common template
-            summary["usefull_container_id"] = agenda.id
-            # To display agenda title in smartweb carousel common template
-            summary["usefull_container_title"] = agenda.title
-        lang = get_restapi_query_lang(query)
-        if lang == "fr":
-            # nothing to go, fr is the default language
-            return summary
-
+    def _apply_language_fields(self, summary, lang):
+        """Overwrite title/description/etc. with language-specific values."""
         obj = IContentListingObject(self.context)
         for orig_field in ["title", "description", "category_title", "local_category"]:
             field = f"{orig_field}_{lang}"
@@ -160,4 +119,45 @@ class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
                 value = value.replace("**", "")
             summary[orig_field] = json_compatible(value)
 
+    def __call__(self):
+        summary = None
+        try:
+            summary = super(EventJSONSummarySerializer, self).__call__()
+        except Exception:  # pragma: no cover
+            # occurence on a old/ bad referenced event wich not exist anymore
+            # in the catalog. We don't want to raise an error here.
+            pass
+        query = self.request.form
+        # To get agenda title and use it in carousel,...
+        if query.get("metadata_fields") is not None and "container_uid" in query.get(
+            "metadata_fields"
+        ):
+            try:
+                container_uid = self._get_container_uid_for_context(summary)
+            except Exception:
+                # occurence on a old/ bad referenced event wich not exist anymore
+                # in the catalog. We don't want to raise an error here.
+                if is_log_active():
+                    logger.info(f"object doesn't exist anymore ?! {self.context.UID}")
+                return summary
+            if container_uid is None:
+                if is_log_active():
+                    logger.info("Container_uid is None ?")
+                    logger.info(f"QUERY_STRING: {self.request.QUERY_STRING}")
+                    logger.info(f"summary: {summary}")
+                return summary
+            # Agendas can be private (admin to access them). That doesn't stop events to be bring.
+            with api.env.adopt_user(username="admin"):
+                agenda = api.content.get(UID=container_uid)
+            if not agenda:
+                return summary
+            # To make a specific agenda css class in smartweb carousel common template
+            summary["usefull_container_id"] = agenda.id
+            # To display agenda title in smartweb carousel common template
+            summary["usefull_container_title"] = agenda.title
+        lang = get_restapi_query_lang(query)
+        if lang == "fr":
+            # nothing to go, fr is the default language
+            return summary
+        self._apply_language_fields(summary, lang)
         return summary
