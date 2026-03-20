@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.46 (unreleased)
+1.2.46 (2026-03-20)
 -------------------
 
 - OIA-109 : OMNIA : Add ia "CategorizeContent" and titles proposal generation features on imio.events.Event
