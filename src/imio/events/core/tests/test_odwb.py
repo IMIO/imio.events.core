@@ -140,7 +140,7 @@ class RestFunctionalTest(unittest.TestCase):
         "imio.smartweb.common.rest.odwb.api.portal.get_registry_record",
         return_value="KAMOULOX_KEY",
     )
-    @patch("imio.events.core.rest.odwb_endpoint.requests.post")
+    @patch("imio.smartweb.common.rest.odwb.requests.post")
     def test_get_entities_to_send_to_odwb(self, m_post, m_reg):
         fake_response = MagicMock()
         fake_response.text = "KAMOULOX"

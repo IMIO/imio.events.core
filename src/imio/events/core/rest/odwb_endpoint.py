@@ -18,7 +18,6 @@ from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 
 import json
 import logging
-import requests
 
 logger = logging.getLogger("imio.events.core")
 
@@ -79,9 +78,7 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
         if is_log_active():
             logger.info(f"ODWB delete url: {url}")
         payload = json.dumps(lst_events)
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, data=payload)
-        return response.text
+        return self.odwb_query(url, payload)
 
 
 class Event:
@@ -202,6 +199,4 @@ class OdwbEntitiesEndpointGet(OdwbBaseEndpointGet):
         if is_log_active():
             logger.info(f"ODWB push url: {url}")
         payload = json.dumps(lst_entities)
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, data=payload)
-        return response.text
+        return self.odwb_query(url, payload)
