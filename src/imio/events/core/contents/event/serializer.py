@@ -4,6 +4,7 @@ from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEvent
 from imio.events.core.contents import IFolder
 from imio.events.core.interfaces import IImioEventsCoreLayer
+from imio.events.core.utils import get_agenda_for_event
 from imio.smartweb.common.rest.utils import get_restapi_query_lang
 from imio.smartweb.common.utils import is_log_active
 from plone import api
@@ -25,16 +26,16 @@ import logging
 logger = logging.getLogger("imio.events.core")
 
 
-def get_container_uid(event_uid, summary=None):
+def get_container_uid(event_obj=None, summary=None):
     if summary is not None:
-        container_uid = summary.get("UID") or summary.get("container_uid")
+        container_uid = summary.get("container_uid")
         if container_uid:
             return container_uid
-    if event_uid is None:
+    if event_obj is None:
         return None
-    brain = api.content.find(UID=event_uid)[0]
-    container_uid = getattr(brain, "container_uid", None)
-    return container_uid
+    agenda = get_agenda_for_event(event_obj)
+    print(f"================== container_uid : {agenda.UID()}")
+    return agenda.UID() if agenda is not None else None
 
 
 @implementer(ISerializeToJson)
@@ -70,8 +71,7 @@ class SerializeEventToJson(SerializeFolderToJson):
             "metadata_fields"
         ):
             agenda = None
-            event_uid = self.context.UID()
-            container_uid = get_container_uid(event_uid)
+            container_uid = get_container_uid(self.context)
             if container_uid is not None:
                 # Agendas can be private (admin to access them). That doesn't stop events to be bring.
                 with api.env.adopt_user(username="admin"):
@@ -95,7 +95,7 @@ class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
         summary = None
         try:
             summary = super(EventJSONSummarySerializer, self).__call__()
-        except Exception as e:  # pragma: no cover
+        except:  # pragma: no cover
             # occurence on a old/ bad referenced event wich not exist anymore
             # in the catalog. We don't want to raise an error here.
             pass
@@ -107,25 +107,23 @@ class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
             agenda = None
             try:
                 if IEvent.providedBy(self.context):
-                    event_uid = self.context.UID()
-                    container_uid = get_container_uid(event_uid)
+                    container_uid = get_container_uid(self.context)
                 elif IAgenda.providedBy(self.context) or IFolder.providedBy(
                     self.context
                 ):
                     container_uid = get_container_uid(None, summary)
-                elif IEvent.providedBy(self.context.getObject()):
-                    # context can be a brain
-                    event_uid = self.context.UID
-                    container_uid = get_container_uid(event_uid)
+                elif getattr(self.context, "portal_type", None) == "imio.events.Event":
+                    # context is a brain — container_uid is already in the metadata
+                    container_uid = getattr(self.context, "container_uid", None)
                 else:
                     container_uid = get_container_uid(None, summary)
                 if container_uid is None:
                     if is_log_active():
-                        logger.info(f"container_uid is None ?")
+                        logger.info("Container_uid is None ?")
                         logger.info(f"QUERY_STRING: {self.request.QUERY_STRING}")
                         logger.info(f"summary: {summary}")
                     return summary
-            except Exception as e:
+            except:
                 # occurence on a old/ bad referenced event wich not exist anymore
                 # in the catalog. We don't want to raise an error here.
                 if is_log_active():
