@@ -5,7 +5,7 @@ Changelog
 1.2.46 (unreleased)
 -------------------
 
-- OIA-109 : IPA : Add ia "CategorizeContent" and titles proposal generation features on imio.events.Event
+- OIA-109 : OMNIA : Add ia "CategorizeContent" and titles proposal generation features on imio.events.Event
   [boulch]
 
 

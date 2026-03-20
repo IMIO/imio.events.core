@@ -23,12 +23,18 @@ class ProcessCategorizeContentView(BaseProcessCategorizeContentView):
     def _process_specific(self, all_text, results):
         """Must be impleted"""
         ia_category = self._process_category(all_text, results)
-        results["form-widgets-category"] = ia_category
+        if ia_category:
+            results["form-widgets-category"] = ia_category
 
         ia_local_category = self._process_local_category(all_text, results)
-        results["form-widgets-local_category"] = ia_local_category
+        if ia_local_category:
+            results["form-widgets-local_category"] = ia_local_category
+
         ia_public_cible = self._process_public_cible(all_text, results)
-        results["form.widgets.event_public.taxonomy_event_public"] = ia_public_cible
+
+        if ia_public_cible:
+            results["form.widgets.event_public.taxonomy_event_public"] = ia_public_cible
+
         return results
 
     def _process_public_cible(self, all_text, results):

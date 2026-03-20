@@ -12,6 +12,9 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <!-- No zcml needed for edit here because of inheritage 
+       in imio.events.core.browser.forms.EventCustomEditForm --> 
+
   <adapter
       for="Products.CMFCore.interfaces.IFolderish
            imio.smartweb.common.interfaces.IImioSmartwebCommonLayer
