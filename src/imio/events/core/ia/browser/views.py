@@ -1,6 +1,5 @@
 from collective.taxonomy.interfaces import ITaxonomy
 from imio.smartweb.common.ia.browser.views import BaseProcessCategorizeContentView
-from imio.events.core.contents import IEvent
 from zope.component import getSiteManager
 
 

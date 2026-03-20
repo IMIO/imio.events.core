@@ -7,8 +7,6 @@ from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
 from imio.smartweb.common.faceted.utils import configure_faceted
 from imio.smartweb.common.utils import is_log_active
-from imio.smartweb.common.vocabularies import IAmVocabulary
-from imio.smartweb.common.vocabularies import TopicsVocabulary
 from plone import api
 from plone.event.recurrence import recurrence_sequence_ical
 from plone.restapi.serializer.converters import json_compatible

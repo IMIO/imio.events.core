@@ -95,7 +95,7 @@ class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
         summary = None
         try:
             summary = super(EventJSONSummarySerializer, self).__call__()
-        except:  # pragma: no cover
+        except Exception:  # pragma: no cover
             # occurence on a old/ bad referenced event wich not exist anymore
             # in the catalog. We don't want to raise an error here.
             pass
@@ -123,7 +123,7 @@ class EventJSONSummarySerializer(DefaultJSONSummarySerializer):
                         logger.info(f"QUERY_STRING: {self.request.QUERY_STRING}")
                         logger.info(f"summary: {summary}")
                     return summary
-            except:
+            except Exception:
                 # occurence on a old/ bad referenced event wich not exist anymore
                 # in the catalog. We don't want to raise an error here.
                 if is_log_active():
