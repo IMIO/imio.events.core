@@ -42,6 +42,7 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
         batched_lst = [
             self.__datas__[i : i + 1000] for i in range(0, len(self.__datas__), 1000)
         ]
+        response_text = None
         for elem in batched_lst:
             payload = json.dumps(elem)
             response_text = self.odwb_query(url, payload)

@@ -68,7 +68,10 @@ def get_local_category(obj, lang):
         IVocabularyFactory, "imio.events.vocabulary.EventsLocalCategories"
     )
     vocabulary = factory(obj, lang=lang)
-    term = vocabulary.getTerm(obj.local_category)
+    try:
+        term = vocabulary.getTerm(obj.local_category)
+    except LookupError:
+        raise AttributeError
     return term.title
 
 

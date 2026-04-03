@@ -19,7 +19,10 @@ from zope.component import getMultiAdapter
 import hashlib
 import json
 import logging
+import pytz
 import time
+
+_brussels = pytz.timezone("Europe/Brussels")
 
 logger = logging.getLogger("imio.events.core")
 
@@ -226,10 +229,18 @@ class EventsEndpointHandler(SearchHandler):
     def is_within_range(self, occurrence):
         min_date, max_date = self.request.form.get("event_dates.query", [None, None])
         if min_date and max_date:
-            min_date = datetime.fromisoformat(min_date).replace(tzinfo=timezone.utc)
-            max_date = datetime.fromisoformat(max_date).replace(
-                hour=23, minute=59, second=59, tzinfo=timezone.utc
+            parsed_min = datetime.fromisoformat(min_date)
+            parsed_max = datetime.fromisoformat(max_date)
+            min_date = (
+                parsed_min.astimezone(_brussels)
+                if parsed_min.tzinfo
+                else _brussels.localize(parsed_min)
             )
+            max_date = (
+                parsed_max.astimezone(_brussels)
+                if parsed_max.tzinfo
+                else _brussels.localize(parsed_max)
+            ).replace(hour=23, minute=59, second=59)
             start_date = datetime.fromisoformat(occurrence["start"])
             end_date = datetime.fromisoformat(occurrence["end"])
             return (

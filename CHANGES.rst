@@ -5,7 +5,11 @@ Changelog
 1.2.47 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4353 : Feat: switch portal timezone from UTC to Europe/Brussels
+  Upgrade step 1022→1023: reinterpret existing event datetimes as
+  Europe/Brussels wall-clock time (localize without shifting the
+  displayed time), push all published events to ODWB after commit
+  [boulch]
 
 
 1.2.46 (2026-03-20)
