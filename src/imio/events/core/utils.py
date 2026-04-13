@@ -144,30 +144,9 @@ def expand_occurences(events, range="min"):
         if not event["recurrence"]:
             expanded_events.append(event)
             continue
-        # optimize query with "until" to avoid to go through all recurrences
-        # if we want "future events", we get occurences to 1 years in the future
-        # if we want "past events", we get occurences to 1 year in the past
-        until = from_ = None  # datetime.now()
-        until = start_date + timedelta(days=365)
-        # for now min:max is only supported for future events
-        if range == "min":
-            from_ = datetime.now()
-            until = from_ + timedelta(days=365)
-        if range == "min:max":
-            from_ = datetime.now()
-        elif range == "max":
-            from_ = start_date - timedelta(days=365)
-            until = datetime.now()
-        start_dates = recurrence_sequence_ical(
-            start=start_date,
-            recrule=event["recurrence"],
-            from_=from_,
-            until=until,
-        )
-        if is_log_active():
-            logger.warning(
-                f"FROM = {from_} , UNTIL = {until} , range = {range}, start_date = {start_date}, recrule = {event['recurrence']}"
-            )
+        # Compute duration before recurrence_sequence_ical: it uses it in
+        # rset.between(from_ - duration, until) so that ongoing occurrences
+        # (started before now but not yet ended) are included.
         if event["whole_day"]:
             start_day = dateutil.parser.parse(first_start).date()
             end_day = dateutil.parser.parse(first_end).date()
@@ -175,6 +154,31 @@ def expand_occurences(events, range="min"):
             duration = timedelta(days=day_diff, hours=23, minutes=59, seconds=59)
         else:
             duration = end_date - start_date
+        # optimize query with "until" to avoid to go through all recurrences
+        # if we want "future events", we get occurences to 1 years in the future
+        # if we want "past events", we get occurences to 1 year in the past
+        until = from_ = None
+        until = start_date + timedelta(days=365)
+        # for now min:max is only supported for future events
+        if range == "min":
+            from_ = datetime.now(brussels)
+            until = from_ + timedelta(days=365)
+        if range == "min:max":
+            from_ = datetime.now(brussels)
+        elif range == "max":
+            from_ = start_date - timedelta(days=365)
+            until = datetime.now(brussels)
+        start_dates = recurrence_sequence_ical(
+            start=start_date,
+            recrule=event["recurrence"],
+            from_=from_,
+            until=until,
+            duration=duration,
+        )
+        if is_log_active():
+            logger.warning(
+                f"FROM = {from_} , UNTIL = {until} , range = {range}, start_date = {start_date}, recrule = {event['recurrence']}"
+            )
         for occurence_start in start_dates:
             new_event = {**event}
             new_event["start"] = json_compatible(occurence_start)

@@ -152,7 +152,7 @@ class RestFunctionalTest(unittest.TestCase):
         event2.reindexObject()
         response = endpoint.search(query)
         items = response.get("items")
-        self.assertEqual(len(items), 3)
+        self.assertEqual(len(items), 4)
         clear_search_cache(query)
 
         event4.start = datetime(2023, 3, 1, 0, 0)
@@ -162,7 +162,7 @@ class RestFunctionalTest(unittest.TestCase):
         event4.reindexObject()
         response = endpoint.search(query)
         items = response.get("items")
-        self.assertEqual(len(items), 5)
+        self.assertEqual(len(items), 9)
         api.content.transition(event4, "retract")
         event4.reindexObject()
         clear_search_cache(query)
@@ -176,7 +176,7 @@ class RestFunctionalTest(unittest.TestCase):
         api.content.transition(event3, "publish")
         response = endpoint.search(query)
         items = response.get("items")
-        self.assertEqual(len(items), 4)
+        self.assertEqual(len(items), 5)
         clear_search_cache(query)
 
         # Assert list is sorted by start date
