@@ -11,7 +11,6 @@ from plone import api
 from plone.event.recurrence import recurrence_sequence_ical
 from plone.restapi.serializer.converters import json_compatible
 from Products.CMFPlone.utils import parent
-from pytz import utc
 from zope.component import getMultiAdapter
 from zope.i18n import translate
 from zope.interface import noLongerProvides
@@ -19,6 +18,9 @@ from zope.interface import noLongerProvides
 import dateutil
 import logging
 import os
+import pytz
+
+brussels = pytz.timezone("Europe/Brussels")
 
 logger = logging.getLogger("imio.events.core")
 
@@ -103,8 +105,8 @@ def expand_occurences(events, range="min"):
             continue
         first_start = event.get("first_start") or event.get("start")
         first_end = event.get("first_end") or event.get("end")
-        start_date = dateutil.parser.parse(first_start).astimezone(utc)
-        end_date = dateutil.parser.parse(first_end).astimezone(utc)
+        start_date = dateutil.parser.parse(first_start).astimezone(brussels)
+        end_date = dateutil.parser.parse(first_end).astimezone(brussels)
         event["geolocation"] = {
             "latitude": event.get("latitude", ""),
             "longitude": event.get("longitude", ""),
@@ -142,25 +144,36 @@ def expand_occurences(events, range="min"):
         if not event["recurrence"]:
             expanded_events.append(event)
             continue
+        # Compute duration before recurrence_sequence_ical: it uses it in
+        # rset.between(from_ - duration, until) so that ongoing occurrences
+        # (started before now but not yet ended) are included.
+        if event["whole_day"]:
+            start_day = dateutil.parser.parse(first_start).date()
+            end_day = dateutil.parser.parse(first_end).date()
+            day_diff = (end_day - start_day).days
+            duration = timedelta(days=day_diff, hours=23, minutes=59, seconds=59)
+        else:
+            duration = end_date - start_date
         # optimize query with "until" to avoid to go through all recurrences
         # if we want "future events", we get occurences to 1 years in the future
         # if we want "past events", we get occurences to 1 year in the past
-        until = from_ = None  # datetime.now()
+        until = from_ = None
         until = start_date + timedelta(days=365)
         # for now min:max is only supported for future events
         if range == "min":
-            from_ = datetime.now()
+            from_ = datetime.now(brussels)
             until = from_ + timedelta(days=365)
         if range == "min:max":
-            from_ = datetime.now()
+            from_ = datetime.now(brussels)
         elif range == "max":
             from_ = start_date - timedelta(days=365)
-            until = datetime.now()
+            until = datetime.now(brussels)
         start_dates = recurrence_sequence_ical(
             start=start_date,
             recrule=event["recurrence"],
             from_=from_,
             until=until,
+            duration=duration,
         )
         if is_log_active():
             logger.warning(
@@ -168,9 +181,6 @@ def expand_occurences(events, range="min"):
             )
         for occurence_start in start_dates:
             new_event = {**event}
-            start_time = datetime.combine(datetime.today(), start_date.time())
-            end_time = datetime.combine(datetime.today(), end_date.time())
-            duration = end_time - start_time
             new_event["start"] = json_compatible(occurence_start)
             new_event["end"] = json_compatible(occurence_start + duration)
             expanded_events.append(new_event)

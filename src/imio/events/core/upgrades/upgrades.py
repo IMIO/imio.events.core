@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-
+from imio.events.core.contents import IEvent
+from imio.events.core.subscribers import send_to_odwb
 from imio.events.core.utils import reload_faceted_config
 from imio.smartweb.common.upgrades import upgrades
 from plone import api
 from zope.globalrequest import getRequest
 
 import logging
+import pytz
+import transaction
 
 logger = logging.getLogger("imio.events.core")
 
@@ -147,3 +150,59 @@ def reindex_agendas_and_folders(context):
     brains = api.content.find(portal_type=["imio.events.Agenda", "imio.events.Folder"])
     for brain in brains:
         brain.getObject().reindexObject()
+
+
+def migrate_events_to_brussels_timezone(context):
+    _brussels = pytz.timezone("Europe/Brussels")
+    brains = api.content.find(object_provides=IEvent.__identifier__)
+    count = 0
+    batch_size = 100
+    for brain in brains:
+        event = brain.getObject()
+        if getattr(event, "timezone", None) not in ("UTC", "Etc/UTC", None):
+            continue
+        if event.start is None or event.end is None:
+            continue
+        if event.start.year < 100 or event.end.year < 100:
+            logger.warning(f"Skipping event with sentinel date: {brain.getPath()}")
+            continue
+        try:
+            # pytz.timezone.localize() attaches a timezone to a naive datetime
+            event.start = _brussels.localize(event.start.replace(tzinfo=None))
+            event.end = _brussels.localize(event.end.replace(tzinfo=None))
+            event.reindexObject(
+                idxs=["start", "end", "first_start", "first_end", "event_dates"]
+            )
+            count += 1
+        except Exception:
+            logger.exception(f"Failed to migrate event {brain.getPath()}, skipping")
+            continue
+        if count % batch_size == 0:
+            transaction.commit()
+            logger.info(f"Committed batch, {count} events migrated so far")
+    logger.info(f"Migrated {count} events to Europe/Brussels timezone")
+    site = api.portal.get()
+    # Update all published events in ODWB after final commit
+    transaction.get().addAfterCommitHook(send_to_odwb, kws={"obj": site})
+
+
+def migrate_members_timezone_to_brussels(context):
+    """Reset member timezone preferences that are set to UTC.
+
+    User timezone preferences override the portal timezone (plone.app.event
+    checks member.getProperty("timezone") first). Members with UTC set will
+    keep creating events in UTC even after the portal timezone switch.
+    """
+    membership = api.portal.get_tool("portal_membership")
+    members = membership.listMembers()
+    count = 0
+    utc_zones = {"UTC", "Etc/UTC"}
+    for member in members:
+        tz = member.getProperty("timezone", None)
+        if tz in utc_zones or tz is None or tz == "":
+            member.setMemberProperties({"timezone": "Europe/Brussels"})
+            count += 1
+            logger.info(
+                f"Reset timezone for member {member.getId()}: UTC → Europe/Brussels"
+            )
+    logger.info(f"Updated timezone for {count} members")

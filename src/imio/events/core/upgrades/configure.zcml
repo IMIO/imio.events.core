@@ -105,6 +105,14 @@
       directory="profiles/1021_to_1022"
       description="Remove useless plone.IBasic beahavior. Replace with imio.smartweb.ia.titles behavior"
       provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:registerProfile
+      name="upgrade_1022_to_1023"
+      title="Upgrade core from 1022 to 1023"
+      directory="profiles/1022_to_1023"
+      description="Switch portal timezone from UTC to Europe/Brussels and migrate existing events"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
       />      
 
   <genericsetup:upgradeStep
@@ -345,6 +353,24 @@
         title="Remove useless plone.IBasic beahavior. Replace with imio.smartweb.ia.titles behavior"
         import_profile="imio.events.core.upgrades:upgrade_1021_to_1022"
         />
-  </genericsetup:upgradeSteps>  
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+      source="1022"
+      destination="1023"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Set portal timezone to Europe/Brussels"
+        import_profile="imio.events.core.upgrades:upgrade_1022_to_1023"
+        />
+    <genericsetup:upgradeStep
+        title="Migrate existing events to Europe/Brussels timezone"
+        handler=".upgrades.migrate_events_to_brussels_timezone"
+        />
+    <genericsetup:upgradeStep
+        title="Reset member timezone preferences from UTC to Europe/Brussels"
+        handler=".upgrades.migrate_members_timezone_to_brussels"
+        />
+  </genericsetup:upgradeSteps>
 
 </configure>

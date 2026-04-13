@@ -5,7 +5,8 @@ Changelog
 1.2.47 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4353 : Feat: switch portal timezone from UTC to Europe/Brussels and push all published events to ODWB after commit
+  [boulch]
 
 
 1.2.46 (2026-03-20)
