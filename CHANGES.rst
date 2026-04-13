@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.47 (unreleased)
+1.2.47 (2026-04-13)
 -------------------
 
 - WEB-4353 : Feat: switch portal timezone from UTC to Europe/Brussels and push all published events to ODWB after commit
