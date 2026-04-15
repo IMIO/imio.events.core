@@ -16,10 +16,19 @@ from plone import api
 from plone.formwidget.geolocation.geolocation import Geolocation
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 
+import itertools
 import json
 import logging
+import pytz
 
 logger = logging.getLogger("imio.events.core")
+
+
+def _batched(iterable, n):
+    """Backport of itertools.batched (Python 3.12+) for older runtimes."""
+    it = iter(iterable)
+    while batch := list(itertools.islice(it, n)):
+        yield batch
 
 
 class OdwbEndpointGet(OdwbBaseEndpointGet):
@@ -31,27 +40,71 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
         )
         pushkey = f"imio.events.core.odwb_{imio_service}_pushkey"
         super(OdwbEndpointGet, self).__init__(context, request, imio_service, pushkey)
+        self.__datas_count__ = 0
+
+    def _log_odwb_response(self, action, count, response_text):
+        """Log the ODWB response at INFO (success) or WARNING (error).
+
+        action  : "push" or "delete"
+        count   : number of items in the batch
+        """
+        verb = "sent/updated" if action == "push" else "deleted"
+        try:
+            data = json.loads(response_text)
+            success = data.get("ok") or data.get("status") == "ok"
+            if success:
+                logger.info(
+                    "ODWB %s: %d events item(s) %s — ODWB response: %s",
+                    action,
+                    count,
+                    verb,
+                    response_text,
+                )
+            else:
+                logger.warning(
+                    "ODWB %s: %d events item(s) — ODWB returned an error: %s",
+                    action,
+                    count,
+                    response_text,
+                )
+        except (json.JSONDecodeError, AttributeError):
+            # odwb_query returns a plain error string on network/HTTP exceptions
+            logger.warning(
+                "ODWB %s: %d events item(s) — unexpected response: %s",
+                action,
+                count,
+                response_text,
+            )
 
     def reply(self):
         if not super(OdwbEndpointGet, self).available():
+            logger.info(
+                "ODWB push skipped (not available) for %s",
+                self.context.absolute_url(),
+            )
             return
         url = f"{self.odwb_api_push_url}/{self.odwb_imio_service}/temps_reel/push/?pushkey={self.odwb_pushkey}"
         if is_log_active():
             logger.info(f"ODWB push url: {url}")
-        self.__datas__ = self.get_events()
-        batched_lst = [
-            self.__datas__[i : i + 1000] for i in range(0, len(self.__datas__), 1000)
-        ]
-        response_text = None
-        for elem in batched_lst:
-            payload = json.dumps(elem)
+        self.__datas_count__ = 0
+        responses = []
+        for batch in _batched(self.get_events(), 500):
+            self.__datas_count__ += len(batch)
+            payload = json.dumps(list(batch))
             response_text = self.odwb_query(url, payload)
-            if is_log_active():
-                logger.info(response_text)
-        return response_text
+            self._log_odwb_response("push", len(batch), response_text)
+            responses.append(response_text)
+        logger.info(
+            "ODWB push complete: %d events item(s) sent from %s",
+            self.__datas_count__,
+            self.context.absolute_url(),
+        )
+        if not responses:
+            return None
+        unique = set(responses)
+        return responses[-1] if len(unique) == 1 else responses
 
     def get_events(self):
-        lst_events = []
         if IPloneSiteRoot.providedBy(self.context) or IAgenda.providedBy(self.context):
             brains = api.content.find(
                 object_provides=IEvent.__identifier__, review_state="published"
@@ -61,25 +114,46 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
                     if self.context.UID() not in brain.selected_agendas:
                         continue
                 event_obj = brain.getObject()
-                event = Event(event_obj)
-                lst_events.append(json.loads(event.to_json()))
+                yield json.loads(Event(event_obj).to_json())
+        elif IEntity.providedBy(self.context):
+            brains = api.content.find(
+                object_provides=IEvent.__identifier__,
+                review_state="published",
+                path={"query": "/".join(self.context.getPhysicalPath()), "depth": -1},
+            )
+            for brain in brains:
+                event_obj = brain.getObject()
+                yield json.loads(Event(event_obj).to_json())
         elif IEvent.providedBy(self.context):
-            event = Event(self.context)
-            lst_events.append(json.loads(event.to_json()))
-        return lst_events
+            yield json.loads(Event(self.context).to_json())
 
     def remove(self):
         if not super(OdwbEndpointGet, self).available():
+            logger.info(
+                "ODWB delete skipped (not available) for %s",
+                self.context.absolute_url(),
+            )
             return
-        lst_events = []
-        if IEvent.providedBy(self.context):
-            event = Event(self.context)
-            lst_events.append(json.loads(event.to_json()))
         url = f"{self.odwb_api_push_url}/{self.odwb_imio_service}/temps_reel/delete/?pushkey={self.odwb_pushkey}"
         if is_log_active():
             logger.info(f"ODWB delete url: {url}")
-        payload = json.dumps(lst_events)
-        return self.odwb_query(url, payload)
+        deleted_count = 0
+        responses = []
+        for batch in _batched(self.get_events(), 500):
+            deleted_count += len(batch)
+            payload = json.dumps(list(batch))
+            response_text = self.odwb_query(url, payload)
+            self._log_odwb_response("delete", len(batch), response_text)
+            responses.append(response_text)
+        logger.info(
+            "ODWB delete complete: %d events item(s) sent to ODWB delete endpoint from %s",
+            deleted_count,
+            self.context.absolute_url(),
+        )
+        if not responses:
+            return None
+        unique = set(responses)
+        return responses[-1] if len(unique) == 1 else responses
 
 
 class Event:
@@ -164,6 +238,9 @@ class EventEncoder(json.JSONEncoder):
             iso_datetime = attr.ISO8601()
             return iso_datetime
         elif isinstance(attr, datetime):
+            brussels = pytz.timezone("Europe/Brussels")
+            if attr.tzinfo is not None:
+                attr = attr.astimezone(brussels)
             return attr.isoformat()
         else:
             return super().default(attr)
