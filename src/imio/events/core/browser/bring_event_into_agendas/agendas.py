@@ -43,7 +43,7 @@ class BringEventIntoAgendasForm(AutoExtensibleForm, form.Form):
 
     def update(self):
         super(BringEventIntoAgendasForm, self).update()
-        if user_is_contributor_in_entity_which_authorize_to_bring_events is False:
+        if user_is_contributor_in_entity_which_authorize_to_bring_events() is False:
             api.portal.show_message(
                 _("You don't have rights to access this page."), self.request
             )

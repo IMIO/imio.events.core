@@ -5,7 +5,8 @@ Changelog
 1.2.48 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix a bug in BringEventIntoAgendasForm and improve tests
+  [boulch]
 
 
 1.2.47 (2026-04-13)
