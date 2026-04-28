@@ -5,6 +5,9 @@ Changelog
 1.2.48 (unreleased)
 -------------------
 
+- SUP-52831 : Fix @events range=min to return ongoing and open_end events
+  [boulch]
+
 - Fix a bug in BringEventIntoAgendasForm and improve tests
   [boulch]
 

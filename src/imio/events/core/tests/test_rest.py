@@ -250,3 +250,76 @@ class RestFunctionalTest(unittest.TestCase):
         items = response.get("items")
         self.assertEqual(len(items), 2)
         clear_search_cache(query)
+
+    @freeze_time("2026-04-24")
+    def test_ongoing_long_duration_event_retrieved_with_min_range(self):
+        """Long-duration event (started months ago, ends months from now) must be
+        returned for range=min even when event_dates index only has the start date
+        (stale index scenario after upgrading the indexer)."""
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="long_event",
+            title="Long Duration Event",
+        )
+        event.start = datetime(2025, 6, 1, 0, 0)
+        event.end = datetime(2026, 6, 30, 0, 0)
+        event.reindexObject()
+        api.content.transition(event, "publish")
+
+        # Simulate stale event_dates index: only the original start date is indexed,
+        # not all the intermediate days that the current indexer would produce.
+        catalog = api.portal.get_tool("portal_catalog")
+        brain = api.content.find(UID=event.UID())[0]
+        rid = brain.getRID()
+        idx = catalog._catalog.indexes["event_dates"]
+        idx.unindex_object(rid)
+
+        class _StaleIndexData:
+            event_dates = ("2025-06-01",)
+
+        idx.index_object(rid, _StaleIndexData())
+
+        endpoint = EventsEndpointHandler(self.portal, self.request)
+        self.request.form["event_dates.range"] = "min"
+        # Pass event_dates in the query dict as the real endpoint does via
+        # EventsEndpointGet.reply() → unflatten_dotted_dict(request.form.copy())
+        query = {
+            "b_size": 10,
+            "b_start": 0,
+            "event_dates": {"query": "2026-04-24", "range": "min"},
+        }
+        clear_search_cache({"event_dates": {"query": "2026-04-24", "range": "min"}})
+
+        response = endpoint.search(query)
+        items = response.get("items")
+        titles = [i["title"] for i in items]
+        self.assertIn("Long Duration Event", titles)
+
+    @freeze_time("2026-04-24")
+    def test_open_end_event_started_in_past_retrieved_with_min_range(self):
+        """An open_end event has no defined end and must be considered ongoing
+        once it has started. It must therefore be returned for range=min even
+        when its explicit end date is in the past."""
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="open_end_event",
+            title="Open End Event",
+        )
+        # Start 10 days ago, end same day (open_end means the explicit end is meaningless)
+        event.start = datetime(2026, 4, 14, 0, 0)
+        event.end = datetime(2026, 4, 14, 0, 0)
+        event.whole_day = True
+        event.open_end = True
+        event.reindexObject()
+        api.content.transition(event, "publish")
+
+        endpoint = EventsEndpointHandler(self.portal, self.request)
+        self.request.form["event_dates.range"] = "min"
+        query = {"b_size": 10, "b_start": 0}
+
+        response = endpoint.search(query)
+        items = response.get("items")
+        titles = [i["title"] for i in items]
+        self.assertIn("Open End Event", titles)

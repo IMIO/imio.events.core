@@ -86,7 +86,9 @@ class EventsEndpointHandler(SearchHandler):
         self._constrain_query_by_path(query)
         query = self._parse_query(query)
         range_type = self.request.form.get("event_dates.range")
-        if range_type == "max":
+        if range_type == "min":
+            self.optimize_min_range(query)
+        elif range_type == "max":
             self.optimize_max_range(query)
         lazy_resultset = self.catalog.searchResults(**query)
 
@@ -165,6 +167,13 @@ class EventsEndpointHandler(SearchHandler):
 
         return recursive_generator(initial_agenda)
 
+    def optimize_min_range(self, query):
+        # Remove any caller-supplied event_dates filter. If the index is stale
+        # (only the start date indexed, not all intermediate days), ongoing
+        # long-duration events would otherwise be excluded. The Python filter in
+        # filter_and_sort_occurrences handles date filtering precisely.
+        query.pop("event_dates", None)
+
     def optimize_max_range(self, query):
         now = datetime.now(timezone.utc)
         one_year_ago = now - timedelta(days=365)
@@ -181,12 +190,7 @@ class EventsEndpointHandler(SearchHandler):
         if is_log_active():
             logger.warning(f"Occurrences before filtering: {len(occurrences)}")
         filter_func = {
-            "min": lambda occ: datetime.fromisoformat(occ["start"]) >= current_date
-            or (
-                datetime.fromisoformat(occ["start"])
-                <= current_date
-                <= datetime.fromisoformat(occ["end"])
-            ),
+            "min": lambda occ: self._matches_min_range(occ, current_date),
             "max": lambda occ: datetime.fromisoformat(occ["end"]) < current_date
             or (
                 datetime.fromisoformat(occ["start"])
@@ -225,6 +229,16 @@ class EventsEndpointHandler(SearchHandler):
                 reverse=(range_type == "max"),
             )
             return sorted_occurrences
+
+    def _matches_min_range(self, occurrence, current_date):
+        start = datetime.fromisoformat(occurrence["start"])
+        if start >= current_date:
+            return True
+        # Event has started. open_end events have no defined end and are
+        # considered ongoing indefinitely once started.
+        if occurrence.get("open_end"):
+            return True
+        return current_date <= datetime.fromisoformat(occurrence["end"])
 
     def is_within_range(self, occurrence):
         min_date, max_date = self.request.form.get("event_dates.query", [None, None])
