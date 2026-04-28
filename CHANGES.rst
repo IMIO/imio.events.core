@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.48 (unreleased)
+1.2.48 (2026-04-28)
 -------------------
 
 - SUP-52831 : Fix @events range=min to return ongoing and open_end events
