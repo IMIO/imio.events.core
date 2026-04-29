@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.49 (unreleased)
+1.2.49 (2026-04-29)
 -------------------
 
 - SUP-52831 : Fix @events ?event_dates.range=min dropping future events when the agenda has many past events.
