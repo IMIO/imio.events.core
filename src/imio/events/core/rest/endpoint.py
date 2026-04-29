@@ -76,7 +76,6 @@ class EventsEndpointHandler(SearchHandler):
 
         query["portal_type"] = "imio.events.Event"
         query["review_state"] = "published"
-        query["b_size"] = 400
 
         if "selected_agendas" in query:
             query["selected_agendas"] = sorted(
@@ -91,6 +90,9 @@ class EventsEndpointHandler(SearchHandler):
         elif range_type == "max":
             self.optimize_max_range(query)
         lazy_resultset = self.catalog.searchResults(**query)
+        total = len(lazy_resultset)
+        if is_log_active():
+            logger.info(f"catalog returned {total} brains")
 
         if "metadata_fields" not in self.request.form:
             self.request.form["metadata_fields"] = []
@@ -102,7 +104,7 @@ class EventsEndpointHandler(SearchHandler):
             "first_end",
             "open_end",
         ]
-        self.request.form["b_size"] = query["b_size"]
+        self.request.form["b_size"] = total
         self.request.form["b_start"] = 0
         results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(
             fullobjects=fullobjects
@@ -168,11 +170,19 @@ class EventsEndpointHandler(SearchHandler):
         return recursive_generator(initial_agenda)
 
     def optimize_min_range(self, query):
-        # Remove any caller-supplied event_dates filter. If the index is stale
-        # (only the start date indexed, not all intermediate days), ongoing
-        # long-duration events would otherwise be excluded. The Python filter in
-        # filter_and_sort_occurrences handles date filtering precisely.
-        query.pop("event_dates", None)
+        # event_dates only indexes the start date, so a strict `>= now`
+        # would drop long-running events that started in the past but are
+        # still ongoing. Use a permissive lower bound (now - 365 days) to
+        # let those through while keeping the catalog filter — without it,
+        # the resultset balloons to all published events and the serializer
+        # truncates future events. The Python filter in
+        # filter_and_sort_occurrences refines precisely afterwards.
+        now = datetime.now(timezone.utc)
+        lower_bound = now - timedelta(days=365)
+        query["event_dates"] = {
+            "query": lower_bound.isoformat(),
+            "range": "min",
+        }
 
     def optimize_max_range(self, query):
         now = datetime.now(timezone.utc)
