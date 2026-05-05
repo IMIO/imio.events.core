@@ -124,6 +124,131 @@
       </ul>
     </div>
 
+    <div id="linked-contacts"
+         class="linked-contacts"
+         tal:define="contacts view/linked_contacts"
+         tal:condition="contacts">
+      <h2 i18n:translate="">Linked contacts</h2>
+      <ul>
+        <li tal:repeat="contact contacts" class="linked-contact">
+          <details class="contact-details">
+            <summary class="contact-title" tal:content="contact/title">Title</summary>
+
+            <div class="contact-body">
+              <a tal:condition="contact/image_url"
+                 tal:attributes="href contact/url" target="_blank">
+                <img class="contact-image"
+                     tal:attributes="src contact/image_url; alt contact/title" />
+              </a>
+              <p tal:condition="contact/subtitle"
+                 class="contact-subtitle"
+                 tal:content="contact/subtitle">Subtitle</p>
+              <p tal:condition="contact/description"
+                 class="contact-description"
+                 tal:content="contact/description">Description</p>
+
+              <p class="contact-link">
+                <a target="_blank"
+                   tal:attributes="href contact/url"
+                   i18n:translate="">View full contact</a>
+              </p>
+
+              <p tal:condition="contact/address"
+                 class="contact-address"
+                 tal:content="contact/address">Address</p>
+
+              <ul tal:condition="contact/phones" class="contact-phones">
+                <li tal:repeat="phone contact/phones">
+                  <span tal:condition="phone/label"
+                        class="phone-label"
+                        tal:content="phone/label">Label</span>
+                  <span tal:condition="phone/type"
+                        class="phone-type"
+                        tal:content="phone/type">Type</span>
+                  <a tal:attributes="href string:tel:${phone/number}"
+                     tal:content="phone/number">Number</a>
+                </li>
+              </ul>
+
+              <ul tal:condition="contact/mails" class="contact-mails">
+                <li tal:repeat="mail contact/mails">
+                  <span tal:condition="mail/label"
+                        class="mail-label"
+                        tal:content="mail/label">Label</span>
+                  <span tal:condition="mail/type"
+                        class="mail-type"
+                        tal:content="mail/type">Type</span>
+                  <a tal:attributes="href string:mailto:${mail/mail_address}"
+                     tal:content="mail/mail_address">E-mail</a>
+                </li>
+              </ul>
+
+              <ul tal:condition="contact/urls" class="contact-urls">
+                <li tal:repeat="link contact/urls">
+                  <span tal:condition="link/type"
+                        class="url-type"
+                        tal:content="link/type">Type</span>
+                  <a target="_blank"
+                     tal:attributes="href link/url"
+                     tal:content="link/url">URL</a>
+                </li>
+              </ul>
+
+              <details tal:condition="contact/table_date"
+                       class="contact-schedule">
+                <summary i18n:translate="">Schedule</summary>
+                <ul>
+                  <li tal:repeat="row contact/table_date">
+                    <span class="schedule-day"
+                          i18n:translate=""
+                          tal:content="row/day">Day</span>
+                    <span class="schedule-value" tal:content="row/value">Value</span>
+                  </li>
+                </ul>
+              </details>
+
+              <details tal:condition="contact/multi_schedule"
+                       class="contact-multi-schedule">
+                <summary i18n:translate="">Particular schedules</summary>
+                <div tal:repeat="ms contact/multi_schedule" class="particular-schedule">
+                  <h5 tal:condition="ms/title" tal:content="ms/title">Title</h5>
+                  <p tal:condition="ms/dates" class="particular-schedule-dates">
+                    <tal:dates tal:repeat="d ms/dates">
+                      <span tal:content="d/start">start</span>
+                      <span> &mdash; </span>
+                      <span tal:content="d/end">end</span>
+                      <tal:sep tal:condition="not:repeat/d/end">, </tal:sep>
+                    </tal:dates>
+                  </p>
+                  <ul tal:condition="ms/schedule">
+                    <li tal:repeat="row ms/schedule">
+                      <span class="schedule-day"
+                            i18n:translate=""
+                            tal:content="row/day">Day</span>
+                      <span class="schedule-value" tal:content="row/value">Value</span>
+                    </li>
+                  </ul>
+                </div>
+              </details>
+
+              <details tal:condition="contact/exceptional_closures"
+                       class="contact-exceptional-closures">
+                <summary i18n:translate="">Exceptional closures</summary>
+                <ul>
+                  <li tal:repeat="closure contact/exceptional_closures">
+                    <span class="closure-date" tal:content="closure/date">Date</span>
+                    <span tal:condition="closure/title"
+                          class="closure-title"
+                          tal:content="closure/title">Title</span>
+                  </li>
+                </ul>
+              </details>
+            </div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
     <div id="map" class="map"
          tal:define="is_geolocated context/is_geolocated;
                      utils_view context/@@utils;"

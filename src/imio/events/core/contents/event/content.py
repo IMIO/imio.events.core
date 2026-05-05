@@ -158,6 +158,20 @@ class IEvent(IAddress, ITranslations):
         default=False,
     )
 
+    directives.widget(
+        "directory_linked_contact",
+        SelectFieldWidget,
+        vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
+    )
+    directory_linked_contact = schema.List(
+        title=_("Linked contact"),
+        description=_("Select contact for this event"),
+        value_type=schema.Choice(
+            source="imio.events.vocabulary.RemoteDirectoryContact"
+        ),
+        required=False,
+    )
+
     model.fieldset(
         "categorization",
         label=_("Categorization"),

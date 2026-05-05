@@ -2,6 +2,9 @@
 
 from collective.taxonomy.interfaces import ITaxonomy
 from AccessControl import Unauthorized
+from imio.smartweb.common.config import DIRECTORY_URL
+from imio.smartweb.common.utils import get_json
+from imio.smartweb.common.utils import get_parent_providing
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
 from imio.smartweb.locales import SmartwebMessageFactory as _
@@ -236,6 +239,7 @@ class UserAgendasVocabularyFactory:
                 if not search_query or search_query in title:
                     obj = brain.getObject()
                     if user.has_permission(permission, obj):
+                        print(obj.absolute_url())
                         terms.append(
                             SimpleTerm(
                                 value=brain.UID, token=brain.UID, title=brain.breadcrumb
@@ -266,3 +270,37 @@ class EventPublicDeVocabularyFactory:
 
 
 EventPublicDeVocabulary = EventPublicDeVocabularyFactory()
+
+
+class RemoteDirectoryContactVocabularyFactory:
+    @ram.cache(lambda *args: time.time() // (60))
+    def _fetch(self, context=None):
+        parent_entity = get_parent_providing(context, IEntity)
+        directory_entities = parent_entity.directory_linked_entities or []
+        if not directory_entities:
+            return SimpleVocabulary([])
+
+        params = [
+            "portal_type=imio.directory.Contact",
+            "sort_on=breadcrumb",
+            "b_size=1000000",
+            "metadata_fields=UID",
+            "metadata_fields=breadcrumb",
+        ]
+        params.extend("selected_entities={}".format(uid) for uid in directory_entities)
+        url = "{}/@search?{}".format(DIRECTORY_URL, "&".join(params))
+        json_contacts = get_json(url, None, 12)
+        if json_contacts is None or len(json_contacts.get("items", [])) == 0:
+            return SimpleVocabulary([])
+        return SimpleVocabulary(
+            [
+                SimpleTerm(value=elem["UID"], title=elem["breadcrumb"])
+                for elem in json_contacts.get("items")
+            ]
+        )
+
+    def __call__(self, context=None):
+        return self._fetch(context)
+
+
+RemoteDirectoryContactVocabulary = RemoteDirectoryContactVocabularyFactory()
