@@ -180,12 +180,10 @@ class IEvent(IAddress, ITranslations):
         SelectFieldWidget,
         vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
     )
-    directory_linked_contact = schema.List(
+    directory_linked_contact = schema.Choice(
         title=_("Linked contact"),
         description=_("Select contact for this event"),
-        value_type=schema.Choice(
-            source="imio.events.vocabulary.RemoteDirectoryContact"
-        ),
+        source="imio.events.vocabulary.RemoteDirectoryContact",
         required=False,
     )
 

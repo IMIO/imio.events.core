@@ -123,6 +123,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="upgrade_1024_to_1025"
+      title="Upgrade core from 1024 to 1025"
+      directory="profiles/1024_to_1025"
+      description="Import new js bundle to retrieve informations from linked contact"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />      
+
   <genericsetup:upgradeStep
       title="Refresh faceted"
       description="Refresh faceted configurations on all entities / agendas"
@@ -391,5 +399,14 @@
         />
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+      source="1024"
+      destination="1025"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Import new js bundle to retrieve informations from linked contact"
+        import_profile="imio.events.core.upgrades:upgrade_1024_to_1025"
+        />
+  </genericsetup:upgradeSteps>
 
 </configure>

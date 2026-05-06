@@ -5,6 +5,14 @@ Changelog
 1.2.50 (unreleased)
 -------------------
 
+- WEBBDC-2803 : Auto-fill Event contact/address from linked directory contact
+  When the user picks an entry in ``directory_linked_contact``, fetch the
+  remote contact via a new ``@@directory_contact_info`` view and populate
+  the IEventContact (name/email/phone) and IAddress inputs. 
+  Existing values are never overwritten; a "Clear" button wipes those fields.
+  The JS is shipped via a new ``imio-events-core-edit`` Plone bundle restricted to logged-in members.
+  [boulch]
+
 - WEBBDC-2803 : Reorganize imio.events.Event fieldsets (and fields order)
   Move the geolocation field into "address" and the change-note field into
   "settings" (stripping IVersionable's ``order_after`` rule that would undo it).
