@@ -6,27 +6,43 @@ from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.app.content.namechooser import NormalizingNameChooser
 from plone.app.textfield import RichText
+from plone.app.versioningbehavior.behaviors import IVersionable
 from plone.app.z3cform.widget import SelectFieldWidget
 from plone.autoform import directives
 from plone.autoform.directives import read_permission
 from plone.autoform.directives import write_permission
+from plone.autoform.interfaces import ORDER_KEY
 from plone.dexterity.content import Container
 from plone.supermodel import model
+from plone.supermodel.interfaces import FIELDSETS_KEY
+from plone.supermodel.model import Fieldset
 from z3c.form.browser.radio import RadioFieldWidget
 from zope import schema
 from zope.container.interfaces import INameChooser
 from zope.interface import implementer
 
-# from collective.geolocationbehavior.geolocation import IGeolocatable
-# from plone.supermodel.interfaces import FIELDSETS_KEY
-# from plone.supermodel.model import Fieldset
+# Attach the geolocation field to the "address" fieldset so it renders right
+# after the address fields. Preserve any pre-existing tagged values to avoid
+# clobbering metadata set by other code paths.
+_geo_fieldsets = list(IGeolocatable.queryTaggedValue(FIELDSETS_KEY) or [])
+_geo_fieldsets.append(Fieldset("address", fields=["geolocation"]))
+IGeolocatable.setTaggedValue(FIELDSETS_KEY, _geo_fieldsets)
 
-# # Move geolocation field to our Address fieldset
-# address_fieldset = Fieldset(
-#     "address",
-#     fields=["geolocation"],
-# )
-# IGeolocatable.setTaggedValue(FIELDSETS_KEY, [address_fieldset])
+# Move the change-note field into the "settings" fieldset alongside
+# versioning_enabled instead of letting it fall back to the default fieldset.
+_versionable_fieldsets = list(IVersionable.queryTaggedValue(FIELDSETS_KEY) or [])
+_versionable_fieldsets.append(Fieldset("settings", fields=["changeNote"]))
+IVersionable.setTaggedValue(FIELDSETS_KEY, _versionable_fieldsets)
+
+# IVersionable declares ``form.order_after(changeNote="*")`` which moves the
+# field to the end of the default fieldset, undoing the placement above. Strip
+# that rule so the fieldset assignment wins.
+_versionable_order = [
+    rule
+    for rule in (IVersionable.queryTaggedValue(ORDER_KEY) or [])
+    if rule[0] != "changeNote"
+]
+IVersionable.setTaggedValue(ORDER_KEY, _versionable_order)
 
 
 class EventCroppingProvider(BaseCroppingProvider):
@@ -158,10 +174,32 @@ class IEvent(IAddress, ITranslations):
         default=False,
     )
 
+    directives.order_before(directory_linked_contact="IEventContact.contact_name")
+    directives.widget(
+        "directory_linked_contact",
+        SelectFieldWidget,
+        vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
+    )
+    directory_linked_contact = schema.List(
+        title=_("Linked contact"),
+        description=_("Select contact for this event"),
+        value_type=schema.Choice(
+            source="imio.events.vocabulary.RemoteDirectoryContact"
+        ),
+        required=False,
+    )
+
+    model.fieldset(
+        "address",
+        label=_("Event location"),
+        order=1,
+    )
+
     model.fieldset(
         "categorization",
         label=_("Categorization"),
         fields=["selected_agendas", "category", "local_category"],
+        order=20,
     )
     directives.widget(selected_agendas=SelectFieldWidget)
     selected_agendas = schema.List(

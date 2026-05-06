@@ -4,31 +4,8 @@
     meta_type="Dexterity FTI"
     i18n:domain="imio.smartweb">
 
-  <!-- Basic properties -->
-  <property
-      i18n:translate=""
-      name="title">Event</property>
-  <property
-      i18n:translate=""
-      name="description">Folderish event content type</property>
-
-  <property name="icon_expr"></property>
-
-  <!-- Hierarchy control -->
-  <property name="global_allow">False</property>
-  <property name="filter_content_types">True</property>
-  <property name="allowed_content_types">
-    <element value="File" />
-    <element value="Image" />
-  </property>
-
-  <!-- Schema, class and security -->
-  <property name="add_permission">imio.events.core.AddEvent</property>
-  <property name="klass">imio.events.core.contents.Event</property>
-  <property name="schema">imio.events.core.contents.IEvent</property>
-
   <!-- Enabled behaviors -->
-  <property name="behaviors" purge="false">
+  <property name="behaviors" purge="true">
     <element value="plone.excludefromnavigation"/>
     <element value="imio.smartweb.ia.titles"/>
     <element value="plone.locking" />
@@ -40,12 +17,12 @@
     <!-- seems order for this one is important for fieldset sorting -->
     <element value="plone.richtext"/>
     <element value="plone.eventcontact"/>
+    <element value="plone.versioning"/>
     <element value="geolocatable"/>
     <element value="collective.taxonomy.generated.event_public"/>
     <element value="imio.smartweb.topics"/>
     <element value="imio.smartweb.iam"/>
     <element value="plone.categorization"/>
-    <element value="plone.versioning"/>
     <element value="solr.fields" />
   </property>
 
