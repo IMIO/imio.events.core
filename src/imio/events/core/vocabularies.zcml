@@ -61,4 +61,10 @@
     provides="zope.schema.interfaces.IVocabularyFactory"
     />    
 
+  <utility
+    name="imio.events.vocabulary.RemoteDirectoryContact"
+    component=".vocabularies.RemoteDirectoryContactVocabulary"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
 </configure>
