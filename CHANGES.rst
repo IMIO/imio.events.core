@@ -21,6 +21,11 @@ Changelog
 
 - WEB-4426 : fix: prevent child items truncation when querying events by UID
   [thomlamb]
+- WEBBDC-2803 : Add RemoteDirectoryContact vocabulary for Event
+  Register ``imio.events.vocabulary.RemoteDirectoryContact``, which queries
+  the Smartweb directory for contacts scoped to the parent Entity's ``directory_linked_entities``.
+  Reorder Event behaviors to align tab order with the new fieldset layout.
+  [boulch]
 
 
 1.2.49 (2026-04-29)
