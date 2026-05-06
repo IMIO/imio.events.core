@@ -5,6 +5,13 @@ Changelog
 1.2.50 (unreleased)
 -------------------
 
+- WEBBDC-2803 : Reorganize imio.events.Event fieldsets (and fields order)
+  Move the geolocation field into "address" and the change-note field into
+  "settings" (stripping IVersionable's ``order_after`` rule that would undo it).
+  Place ``directory_linked_contact`` just before ``contact_name``. 
+  Pin explicit order on the "address" and "categorization" fieldsets.
+  [boulch]
+
 - WEBBDC-2803 : Add RemoteDirectoryContact vocabulary for Event
   Register ``imio.events.vocabulary.RemoteDirectoryContact``, which queries
   the Smartweb directory for contacts scoped to the parent Entity's ``directory_linked_entities``.
