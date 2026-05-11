@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.50 (unreleased)
+1.2.50 (2026-05-11)
 -------------------
 
 - WEB-4426 : fix: prevent child items truncation when querying events by UID
