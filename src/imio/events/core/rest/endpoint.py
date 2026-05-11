@@ -104,7 +104,7 @@ class EventsEndpointHandler(SearchHandler):
             "first_end",
             "open_end",
         ]
-        self.request.form["b_size"] = total
+        self.request.form["b_size"] = max(total, 100)
         self.request.form["b_start"] = 0
         results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(
             fullobjects=fullobjects
