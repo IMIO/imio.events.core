@@ -759,6 +759,49 @@ class RestFunctionalTest(unittest.TestCase):
         # 00:00 → True). 4 future ones expected: 04-29, 05-06, 05-13, 05-20.
         self.assertEqual(len(weekly_items), 4)
 
+    @freeze_time("2026-05-11")
+    def test_uid_query_returns_all_child_items(self):
+        """Regression: b_size was set to len(lazy_resultset) = 1 for UID queries,
+        which truncated child items (files, images) to a single result even though
+        items_total reported more. max(total, 100) ensures all children are returned.
+        """
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="event_with_files",
+            title="Event with files",
+        )
+        event.start = datetime(2026, 6, 1, 10, 0)
+        event.end = datetime(2026, 6, 1, 12, 0)
+        event.reindexObject()
+        api.content.transition(event, "publish")
+
+        for i in range(4):
+            api.content.create(
+                container=event,
+                type="File",
+                id=f"file_{i}",
+                title=f"File {i}",
+            )
+
+        endpoint = EventsEndpointHandler(self.portal, self.request)
+        self.request.form["event_dates.range"] = "min"
+        query = {"UID": event.UID(), "b_size": 10, "b_start": 0}
+        try:
+            response = endpoint.search(query)
+        finally:
+            del self.request.form["event_dates.range"]
+            clear_search_cache(query)
+
+        items = response.get("items", [])
+        self.assertEqual(len(items), 1, "One event should match the UID")
+        child_items = items[0].get("items", [])
+        self.assertEqual(
+            len(child_items),
+            4,
+            "All 4 child items must be returned; b_size must not be truncated to 1",
+        )
+
 
 # <audit>
 #   <file>test_rest.py</file>
