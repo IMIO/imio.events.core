@@ -134,13 +134,13 @@ def expand_occurences(events, range="min"):
         event["start"] = json_compatible(start_date)
         event["end"] = json_compatible(end_date)
         if event["whole_day"]:
-            if end_date:
-                duration = (end_date - start_date) + timedelta(
-                    hours=23, minutes=59, seconds=59
-                )
-            else:
-                duration = timedelta(hours=23, minutes=59, seconds=59)
-            event["end"] = json_compatible(start_date + duration)
+            # whole_day ⇒ fin = 23:59:59 du dernier jour en TZ locale (Brussels).
+            # L'ancienne formule (end-start)+24h doublait la durée quand Plone
+            # avait déjà stocké end à 23:59 du dernier jour.
+            end_basis = end_date if end_date else start_date
+            event["end"] = json_compatible(
+                end_basis.replace(hour=23, minute=59, second=59, microsecond=0)
+            )
         if not event["recurrence"]:
             expanded_events.append(event)
             continue
