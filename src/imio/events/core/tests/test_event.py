@@ -39,7 +39,6 @@ from zope.lifecycleevent import modified
 from zope.publisher.browser import TestRequest
 from zope.schema.interfaces import IVocabularyFactory
 
-import geopy
 import pytz
 import unittest
 
@@ -288,9 +287,6 @@ class TestEvent(unittest.TestCase):
         self.assertEqual(annotation, {})
 
     def test_geolocation(self):
-        attr = {"geocode.return_value": mock.Mock(latitude=1, longitude=2)}
-        geopy.geocoders.Nominatim = mock.Mock(return_value=mock.Mock(**attr))
-
         event = api.content.create(
             container=self.agenda,
             type="imio.events.Event",
@@ -300,7 +296,9 @@ class TestEvent(unittest.TestCase):
         self.assertFalse(event.is_geolocated)
         event.geolocation = Geolocation(0, 0)
         event.street = "My beautiful street"
-        geocode_object(event)
+        with mock.patch("imio.smartweb.common.utils._geocode") as mock_geocode:
+            mock_geocode.return_value = mock.Mock(latitude=1, longitude=2)
+            geocode_object(event)
         self.assertTrue(event.is_geolocated)
         self.assertEqual(event.geolocation.latitude, 1)
         self.assertEqual(event.geolocation.longitude, 2)
