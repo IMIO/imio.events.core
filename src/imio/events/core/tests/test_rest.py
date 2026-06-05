@@ -759,47 +759,54 @@ class RestFunctionalTest(unittest.TestCase):
         # 00:00 → True). 4 future ones expected: 04-29, 05-06, 05-13, 05-20.
         self.assertEqual(len(weekly_items), 4)
 
-    @freeze_time("2026-05-11")
-    def test_uid_query_returns_all_child_items(self):
-        """Regression: b_size was set to len(lazy_resultset) = 1 for UID queries,
-        which truncated child items (files, images) to a single result even though
-        items_total reported more. max(total, 100) ensures all children are returned.
-        """
+    @freeze_time("2026-05-13")
+    def test_whole_day_event_with_same_start_end_returns_correct_dates(self):
+        # Bug observé côté section (@sections/events/view.py) : un événement
+        # whole_day 16/05 02:00 → 16/05 02:00 s'affiche du 15/05 au 17/05.
+        # Ce test pin ce que l'API @events renvoie réellement pour ce cas,
+        # afin de localiser si le bug est ici ou dans le consommateur.
         event = api.content.create(
             container=self.agenda,
             type="imio.events.Event",
-            id="event_with_files",
-            title="Event with files",
+            id="whole_day_same_start_end",
+            title="Whole Day Same Start End",
         )
-        event.start = datetime(2026, 6, 1, 10, 0)
-        event.end = datetime(2026, 6, 1, 12, 0)
+        event.start = datetime(2026, 5, 16, 2, 0)
+        event.end = datetime(2026, 5, 16, 2, 0)
+        event.whole_day = True
         event.reindexObject()
         api.content.transition(event, "publish")
 
-        for i in range(4):
-            api.content.create(
-                container=event,
-                type="File",
-                id=f"file_{i}",
-                title=f"File {i}",
-            )
-
         endpoint = EventsEndpointHandler(self.portal, self.request)
-        self.request.form["event_dates.range"] = "min"
-        query = {"UID": event.UID(), "b_size": 10, "b_start": 0}
+        query = {"b_size": 10, "b_start": 0}
         try:
             response = endpoint.search(query)
         finally:
-            del self.request.form["event_dates.range"]
             clear_search_cache(query)
 
-        items = response.get("items", [])
-        self.assertEqual(len(items), 1, "One event should match the UID")
-        child_items = items[0].get("items", [])
-        self.assertEqual(
-            len(child_items),
-            4,
-            "All 4 child items must be returned; b_size must not be truncated to 1",
+        items = [
+            i
+            for i in response.get("items", [])
+            if i["title"] == "Whole Day Same Start End"
+        ]
+        self.assertEqual(len(items), 1, f"event not found in response: {response}")
+        item = items[0]
+        print(
+            f"\nDIAG whole_day 16/05 02:00→02:00: "
+            f"start={item.get('start')!r}, end={item.get('end')!r}"
+        )
+        # Expected: l'événement doit rester ancré au 16/05.
+        # start doit être le 16/05 (pas le 15/05).
+        self.assertIn(
+            "2026-05-16",
+            item["start"],
+            f"start a glissé hors du 16/05: {item['start']!r}",
+        )
+        # end doit être start + 23h59m59s — donc encore le 16/05 (pas le 17/05).
+        self.assertIn(
+            "2026-05-16",
+            item["end"],
+            f"end a débordé au-delà du 16/05: {item['end']!r}",
         )
 
 

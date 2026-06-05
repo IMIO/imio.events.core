@@ -190,6 +190,56 @@ class TestAgenda(unittest.TestCase):
         self.assertEqual(expanded_events[-1]["start"], "2022-12-11T00:00:00+00:00")
         self.assertEqual(expanded_events[-1]["end"], "2022-12-11T23:59:59+00:00")
 
+    @freeze_time("2026-05-13")
+    def test_expand_occurences_whole_day_non_recurring(self):
+        # Régression: événement whole_day non-récurrent, stocké correctement
+        # par Plone comme jour complet en TZ locale Brussels:
+        #   start = 16/05 00:00 Brussels (= 15/05 22:00 UTC, CEST)
+        #   end   = 16/05 23:59 Brussels (= 16/05 21:59 UTC, CEST)
+        # Avant fix: (end-start) + 23h59m59s ≈ 48h → end débordait au 17/05.
+        # Après fix: end doit rester sur le jour de end_date (= 16/05 Brussels).
+        events = [
+            {
+                "start": "2026-05-15T22:00:00+00:00",
+                "end": "2026-05-16T21:59:00+00:00",
+                "first_start": "2026-05-15T22:00:00+00:00",
+                "first_end": "2026-05-16T21:59:00+00:00",
+                "recurrence": None,
+                "open_end": False,
+                "whole_day": True,
+            }
+        ]
+        expanded_events = expand_occurences(events)
+        self.assertEqual(len(expanded_events), 1)
+        event = expanded_events[0]
+        # start: inchangé, on garde le moment réel d'origine
+        self.assertEqual(event["start"], "2026-05-15T22:00:00+00:00")
+        # end: fin-de-journée Brussels du jour de end_date (16/05 Brussels)
+        # = 16/05 23:59:59 Brussels = 16/05 21:59:59 UTC
+        self.assertEqual(event["end"], "2026-05-16T21:59:59+00:00")
+
+    @freeze_time("2026-05-13")
+    def test_expand_occurences_whole_day_multi_day_non_recurring(self):
+        # Événement whole_day non-récurrent qui couvre plusieurs jours (15→17/05
+        # en TZ Brussels). end doit pointer la fin du DERNIER jour.
+        events = [
+            {
+                "start": "2026-05-14T22:00:00+00:00",  # = 15/05 00:00 Brussels CEST
+                "end": "2026-05-17T21:59:00+00:00",  # = 17/05 23:59 Brussels CEST
+                "first_start": "2026-05-14T22:00:00+00:00",
+                "first_end": "2026-05-17T21:59:00+00:00",
+                "recurrence": None,
+                "open_end": False,
+                "whole_day": True,
+            }
+        ]
+        expanded_events = expand_occurences(events)
+        self.assertEqual(len(expanded_events), 1)
+        event = expanded_events[0]
+        self.assertEqual(event["start"], "2026-05-14T22:00:00+00:00")
+        # end-of-day Brussels du 17/05 = 17/05 21:59:59 UTC
+        self.assertEqual(event["end"], "2026-05-17T21:59:59+00:00")
+
     def test_get_start_date(self):
         event = {
             "start": "2022-11-13T12:00:00+00:00",
