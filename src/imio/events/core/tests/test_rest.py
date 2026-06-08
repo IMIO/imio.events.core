@@ -16,7 +16,6 @@ from zope.intid.interfaces import IIntIds
 
 import unittest
 
-
 # def clear_search_cache(query):
 #     cache_key = EventsEndpointHandler._cache_key("func", "instance", query)
 #     cache = getUtility(ICacheChooser)(cache_key)

@@ -25,7 +25,6 @@ import logging
 import time
 import transaction
 
-
 logger = logging.getLogger("imio.events.core")
 logger.setLevel(logging.INFO)
 
