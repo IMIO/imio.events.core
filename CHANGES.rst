@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.51 (unreleased)
+1.2.51 (2026-06-08)
 -------------------
 
 - WEB-4427 : Fix a bug when whole_day for only 1 day
