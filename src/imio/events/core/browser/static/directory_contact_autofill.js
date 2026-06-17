@@ -326,9 +326,96 @@
         host.appendChild(cleanBtn);
     }
 
+    function fixLeafletSize() {
+        // Root cause: pat-leaflet (RequireJS async) and Plone's fieldset toggle
+        // JS race each other. Whichever runs first loses:
+        //   - If Leaflet wins: it measures a hidden container (height 0) and
+        //     only loads a 2×2 tile stub. When the toggle later shows the
+        //     fieldset the gray areas are already there.
+        //   - If the toggle wins: no issue — Leaflet measures the visible
+        //     container and loads the correct tile set.
+        //
+        // Fix: wait until BOTH events have fired, then dispatch a resize event
+        // so Leaflet re-measures the now-visible container and fills the gaps.
+        // A 150 ms grace period after the second event absorbs any CSS
+        // transition on the fieldset row.
+
+        var leafletReady = false;
+        var fieldsetReady = false;
+
+        function tryFix() {
+            if (!leafletReady || !fieldsetReady) return;
+            setTimeout(function () {
+                window.dispatchEvent(new Event("resize"));
+            }, 150);
+        }
+
+        // 1. Watch for Leaflet adding "leaflet-container" to the map div.
+        var leafletObserver = new MutationObserver(function (mutations) {
+            for (var i = 0; i < mutations.length; i++) {
+                var el = mutations[i].target;
+                if (el.classList && el.classList.contains("leaflet-container")) {
+                    leafletReady = true;
+                    leafletObserver.disconnect();
+                    tryFix();
+                    return;
+                }
+            }
+        });
+        leafletObserver.observe(document.body, {
+            attributes: true,
+            subtree: true,
+            attributeFilter: ["class"],
+        });
+
+        // 2. Watch for Plone's toggle adding "expanded" to the fieldset legend.
+        var legend = document.querySelector("#fieldsetlegend-address");
+        if (!legend) {
+            // No legend found — fieldset always visible, mark as ready now.
+            fieldsetReady = true;
+        } else if (legend.classList.contains("expanded")) {
+            // Already expanded before our script ran.
+            fieldsetReady = true;
+        } else {
+            var legendObserver = new MutationObserver(function (mutations) {
+                for (var i = 0; i < mutations.length; i++) {
+                    if (mutations[i].target.classList.contains("expanded")) {
+                        fieldsetReady = true;
+                        legendObserver.disconnect();
+                        tryFix();
+                        return;
+                    }
+                }
+            });
+            legendObserver.observe(legend, {
+                attributes: true,
+                attributeFilter: ["class"],
+            });
+        }
+
+        // Fallback: if either observer never fires (e.g. different Plone
+        // version, fieldset already visible), force a resize after 2 s.
+        setTimeout(function () {
+            window.dispatchEvent(new Event("resize"));
+        }, 2000);
+
+        // Re-measure on manual toggle click (fieldset collapsed then re-opened).
+        if (legend) {
+            legend.addEventListener("click", function () {
+                setTimeout(function () {
+                    window.dispatchEvent(new Event("resize"));
+                }, 350);
+            });
+        }
+    }
+
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
+        document.addEventListener("DOMContentLoaded", function () {
+            init();
+            fixLeafletSize();
+        });
     } else {
         init();
+        fixLeafletSize();
     }
 })();
