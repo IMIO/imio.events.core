@@ -5,7 +5,8 @@ Changelog
 1.2.52 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- SUP-47733 : Add cancel button to event add/edit forms
+  [thomlamb]
 
 
 1.2.51 (2026-06-08)
