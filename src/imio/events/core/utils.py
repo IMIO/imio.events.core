@@ -5,7 +5,9 @@ from datetime import timedelta
 from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
+from imio.smartweb.common.config import DIRECTORY_URL
 from imio.smartweb.common.faceted.utils import configure_faceted
+from imio.smartweb.common.utils import get_json
 from imio.smartweb.common.utils import is_log_active
 from plone import api
 from plone.event.recurrence import recurrence_sequence_ical
@@ -70,6 +72,35 @@ def get_start_date(event):
     return datetime.fromisoformat(event["start"])
 
 
+def _resolve_sponsors(uids):
+    """Batch-fetch {name, logo, url} for a list of directory contact UIDs."""
+    if not uids:
+        return {}
+    params = "&".join(f"UID={uid}" for uid in uids)
+    url = f"{DIRECTORY_URL}/@search?{params}&fullobjects=true"
+    data = get_json(url, None, 12) or {}
+    result = {}
+    for contact in data.get("items", []):
+        uid = contact.get("UID")
+        if not uid:
+            continue
+        logo = None
+        image_scales = contact.get("image_scales") or {}
+        scales_list = image_scales.get("image") or []
+        if scales_list:
+            logo = scales_list[0].get("download")
+        url_contact = None
+        urls = contact.get("urls") or []
+        if urls:
+            url_contact = urls[0].get("url")
+        result[uid] = {
+            "name": contact.get("title") or "",
+            "logo": logo,
+            "url": url_contact,
+        }
+    return result
+
+
 # If we want to further optimize the retrieval of a single event without using fullobjects=1
 # , then this function will be useful.
 def hydrate_ids_for(field_name, event, vocabulary):
@@ -98,6 +129,15 @@ def hydrate_ids_for(field_name, event, vocabulary):
 # just expand occurences. No filtering here
 def expand_occurences(events, range="min"):
     expanded_events = []
+    all_sponsor_uids = list(
+        {
+            uid
+            for event in events
+            if event
+            for uid in (event.get("event_sponsors") or [])
+        }
+    )
+    sponsors_by_uid = _resolve_sponsors(all_sponsor_uids)
     # iam_vocabulary = IAmVocabulary()
     # topics_vocabulary = TopicsVocabulary()
     for event in events:
@@ -130,6 +170,10 @@ def expand_occurences(events, range="min"):
         event["has_leadimage"] = False
         if event.get("image", None):
             event["has_leadimage"] = True
+        sponsor_uids = event.get("event_sponsors") or []
+        event["event_sponsors"] = [
+            sponsors_by_uid[uid] for uid in sponsor_uids if uid in sponsors_by_uid
+        ]
         # Ensure event start/end are in same date format than other json dates
         event["start"] = json_compatible(start_date)
         event["end"] = json_compatible(end_date)

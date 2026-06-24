@@ -186,6 +186,16 @@ def migrate_events_to_brussels_timezone(context):
     transaction.get().addAfterCommitHook(send_to_odwb, kws={"obj": site})
 
 
+def add_event_sponsors_metadata(context):
+    catalog = api.portal.get_tool("portal_catalog")
+    metadatas = list(catalog.schema())
+    if "event_sponsors" not in metadatas:
+        catalog.addColumn("event_sponsors")
+        logger.info("Added event_sponsors metadata column")
+    catalog.clearFindAndRebuild()
+    logger.info("Reindexed catalog for event_sponsors")
+
+
 def migrate_members_timezone_to_brussels(context):
     """Reset member timezone preferences that are set to UTC.
 

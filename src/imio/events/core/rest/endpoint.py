@@ -103,6 +103,7 @@ class EventsEndpointHandler(SearchHandler):
             "first_start",
             "first_end",
             "open_end",
+            "event_sponsors",
         ]
         self.request.form["b_size"] = max(total, 100)
         self.request.form["b_start"] = 0
