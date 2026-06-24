@@ -409,4 +409,26 @@
         />
   </genericsetup:upgradeSteps>
 
+  <genericsetup:registerProfile
+      name="upgrade_1025_to_1026"
+      title="Upgrade core from 1025 to 1026"
+      directory="profiles/1025_to_1026"
+      description="Add event_sponsors catalog metadata column"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:upgradeSteps
+      source="1025"
+      destination="1026"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Add event_sponsors catalog metadata column"
+        import_profile="imio.events.core.upgrades:upgrade_1025_to_1026"
+        />
+    <genericsetup:upgradeStep
+        title="Reindex catalog for event_sponsors"
+        handler=".upgrades.add_event_sponsors_metadata"
+        />
+  </genericsetup:upgradeSteps>
+
 </configure>

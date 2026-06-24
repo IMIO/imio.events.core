@@ -8,6 +8,7 @@ from plone.app.content.namechooser import NormalizingNameChooser
 from plone.app.textfield import RichText
 from plone.app.versioningbehavior.behaviors import IVersionable
 from plone.app.z3cform.widget import SelectFieldWidget
+from plone.app.z3cform.widgets.select import AjaxSelectWidget
 from plone.autoform import directives
 from plone.autoform.directives import read_permission
 from plone.autoform.directives import write_permission
@@ -191,6 +192,27 @@ class IEvent(IAddress, ITranslations):
         "address",
         label=_("Event location"),
         order=1,
+    )
+
+    model.fieldset(
+        "partners",
+        label=_("Organisateurs et partenaires"),
+        fields=["event_sponsors"],
+        order=2,
+    )
+    directives.widget(
+        "event_sponsors",
+        AjaxSelectWidget,
+        vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
+        pattern_options={"multiple": True},
+    )
+    event_sponsors = schema.List(
+        title=_("Organisateurs et partenaires"),
+        description=_("Select organizers, partners or sponsors for this event"),
+        value_type=schema.Choice(
+            source="imio.events.vocabulary.RemoteDirectoryContact"
+        ),
+        required=False,
     )
 
     model.fieldset(
