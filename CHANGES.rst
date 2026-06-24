@@ -8,19 +8,9 @@ Changelog
 - SUP-47733 : Add cancel button to event add/edit forms
   [thomlamb]
 
-
-1.2.51 (2026-06-08)
--------------------
-
-- WEB-4427 : Fix a bug when whole_day for only 1 day
-  [boulch]
-
-
-1.2.50 (2026-05-11)
--------------------
-
-- WEB-4426 : fix: prevent child items truncation when querying events by UID
+- WEBBDC-2803 : Add a new "Parteners" fieldset to imio.events.Event
   [thomlamb]
+
 - WEBBDC-2803 : Auto-fill Event contact/address from linked directory contact
   When the user picks an entry in ``directory_linked_contact``, fetch the
   remote contact via a new ``@@directory_contact_info`` view and populate
@@ -42,6 +32,19 @@ Changelog
   Reorder Event behaviors to align tab order with the new fieldset layout.
   [boulch]
 
+
+1.2.51 (2026-06-08)
+-------------------
+
+- WEB-4427 : Fix a bug when whole_day for only 1 day
+  [boulch]
+
+
+1.2.50 (2026-05-11)
+-------------------
+
+- WEB-4426 : fix: prevent child items truncation when querying events by UID
+  [thomlamb]
 
 1.2.49 (2026-04-29)
 -------------------
