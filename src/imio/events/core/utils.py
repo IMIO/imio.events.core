@@ -73,7 +73,7 @@ def get_start_date(event):
 
 
 def _resolve_sponsors(uids):
-    """Batch-fetch {name, logo, url} for a list of directory contact UIDs."""
+    """Batch-fetch sponsor data for a list of directory contact UIDs."""
     if not uids:
         return {}
     params = "&".join(f"UID={uid}" for uid in uids)
@@ -85,18 +85,18 @@ def _resolve_sponsors(uids):
         if not uid:
             continue
         logo = None
-        image_scales = contact.get("image_scales") or {}
-        scales_list = image_scales.get("image") or []
-        if scales_list:
-            logo = scales_list[0].get("download")
-        url_contact = None
-        urls = contact.get("urls") or []
-        if urls:
-            url_contact = urls[0].get("url")
+        logo_data = contact.get("logo")
+        if logo_data:
+            scales = logo_data.get("scales") or {}
+            logo = (
+                (scales.get("large") or {}).get("download")
+                or logo_data.get("download")
+            )
         result[uid] = {
+            "uid": uid,
             "name": contact.get("title") or "",
             "logo": logo,
-            "url": url_contact,
+            "url": contact.get("@id"),
         }
     return result
 
@@ -126,15 +126,28 @@ def hydrate_ids_for(field_name, event, vocabulary):
 #     pass
 
 
+def _uid_from_sponsor_item(item):
+    """Return the UID string from a sponsor item.
+
+    With fullobjects=False the catalog returns plain UID strings.
+    With fullobjects=True the full serializer returns {"token": uid, ...} dicts
+    (same as event_type, country, etc. in that context).
+    """
+    if isinstance(item, dict):
+        return item.get("token") or item.get("UID")
+    return item
+
+
 # just expand occurences. No filtering here
 def expand_occurences(events, range="min"):
     expanded_events = []
     all_sponsor_uids = list(
         {
-            uid
+            _uid_from_sponsor_item(item)
             for event in events
             if event
-            for uid in (event.get("event_sponsors") or [])
+            for item in (event.get("event_sponsors") or [])
+            if _uid_from_sponsor_item(item)
         }
     )
     sponsors_by_uid = _resolve_sponsors(all_sponsor_uids)
@@ -170,9 +183,12 @@ def expand_occurences(events, range="min"):
         event["has_leadimage"] = False
         if event.get("image", None):
             event["has_leadimage"] = True
-        sponsor_uids = event.get("event_sponsors") or []
+        sponsor_items = event.get("event_sponsors") or []
         event["event_sponsors"] = [
-            sponsors_by_uid[uid] for uid in sponsor_uids if uid in sponsors_by_uid
+            sponsors_by_uid[uid]
+            for item in sponsor_items
+            for uid in [_uid_from_sponsor_item(item)]
+            if uid and uid in sponsors_by_uid
         ]
         # Ensure event start/end are in same date format than other json dates
         event["start"] = json_compatible(start_date)
