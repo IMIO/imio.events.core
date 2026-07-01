@@ -59,6 +59,22 @@
         return (body && body.dataset && body.dataset.portalUrl) || "";
     }
 
+    function markAutofilled(field) {
+        if (!field) return;
+        field.classList.add("autofilled-contact");
+        function removeOnUserInput(evt) {
+            if (evt.isTrusted) {
+                field.classList.remove("autofilled-contact");
+                field.removeEventListener("input", removeOnUserInput);
+                field.removeEventListener("change", removeOnUserInput);
+            }
+        }
+        // "input"  → text inputs (not fired by .value = x assignments)
+        // "change" → selects (isTrusted distinguishes user interaction from dispatchEvent)
+        field.addEventListener("input", removeOnUserInput);
+        field.addEventListener("change", removeOnUserInput);
+    }
+
     function fillIfEmpty(field, value) {
         if (!field) return;
         // Preserve any existing user input. The "Clear" button is the only
@@ -67,7 +83,11 @@
         // we treat it as empty.
         var current = (field.value || "").trim();
         if (current && current !== "--NOVALUE--") return;
-        field.value = value || "";
+        var newValue = value || "";
+        field.value = newValue;
+        if (newValue) {
+            markAutofilled(field);
+        }
         // Notify any widget enhancer (pat-select2, geolocation map, …) so the
         // visible state stays in sync with the underlying input/select value.
         try {
@@ -252,6 +272,7 @@
                     var f = fields[key];
                     if (!f) return;
                     f.value = "";
+                    f.classList.remove("autofilled-contact");
                     try {
                         f.dispatchEvent(new Event("change", { bubbles: true }));
                     } catch (e) { /* no-op */ }

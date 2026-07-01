@@ -5,7 +5,12 @@ Changelog
 1.2.52 (unreleased)
 -------------------
 
+
+- WEBBDC-2831 : Add auto-filed-contact class to improve autofiled field styles
+  [thomaslamb]
+
 - WEBBDC-2831 : Auto-expand "address" fieldset on contact selection
+  [boulch]
 
 - WEBBDC-2831 : Add description on "address" fieldset
   [boulch]
