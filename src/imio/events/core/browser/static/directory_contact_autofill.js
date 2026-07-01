@@ -8,7 +8,10 @@
  *    populate the IEventContact (name / email / phone) and IAddress
  *    (street, number, complement, zipcode, city, country) inputs. Picking a
  *    (new) contact first wipes those fields, then fills them from the chosen
- *    entry; deselecting simply clears them.
+ *    entry; deselecting simply clears them. A "Open in directory" link is
+ *    shown next to the select, pointing at the contact's own directory URL
+ *    (its ``@id``) plus ``/edit`` so editors can jump straight to the contact
+ *    in the remote directory (within its entity).
  *
  *  - **Address-based geocoding**: a "Géolocaliser depuis l'adresse" button
  *    inserted at the top of the geolocation widget. On click, we build a
@@ -263,6 +266,33 @@
         // bail out cleanly so the script stays harmless on unrelated forms.
         if (!contactFields.__any && !addressFields.__any) return;
 
+        // "Open in directory" link shown next to the select once a contact is
+        // picked. It targets the contact's real directory URL (its @id, from
+        // @@directory_contact_info) so it lands on the contact in its own
+        // entity, plus "/edit" to open the edit form there. Editors sign in to
+        // the directory site separately (SSO).
+        var contactLink = document.createElement("a");
+        contactLink.className = "directory-contact-edit-link";
+        contactLink.target = "_blank";
+        contactLink.rel = "noopener noreferrer";
+        contactLink.style.display = "none";
+        contactLink.style.marginTop = "0.5em";
+        contactLink.textContent = "Ouvrir le contact dans l'annuaire";
+        (select.closest(".field") || select.parentNode).appendChild(contactLink);
+
+        function setContactLink(baseUrl) {
+            // baseUrl is the contact's @id (canonical directory URL). Strip any
+            // trailing slash before appending "/edit". Hide the link when there
+            // is no URL (nothing selected, or the lookup failed).
+            if (baseUrl) {
+                contactLink.href = baseUrl.replace(/\/+$/, "") + "/edit";
+                contactLink.style.display = "";
+            } else {
+                contactLink.removeAttribute("href");
+                contactLink.style.display = "none";
+            }
+        }
+
         function clearFields() {
             // Wipe every contact and address field we know about, ignoring
             // missing ones (e.g. on a future form variant that drops some).
@@ -303,7 +333,12 @@
             // fields from the fetched data.
             clearFields();
             var uid = select.value;
-            if (!uid) return;
+            // "--NOVALUE--" is z3c.form's placeholder for "nothing selected".
+            if (!uid || uid === "--NOVALUE--") {
+                // Deselection: nothing to fill and no contact to link to.
+                setContactLink(null);
+                return;
+            }
             // A contact is chosen: reveal the address fieldset we're about to
             // fill. Skipped on deselection (empty uid) via the early return.
             expandAddressFieldset();
@@ -332,10 +367,12 @@
                     );
                     fillIfEmpty(addressFields.city, data.city);
                     fillIfEmpty(addressFields.country, data.country);
+                    setContactLink(data.url);
                 })
                 .catch(function () {
                     // Network/parse errors are non-fatal: the user can still
-                    // type the contact details manually.
+                    // type the contact details manually. Drop any stale link.
+                    setContactLink(null);
                 });
         }
 
@@ -349,6 +386,27 @@
         select.addEventListener("change", fetchAndFill);
         if (window.jQuery) {
             window.jQuery(select).on("change", fetchAndFill);
+        }
+
+        // On an edit form a contact may already be linked. Show the directory
+        // link on load WITHOUT running fetchAndFill (which would clear/refill
+        // the fields and wipe existing values): just look up the contact URL.
+        if (select.value && select.value !== "--NOVALUE--") {
+            fetch(
+                getPortalUrl() +
+                    "/@@directory_contact_info?uid=" +
+                    encodeURIComponent(select.value),
+                { credentials: "same-origin" }
+            )
+                .then(function (r) {
+                    return r.ok ? r.json() : {};
+                })
+                .then(function (data) {
+                    setContactLink(data.url);
+                })
+                .catch(function () {
+                    /* no-op: link just stays hidden */
+                });
         }
     }
 

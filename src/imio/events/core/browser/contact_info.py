@@ -41,6 +41,10 @@ class DirectoryContactInfoView(BrowserView):
             country = country.get("token") or country.get("title") or ""
         zipcode = contact.get("zipcode")
         result = {
+            # Canonical directory URL of the contact (already points inside its
+            # own entity). The edit form JS appends "/edit" to build a link that
+            # opens the contact for editing in the remote directory.
+            "url": contact.get("@id") or "",
             "name": contact_name,
             "email": (mails[0].get("mail_address") if mails else "") or "",
             "phone": (phones[0].get("number") if phones else "") or "",
