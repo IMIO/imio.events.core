@@ -88,9 +88,8 @@ def _resolve_sponsors(uids):
         logo_data = contact.get("logo")
         if logo_data:
             scales = logo_data.get("scales") or {}
-            logo = (
-                (scales.get("large") or {}).get("download")
-                or logo_data.get("download")
+            logo = (scales.get("large") or {}).get("download") or logo_data.get(
+                "download"
             )
         result[uid] = {
             "uid": uid,
