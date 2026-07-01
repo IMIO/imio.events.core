@@ -5,7 +5,13 @@ Changelog
 1.2.52 (unreleased)
 -------------------
 
-- WEBBDC-2831 : Fix intermittently empty event_sponsors 
+- WEBBDC-2831 : Add links to create a new contact in the directory
+  [boulch]
+
+- WEBBDC-2831 : Add link to edit the linked contact in the directory
+  [boulch]
+
+- WEBBDC-2831 : Fix intermittently empty event_sponsors
   Fix RemoteDirectoryContact vocabulary cache key (per-entity cache key)
   [boulch]
 
