@@ -259,6 +259,22 @@
             });
         }
 
+        function expandAddressFieldset() {
+            // Once a contact is picked we prefill the IAddress inputs, so make
+            // sure the "address" fieldset is visible. imio's edit.js renders
+            // secondary fieldsets as toggles: the <legend> gets a
+            // "dropdown-toggle collapsed" class and its content is hidden until
+            // the legend is clicked (which slides it open and swaps the class
+            // to "expanded"). We trigger that native click rather than flipping
+            // classes ourselves so the real toggle runs — including the Leaflet
+            // resize fix bound to the same legend in fixLeafletSize(). No-op if
+            // the fieldset is already open.
+            var legend = document.getElementById("fieldsetlegend-address");
+            if (legend && !legend.classList.contains("expanded")) {
+                legend.click();
+            }
+        }
+
         function fetchAndFill() {
             // Reset first so switching (or clearing) the selected contact
             // always reflects the new choice rather than keeping stale values
@@ -267,6 +283,9 @@
             clearFields();
             var uid = select.value;
             if (!uid) return;
+            // A contact is chosen: reveal the address fieldset we're about to
+            // fill. Skipped on deselection (empty uid) via the early return.
+            expandAddressFieldset();
             var url =
                 getPortalUrl() +
                 "/@@directory_contact_info?uid=" +

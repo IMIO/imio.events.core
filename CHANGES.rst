@@ -5,6 +5,8 @@ Changelog
 1.2.52 (unreleased)
 -------------------
 
+- WEBBDC-2831 : Auto-expand "address" fieldset on contact selection
+
 - WEBBDC-2831 : Add description on "address" fieldset
   [boulch]
 
