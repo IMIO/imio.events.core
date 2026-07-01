@@ -199,6 +199,9 @@ class IEvent(IAddress, ITranslations):
     model.fieldset(
         "address",
         label=_("Event location"),
+        description=_(
+            "The fields below have been populated with information from the linked contact. If this is not relevant, you can manually modify the information in each field"
+        ),
         order=1,
     )
 

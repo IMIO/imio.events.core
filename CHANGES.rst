@@ -5,6 +5,9 @@ Changelog
 1.2.52 (unreleased)
 -------------------
 
+- WEBBDC-2831 : Add description on "address" fieldset
+  [boulch]
+
 - WEBBDC-2831 : Move "event_url" (from plone.app.event's IEventContact behavior) right below the description
   [boulch]
 
