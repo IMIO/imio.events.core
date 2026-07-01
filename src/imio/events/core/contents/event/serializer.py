@@ -34,7 +34,6 @@ def get_container_uid(event_obj=None, summary=None):
     if event_obj is None:
         return None
     agenda = get_agenda_for_event(event_obj)
-    print(f"================== container_uid : {agenda.UID()}")
     return agenda.UID() if agenda is not None else None
 
 
