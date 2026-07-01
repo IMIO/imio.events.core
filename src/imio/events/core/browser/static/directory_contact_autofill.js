@@ -6,9 +6,9 @@
  *    on the current Plone site (a server-side proxy to the remote directory
  *    that avoids CORS and keeps the directory URL out of the client) and
  *    populate the IEventContact (name / email / phone) and IAddress
- *    (street, number, complement, zipcode, city, country) inputs. Existing
- *    values are never overwritten. A "Clear" button next to the select
- *    wipes those fields in one click.
+ *    (street, number, complement, zipcode, city, country) inputs. Picking a
+ *    (new) contact first wipes those fields, then fills them from the chosen
+ *    entry; deselecting simply clears them.
  *
  *  - **Address-based geocoding**: a "Géolocaliser depuis l'adresse" button
  *    inserted at the top of the geolocation widget. On click, we build a
@@ -243,7 +243,28 @@
         // bail out cleanly so the script stays harmless on unrelated forms.
         if (!contactFields.__any && !addressFields.__any) return;
 
+        function clearFields() {
+            // Wipe every contact and address field we know about, ignoring
+            // missing ones (e.g. on a future form variant that drops some).
+            [contactFields, addressFields].forEach(function (fields) {
+                Object.keys(fields).forEach(function (key) {
+                    if (key === "__any") return;
+                    var f = fields[key];
+                    if (!f) return;
+                    f.value = "";
+                    try {
+                        f.dispatchEvent(new Event("change", { bubbles: true }));
+                    } catch (e) { /* no-op */ }
+                });
+            });
+        }
+
         function fetchAndFill() {
+            // Reset first so switching (or clearing) the selected contact
+            // always reflects the new choice rather than keeping stale values
+            // from the previous one. fillIfEmpty then populates the now-blank
+            // fields from the fetched data.
+            clearFields();
             var uid = select.value;
             if (!uid) return;
             var url =
@@ -289,41 +310,6 @@
         if (window.jQuery) {
             window.jQuery(select).on("change", fetchAndFill);
         }
-
-        // Insert the "Clear" button right after the directory_linked_contact
-        // field. We attach to the surrounding ``.field`` wrapper so the
-        // button shows up below the select2 widget rather than inside it.
-        var cleanBtn = document.createElement("button");
-        cleanBtn.type = "button";
-        cleanBtn.className = "btn btn-secondary btn-sm";
-        cleanBtn.style.marginTop = "0.5em";
-        cleanBtn.textContent = "Vider les champs contact";
-        cleanBtn.addEventListener("click", function () {
-            // Clear every contact and address field we know about, ignoring
-            // missing ones (e.g. on a future form variant that drops some).
-            Object.keys(contactFields).forEach(function (key) {
-                if (key === "__any") return;
-                var f = contactFields[key];
-                if (f) {
-                    f.value = "";
-                    try {
-                        f.dispatchEvent(new Event("change", { bubbles: true }));
-                    } catch (e) { /* no-op */ }
-                }
-            });
-            Object.keys(addressFields).forEach(function (key) {
-                if (key === "__any") return;
-                var f = addressFields[key];
-                if (f) {
-                    f.value = "";
-                    try {
-                        f.dispatchEvent(new Event("change", { bubbles: true }));
-                    } catch (e) { /* no-op */ }
-                }
-            });
-        });
-        var host = select.closest(".field") || select.parentNode;
-        host.appendChild(cleanBtn);
     }
 
     function fixLeafletSize() {

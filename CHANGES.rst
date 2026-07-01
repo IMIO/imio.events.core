@@ -5,6 +5,9 @@ Changelog
 1.2.52 (unreleased)
 -------------------
 
+- WEBBDC-2831 : Remove cleanBtn. Linked contact is cleaned thank to onChange event on directory_linked_contact select field
+  [boulch]
+
 - SUP-47733 : Add cancel button to event add/edit forms
   [thomlamb]
 
