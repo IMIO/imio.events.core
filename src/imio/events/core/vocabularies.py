@@ -271,21 +271,23 @@ EventPublicDeVocabulary = EventPublicDeVocabularyFactory()
 
 
 class RemoteDirectoryContactVocabularyFactory:
-    @ram.cache(lambda *args: time.time() // (60))
-    def _fetch(self, context=None):
-        parent_entity = get_parent_providing(context, IEntity)
-        if parent_entity is None:
-            # ex: call on @types or @vocabularies from RESTAPI, or from an
-            # add form where context has no IEntity ancestor yet.
-            return SimpleVocabulary([])
-        directory_entities = parent_entity.directory_linked_entities or []
-        if not directory_entities:
-            return SimpleVocabulary([])
-
+    # Cache key MUST depend on the entity: a single global (time-only) key let
+    # one call's result be served to every other event's form. In particular a
+    # call without an IEntity ancestor (RESTAPI @types/@vocabularies, an add
+    # form, a widget resolved at the site root) computed an empty vocabulary and
+    # poisoned the cache for everyone for up to 60s, so sponsors/contacts came
+    # up empty intermittently even while editing. The None/empty cases are now
+    # handled in __call__ and are never cached.
+    @ram.cache(
+        lambda method, self, entity_uid, directory_entities: "{}-{}-{}".format(
+            entity_uid, directory_entities, time.time() // 60
+        )
+    )
+    def _fetch(self, entity_uid, directory_entities):
         params = [
             "portal_type=imio.directory.Contact",
             "sort_on=breadcrumb",
-            "b_size=1000000",
+            "b_size=100000",
             "metadata_fields=UID",
             "metadata_fields=breadcrumb",
         ]
@@ -302,7 +304,19 @@ class RemoteDirectoryContactVocabularyFactory:
         )
 
     def __call__(self, context=None):
-        return self._fetch(context)
+        parent_entity = get_parent_providing(context, IEntity)
+        if parent_entity is None:
+            # No IEntity ancestor: e.g. RESTAPI @types/@vocabularies
+            # introspection, an add form before the object exists, or a widget
+            # whose vocabulary is resolved at the site root. Return empty
+            # WITHOUT caching so a later call with a real context still builds
+            # the actual vocabulary.
+            return SimpleVocabulary([])
+        directory_entities = parent_entity.directory_linked_entities or []
+        if not directory_entities:
+            return SimpleVocabulary([])
+        # tuple(sorted(...)) → stable, hashable component for the cache key.
+        return self._fetch(parent_entity.UID(), tuple(sorted(directory_entities)))
 
 
 RemoteDirectoryContactVocabulary = RemoteDirectoryContactVocabularyFactory()

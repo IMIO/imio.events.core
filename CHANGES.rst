@@ -5,6 +5,9 @@ Changelog
 1.2.52 (unreleased)
 -------------------
 
+- WEBBDC-2831 : Fix intermittently empty event_sponsors 
+  Fix RemoteDirectoryContact vocabulary cache key (per-entity cache key)
+  [boulch]
 
 - WEBBDC-2831 : Add auto-filed-contact class to improve autofiled field styles
   [thomaslamb]
