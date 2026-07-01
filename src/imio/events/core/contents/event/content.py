@@ -9,7 +9,7 @@ from plone.app.event.dx.behaviors import IEventContact
 from plone.app.textfield import RichText
 from plone.app.versioningbehavior.behaviors import IVersionable
 from plone.app.z3cform.widget import SelectFieldWidget
-from plone.app.z3cform.widgets.select import AjaxSelectWidget
+from imio.smartweb.common.widgets.select import TranslatedAjaxSelectWidget
 from plone.autoform import directives
 from plone.autoform.directives import read_permission
 from plone.autoform.directives import write_permission
@@ -210,7 +210,7 @@ class IEvent(IAddress, ITranslations):
     )
     directives.widget(
         "event_sponsors",
-        AjaxSelectWidget,
+        TranslatedAjaxSelectWidget,
         vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
         pattern_options={"multiple": True},
     )
