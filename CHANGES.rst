@@ -5,6 +5,9 @@ Changelog
 1.2.52 (unreleased)
 -------------------
 
+- WEBBDC-2831 : Move "event_url" (from plone.app.event's IEventContact behavior) right below the description
+  [boulch]
+
 - WEBBDC-2831 : Remove cleanBtn. Linked contact is cleaned thank to onChange event on directory_linked_contact select field
   [boulch]
 

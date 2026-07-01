@@ -5,6 +5,7 @@ from imio.smartweb.common.adapters import BaseCroppingProvider
 from imio.smartweb.common.interfaces import IAddress
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone.app.content.namechooser import NormalizingNameChooser
+from plone.app.event.dx.behaviors import IEventContact
 from plone.app.textfield import RichText
 from plone.app.versioningbehavior.behaviors import IVersionable
 from plone.app.z3cform.widget import SelectFieldWidget
@@ -44,6 +45,13 @@ _versionable_order = [
     if rule[0] != "changeNote"
 ]
 IVersionable.setTaggedValue(ORDER_KEY, _versionable_order)
+
+# Move "event_url" (from plone.app.event's IEventContact behavior) right below
+# the description instead of leaving it down in the contact block.
+_contact_order = list(IEventContact.queryTaggedValue(ORDER_KEY) or [])
+if not any(rule[0] == "event_url" for rule in _contact_order):
+    _contact_order.append(("event_url", "after", "IIASmartTitle.description"))
+    IEventContact.setTaggedValue(ORDER_KEY, _contact_order)
 
 
 class EventCroppingProvider(BaseCroppingProvider):
