@@ -11,7 +11,10 @@
  *    entry; deselecting simply clears them. A "Open in directory" link is
  *    shown next to the select, pointing at the contact's own directory URL
  *    (its ``@id``) plus ``/edit`` so editors can jump straight to the contact
- *    in the remote directory (within its entity).
+ *    in the remote directory (within its entity). Alongside it, one "Add a new
+ *    contact" link per directory entity linked on the parent Entity opens that
+ *    entity's ``++add++imio.directory.Contact`` form, to create a contact that
+ *    does not exist yet.
  *
  *  - **Address-based geocoding**: a "Géolocaliser depuis l'adresse" button
  *    inserted at the top of the geolocation widget. On click, we build a
@@ -60,6 +63,17 @@
         // can build absolute URLs without hard-coding the site path.
         var body = document.body;
         return (body && body.dataset && body.dataset.portalUrl) || "";
+    }
+
+    function getBaseUrl() {
+        // <body data-base-url="..."> is the current content context URL (the
+        // Event on an edit form, the container Agenda on an add form). Views
+        // that depend on the parent Entity must be called here, not on the
+        // portal root. Fall back to the portal URL if the attribute is absent.
+        var body = document.body;
+        return (
+            (body && body.dataset && body.dataset.baseUrl) || getPortalUrl()
+        );
     }
 
     function markAutofilled(field) {
@@ -293,6 +307,40 @@
             }
         }
 
+        // "Add a new contact" link(s), independent from the selected contact:
+        // one per directory entity linked on the parent Entity, each opening
+        // that entity's contact add form (its @id + "/++add++imio.directory.Contact")
+        // so an editor can create a contact that does not exist yet. Built once
+        // on load from @@directory_entities_info (which resolves the parent
+        // Entity's directory_linked_entities to their real directory URLs).
+        var addLinksBox = document.createElement("div");
+        addLinksBox.className = "directory-contact-add-links";
+        addLinksBox.style.marginTop = "0.5em";
+        (select.closest(".field") || select.parentNode).appendChild(addLinksBox);
+
+        function renderAddLinks(entities) {
+            addLinksBox.textContent = "";
+            if (!entities || !entities.length) return;
+            // One entity → a single generic label; several → name each entity
+            // so the editor picks where the contact is created.
+            var single = entities.length === 1;
+            entities.forEach(function (entity) {
+                if (!entity.url) return;
+                var a = document.createElement("a");
+                a.className = "directory-contact-add-link";
+                a.target = "_blank";
+                a.rel = "noopener noreferrer";
+                a.style.display = "block";
+                a.href =
+                    entity.url.replace(/\/+$/, "") +
+                    "/++add++imio.directory.Contact";
+                a.textContent = single
+                    ? "Ajouter un nouveau contact"
+                    : "Ajouter un contact dans : " + entity.title;
+                addLinksBox.appendChild(a);
+            });
+        }
+
         function clearFields() {
             // Wipe every contact and address field we know about, ignoring
             // missing ones (e.g. on a future form variant that drops some).
@@ -387,6 +435,19 @@
         if (window.jQuery) {
             window.jQuery(select).on("change", fetchAndFill);
         }
+
+        // Build the "add a new contact" link(s) once, from the parent Entity's
+        // linked directory entities (independent from the current selection).
+        fetch(getBaseUrl() + "/@@directory_entities_info", {
+            credentials: "same-origin",
+        })
+            .then(function (r) {
+                return r.ok ? r.json() : [];
+            })
+            .then(renderAddLinks)
+            .catch(function () {
+                /* no-op: no add links shown */
+            });
 
         // On an edit form a contact may already be linked. Show the directory
         // link on load WITHOUT running fetchAndFill (which would clear/refill

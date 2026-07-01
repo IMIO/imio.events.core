@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
 
+from imio.events.core.contents import IEntity
 from imio.smartweb.common.config import DIRECTORY_URL
 from imio.smartweb.common.utils import get_json
+from imio.smartweb.common.utils import get_parent_providing
 from Products.Five.browser import BrowserView
 
 
@@ -55,4 +57,42 @@ class DirectoryContactInfoView(BrowserView):
             "city": contact.get("city") or "",
             "country": country,
         }
+        return json.dumps(result)
+
+
+class DirectoryLinkedEntitiesInfoView(BrowserView):
+    """Return the parent Entity's linked directory entities as JSON.
+
+    Used by the Event add/edit form JS to build "add a new contact" links: one
+    per directory entity linked on the parent Entity, each pointing at the
+    entity's real directory URL (its ``@id``) plus ``/++add++imio.directory.Contact``.
+    Called on the content context (via <body data-base-url>), not the portal
+    root, because the linked entities depend on the parent Entity.
+    """
+
+    def __call__(self):
+        self.request.response.setHeader("Content-Type", "application/json")
+        entity = get_parent_providing(self.context, IEntity)
+        if entity is None:
+            return json.dumps([])
+        uids = entity.directory_linked_entities or []
+        if not uids:
+            return json.dumps([])
+        params = [
+            "portal_type=imio.directory.Entity",
+            "sort_on=sortable_title",
+            "b_size=3000",
+            "metadata_fields=UID",
+        ]
+        # Repeated UID params are OR-ed by the catalog, so we get every linked
+        # entity in one request.
+        params.extend("UID={}".format(uid) for uid in uids)
+        url = "{}/@search?{}".format(DIRECTORY_URL, "&".join(params))
+        data = get_json(url, None, 12)
+        items = (data or {}).get("items") or []
+        result = [
+            {"title": item.get("title") or "", "url": item.get("@id") or ""}
+            for item in items
+            if item.get("@id")
+        ]
         return json.dumps(result)
