@@ -274,6 +274,10 @@ class RemoteDirectoryContactVocabularyFactory:
     @ram.cache(lambda *args: time.time() // (60))
     def _fetch(self, context=None):
         parent_entity = get_parent_providing(context, IEntity)
+        if parent_entity is None:
+            # ex: call on @types or @vocabularies from RESTAPI, or from an
+            # add form where context has no IEntity ancestor yet.
+            return SimpleVocabulary([])
         directory_entities = parent_entity.directory_linked_entities or []
         if not directory_entities:
             return SimpleVocabulary([])
