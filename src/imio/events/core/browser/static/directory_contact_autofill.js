@@ -34,6 +34,11 @@
 (function () {
     "use strict";
 
+    // Temporary kill-switch: the directory links/buttons ("Open in directory",
+    // "Refresh", "Add a new contact") are hidden until the feature is tested
+    // and validated. Flip to true to re-enable them. Autofill still works.
+    var SHOW_DIRECTORY_LINKS = false;
+
     // IDs produced by z3c.form for the IEvent schema and the IEventContact
     // behavior. They are stable across add and edit forms because both use
     // the same widget prefix. The address inputs come from IAddress (no
@@ -309,6 +314,13 @@
         (select.closest(".field") || select.parentNode).appendChild(refreshBtn);
 
         function setContactLink(baseUrl) {
+            // Feature hidden for now: keep the open link and refresh button out
+            // of the DOM's visible flow regardless of selection.
+            if (!SHOW_DIRECTORY_LINKS) {
+                contactLink.style.display = "none";
+                refreshBtn.style.display = "none";
+                return;
+            }
             // baseUrl is the contact's @id (canonical directory URL). Strip any
             // trailing slash before appending "/edit". Show/hide the open link
             // and the refresh button together: both are meaningful only while a
@@ -337,6 +349,8 @@
 
         function renderAddLinks(entities) {
             addLinksBox.textContent = "";
+            // Feature hidden for now: render no "add a new contact" links.
+            if (!SHOW_DIRECTORY_LINKS) return;
             if (!entities || !entities.length) return;
             // One entity → a single generic label; several → name each entity
             // so the editor picks where the contact is created.
