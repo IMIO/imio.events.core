@@ -11,7 +11,9 @@
  *    entry; deselecting simply clears them. A "Open in directory" link is
  *    shown next to the select, pointing at the contact's own directory URL
  *    (its ``@id``) plus ``/edit`` so editors can jump straight to the contact
- *    in the remote directory (within its entity). Alongside it, one "Add a new
+ *    in the remote directory (within its entity). A "Refresh" button next to
+ *    it re-queries that contact (cache-busted) and overwrites the fields, to
+ *    pull back data just edited in the directory. Alongside these, one "Add a new
  *    contact" link per directory entity linked on the parent Entity opens that
  *    entity's ``++add++imio.directory.Contact`` form, to create a contact that
  *    does not exist yet.
@@ -294,16 +296,31 @@
         contactLink.textContent = "Ouvrir le contact dans l'annuaire";
         (select.closest(".field") || select.parentNode).appendChild(contactLink);
 
+        // "Refresh" button next to the open link: re-queries the directory for
+        // the selected contact and overwrites the fields, to pull back data
+        // just edited in the directory. Shown whenever a contact is selected.
+        var refreshBtn = document.createElement("button");
+        refreshBtn.type = "button";
+        refreshBtn.className = "btn btn-secondary btn-sm";
+        refreshBtn.style.display = "none";
+        refreshBtn.style.marginLeft = "0.5em";
+        refreshBtn.textContent = "Rafraîchir les infos du contact";
+        refreshBtn.addEventListener("click", refreshContactFields);
+        (select.closest(".field") || select.parentNode).appendChild(refreshBtn);
+
         function setContactLink(baseUrl) {
             // baseUrl is the contact's @id (canonical directory URL). Strip any
-            // trailing slash before appending "/edit". Hide the link when there
-            // is no URL (nothing selected, or the lookup failed).
+            // trailing slash before appending "/edit". Show/hide the open link
+            // and the refresh button together: both are meaningful only while a
+            // contact is selected.
             if (baseUrl) {
                 contactLink.href = baseUrl.replace(/\/+$/, "") + "/edit";
                 contactLink.style.display = "";
+                refreshBtn.style.display = "";
             } else {
                 contactLink.removeAttribute("href");
                 contactLink.style.display = "none";
+                refreshBtn.style.display = "none";
             }
         }
 
@@ -374,6 +391,57 @@
             }
         }
 
+        function fillFromData(data) {
+            // Fill contact + address inputs from the directory payload. Uses
+            // fillIfEmpty, so a caller that must overwrite (refresh) clears the
+            // fields first.
+            fillIfEmpty(contactFields.name, data.name);
+            fillIfEmpty(contactFields.email, data.email);
+            fillIfEmpty(contactFields.phone, data.phone);
+            fillIfEmpty(addressFields.street, data.street);
+            fillIfEmpty(addressFields.number, data.number);
+            fillIfEmpty(addressFields.complement, data.complement);
+            // ``zipcode`` is rendered by z3c.form's IntegerDataConverter which
+            // inserts a locale thousand separator (NBSP in fr_BE), turning
+            // "5300" into "5 300". Inject a whitespace-free value so the field
+            // stays clean until the next save.
+            fillIfEmpty(
+                addressFields.zipcode,
+                (data.zipcode || "").replace(/\s+/g, "")
+            );
+            fillIfEmpty(addressFields.city, data.city);
+            fillIfEmpty(addressFields.country, data.country);
+        }
+
+        function refreshContactFields() {
+            // Re-query the directory for the selected contact and OVERWRITE the
+            // fields (clearFields first, so fillFromData repopulates them). A
+            // fresh timestamp is appended and forwarded to the directory
+            // @search so no cache (browser, proxy or directory) can serve a
+            // stale copy of the just-edited contact.
+            var uid = select.value;
+            if (!uid || uid === "--NOVALUE--") return;
+            clearFields();
+            expandAddressFieldset();
+            var url =
+                getPortalUrl() +
+                "/@@directory_contact_info?uid=" +
+                encodeURIComponent(uid) +
+                "&_=" +
+                Date.now();
+            fetch(url, { credentials: "same-origin", cache: "no-store" })
+                .then(function (r) {
+                    return r.ok ? r.json() : {};
+                })
+                .then(function (data) {
+                    fillFromData(data);
+                    setContactLink(data.url);
+                })
+                .catch(function () {
+                    /* non-fatal: keep whatever the user had */
+                });
+        }
+
         function fetchAndFill() {
             // Reset first so switching (or clearing) the selected contact
             // always reflects the new choice rather than keeping stale values
@@ -399,22 +467,7 @@
                     return r.ok ? r.json() : {};
                 })
                 .then(function (data) {
-                    fillIfEmpty(contactFields.name, data.name);
-                    fillIfEmpty(contactFields.email, data.email);
-                    fillIfEmpty(contactFields.phone, data.phone);
-                    fillIfEmpty(addressFields.street, data.street);
-                    fillIfEmpty(addressFields.number, data.number);
-                    fillIfEmpty(addressFields.complement, data.complement);
-                    // ``zipcode`` is rendered by z3c.form's IntegerDataConverter
-                    // which inserts a locale thousand separator (NBSP in fr_BE),
-                    // turning "5300" into "5 300". Inject a whitespace-free
-                    // value so the field stays clean until the next save.
-                    fillIfEmpty(
-                        addressFields.zipcode,
-                        (data.zipcode || "").replace(/\s+/g, "")
-                    );
-                    fillIfEmpty(addressFields.city, data.city);
-                    fillIfEmpty(addressFields.country, data.country);
+                    fillFromData(data);
                     setContactLink(data.url);
                 })
                 .catch(function () {
