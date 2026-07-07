@@ -5,6 +5,9 @@ Changelog
 1.2.52 (unreleased)
 -------------------
 
+- WEBBDC-2831 : Update some fields descriptions
+  [boulch]
+
 - WEBBDC-2831 : Add links to create a new contact in the directory
   [boulch]
 

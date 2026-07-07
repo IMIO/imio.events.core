@@ -190,8 +190,10 @@ class IEvent(IAddress, ITranslations):
         vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
     )
     directory_linked_contact = schema.Choice(
-        title=_("Linked contact"),
-        description=_("Select contact for this event"),
+        title=_("Main contact"),
+        description=_(
+            "You can retrieve information from a contact record that already exists in your directory"
+        ),
         source="imio.events.vocabulary.RemoteDirectoryContact",
         required=False,
     )
@@ -200,7 +202,7 @@ class IEvent(IAddress, ITranslations):
         "address",
         label=_("Event location"),
         description=_(
-            "The fields below have been populated with information from the linked contact. If this is not relevant, you can manually modify the information in each field"
+            "The fields below have been populated with information from the primary contact. If this is not relevant, you can manually modify the information in each field"
         ),
         order=1,
     )
