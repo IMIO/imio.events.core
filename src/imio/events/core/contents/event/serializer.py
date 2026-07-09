@@ -26,6 +26,16 @@ import logging
 logger = logging.getLogger("imio.events.core")
 
 
+def _selected_rows(rows):
+    """Return the ticked datagrid rows, stripped of the internal 'selected'
+    flag, for REST output of a secondary contact's phones/mails/urls."""
+    result = []
+    for row in rows or []:
+        if row.get("selected"):
+            result.append({k: v for k, v in row.items() if k != "selected"})
+    return result
+
+
 def get_container_uid(event_obj=None, summary=None):
     if summary is not None:
         container_uid = summary.get("container_uid")
@@ -46,6 +56,22 @@ class SerializeEventToJson(SerializeFolderToJson):
         lang = get_restapi_query_lang(query)
         result["first_start"] = json_compatible(self.context.start)
         result["first_end"] = json_compatible(self.context.end)
+        # Child imio.events.Contact ("Secondary contact") objects: the linked
+        # directory contact UID plus the phones/mails/urls lines the editor
+        # ticked to keep (see imio.events.Contact).
+        secondary_contacts = [
+            {
+                "uid": obj.related_contact,
+                "title": obj.title or "",
+                "phones": _selected_rows(getattr(obj, "phones", None)),
+                "mails": _selected_rows(getattr(obj, "mails", None)),
+                "urls": _selected_rows(getattr(obj, "urls", None)),
+            }
+            for obj in self.context.objectValues()
+            if getattr(obj, "portal_type", None) == "imio.events.Contact"
+            and getattr(obj, "related_contact", None)
+        ]
+        result["secondary_contacts"] = json_compatible(secondary_contacts)
         title = result["title"]
         text = result["text"]
         desc = result["description"]

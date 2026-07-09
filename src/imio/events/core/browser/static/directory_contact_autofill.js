@@ -621,13 +621,39 @@
         }
     }
 
+    function initContactReadonlyCells() {
+        // imio.events.Contact edit form: the phones/mails/urls datagrids are
+        // filled from the linked directory contact by the server-side "Refresh"
+        // button. Their data cells must not be hand-edited — only the "Keep"
+        // checkbox stays interactive. We mark the data inputs readonly here.
+        // ``readonly`` (unlike ``disabled``) still submits the value, so the
+        // rows persist on save. No-op on any form without these widgets.
+        var prefixes = [
+            "form-widgets-phones-",
+            "form-widgets-mails-",
+            "form-widgets-urls-",
+        ];
+        prefixes.forEach(function (prefix) {
+            var nodes = document.querySelectorAll(
+                'input[id^="' + prefix + '"], textarea[id^="' + prefix + '"]'
+            );
+            Array.prototype.forEach.call(nodes, function (el) {
+                // Keep the "selected" checkbox (…-<row>-selected) interactive.
+                if (el.id.indexOf("-selected") !== -1) return;
+                el.setAttribute("readonly", "readonly");
+            });
+        });
+    }
+
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", function () {
             init();
             fixLeafletSize();
+            initContactReadonlyCells();
         });
     } else {
         init();
         fixLeafletSize();
+        initContactReadonlyCells();
     }
 })();

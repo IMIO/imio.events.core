@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    name="imio.events.Contact"
+    meta_type="Dexterity FTI"
+    i18n:domain="imio.smartweb">
+
+  <!-- Basic properties -->
+  <property
+      i18n:translate=""
+      name="title">Secondary contact</property>
+  <property
+      i18n:translate=""
+      name="description">Secondary contact linked to a directory contact record</property>
+
+  <property name="icon_expr"></property>
+
+  <!-- Hierarchy control -->
+  <property name="global_allow">False</property>
+  <property name="filter_content_types">True</property>
+  <property name="allowed_content_types"/>
+
+  <!-- Schema, class and security -->
+  <property name="add_permission">imio.events.core.AddEvent</property>
+  <property name="klass">imio.events.core.contents.Contact</property>
+  <property name="schema">imio.events.core.contents.IContact</property>
+
+  <!-- Enabled behaviors -->
+  <!-- purge="true" so the upgrade removes plone.basic on existing sites
+       instead of merely appending the new behavior list. -->
+  <property name="behaviors" purge="true">
+    <element value="plone.namefromtitle"/>
+    <element value="plone.excludefromnavigation"/>
+  </property>
+
+</object>

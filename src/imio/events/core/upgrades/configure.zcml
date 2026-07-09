@@ -431,4 +431,22 @@
         />
   </genericsetup:upgradeSteps>
 
+  <genericsetup:registerProfile
+      name="upgrade_1026_to_1027"
+      title="Upgrade core from 1026 to 1027"
+      directory="profiles/1026_to_1027"
+      description="Add imio.events.Contact type and allow it inside events"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:upgradeSteps
+      source="1026"
+      destination="1027"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Add imio.events.Contact type and allow it inside events"
+        import_profile="imio.events.core.upgrades:upgrade_1026_to_1027"
+        />
+  </genericsetup:upgradeSteps>
+
 </configure>

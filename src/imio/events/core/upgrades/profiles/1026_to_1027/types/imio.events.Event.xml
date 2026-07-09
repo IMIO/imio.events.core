@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    name="imio.events.Event"
+    meta_type="Dexterity FTI"
+    i18n:domain="imio.smartweb">
+
+  <!-- Only re-import the allowed_content_types so existing sites can host the
+       new imio.events.Contact type inside events. -->
+  <property name="filter_content_types">True</property>
+  <property name="allowed_content_types">
+    <element value="imio.events.Contact" />
+    <element value="File" />
+    <element value="Image" />
+  </property>
+
+</object>

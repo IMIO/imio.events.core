@@ -100,6 +100,85 @@ def _resolve_sponsors(uids):
     return result
 
 
+def get_directory_contact_lines(uid):
+    """Fetch phones / mails / urls of a directory contact (by UID).
+
+    Returns a dict of lists mirroring the imio.directory.Contact JSON, keeping
+    only the columns we display. Empty structure when uid is falsy or the
+    directory is unreachable/empty.
+    """
+    empty = {"phones": [], "mails": [], "urls": []}
+    if not uid:
+        return empty
+    url = "{}/@search?UID={}&fullobjects=true".format(DIRECTORY_URL, uid)
+    data = get_json(url, None, 12)
+    items = (data or {}).get("items") or []
+    if not items:
+        return empty
+    contact = items[0]
+    phones = [
+        {
+            "label": p.get("label") or "",
+            "type": p.get("type") or "",
+            "number": p.get("number") or "",
+        }
+        for p in (contact.get("phones") or [])
+    ]
+    mails = [
+        {
+            "label": m.get("label") or "",
+            "type": m.get("type") or "",
+            "mail_address": m.get("mail_address") or "",
+        }
+        for m in (contact.get("mails") or [])
+    ]
+    urls = [
+        {
+            "type": u.get("type") or "",
+            "url": u.get("url") or "",
+        }
+        for u in (contact.get("urls") or [])
+    ]
+    return {"phones": phones, "mails": mails, "urls": urls}
+
+
+def _selected_values(rows, value_key):
+    """Values of the rows that were ticked, used to preserve ticks on refresh."""
+    return {
+        row.get(value_key)
+        for row in (rows or [])
+        if row.get("selected") and row.get(value_key)
+    }
+
+
+def merge_directory_lines(existing_rows, fresh_rows, value_key):
+    """Return the freshly fetched rows as datagrid dicts, re-ticking the lines
+    that were ticked before (matched by their value, e.g. the phone number)."""
+    keep = _selected_values(existing_rows, value_key)
+    merged = []
+    for row in fresh_rows:
+        new_row = dict(row)
+        new_row["selected"] = row.get(value_key) in keep
+        merged.append(new_row)
+    return merged
+
+
+def refresh_contact_informations(contact):
+    """(Re)populate a Contact's phones/mails/urls from its linked directory
+    contact, preserving previously-ticked lines."""
+    uid = getattr(contact, "related_contact", None)
+    lines = get_directory_contact_lines(uid)
+    contact.phones = merge_directory_lines(
+        getattr(contact, "phones", None), lines["phones"], "number"
+    )
+    contact.mails = merge_directory_lines(
+        getattr(contact, "mails", None), lines["mails"], "mail_address"
+    )
+    contact.urls = merge_directory_lines(
+        getattr(contact, "urls", None), lines["urls"], "url"
+    )
+
+
 # If we want to further optimize the retrieval of a single event without using fullobjects=1
 # , then this function will be useful.
 def hydrate_ids_for(field_name, event, vocabulary):

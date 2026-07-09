@@ -49,6 +49,7 @@ class TestEvent(unittest.TestCase):
     def setUp(self):
         """Custom shared utility setup for tests."""
         self.authorized_types_in_event = [
+            "imio.events.Contact",
             "File",
             "Image",
         ]
