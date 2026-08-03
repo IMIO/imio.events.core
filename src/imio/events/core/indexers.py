@@ -2,6 +2,9 @@
 
 from datetime import timedelta
 from imio.events.core.contents.event.content import IEvent
+from imio.events.core.contents.secondary_contact.serializer import (
+    get_secondary_contacts,
+)
 from imio.events.core.utils import get_agenda_for_event
 from imio.smartweb.common.utils import translate_vocabulary_term
 from plone.indexer import indexer
@@ -176,6 +179,20 @@ def event_dates(obj):
             event_days.add(day.date().strftime("%Y-%m-%d"))
 
     return tuple(event_days)
+
+
+@indexer(IEvent)
+def secondary_contacts(obj):
+    """The event's Secondary contacts, as a catalog METADATA column.
+
+    @events serializes full objects only when the query carries a UID; the
+    ordinary listing path builds summaries from catalog metadata, so the
+    snapshot has to travel through the catalog to reach downstream sites.
+
+    Returns [] rather than raising AttributeError: an absent value would be
+    stored as Missing.Value and every consumer would have to special-case it.
+    """
+    return get_secondary_contacts(obj)
 
 
 @indexer(IEvent)

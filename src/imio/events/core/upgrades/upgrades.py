@@ -216,3 +216,13 @@ def migrate_members_timezone_to_brussels(context):
                 f"Reset timezone for member {member.getId()}: UTC → Europe/Brussels"
             )
     logger.info(f"Updated timezone for {count} members")
+
+
+def add_secondary_contacts_metadata(context):
+    catalog = api.portal.get_tool("portal_catalog")
+    metadatas = list(catalog.schema())
+    if "secondary_contacts" not in metadatas:
+        catalog.addColumn("secondary_contacts")
+        logger.info("Added secondary_contacts metadata column")
+    catalog.clearFindAndRebuild()
+    logger.info("Reindexed catalog for secondary_contacts")

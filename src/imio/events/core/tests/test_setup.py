@@ -28,6 +28,21 @@ class TestSetup(unittest.TestCase):
 
         self.assertIn(IImioEventsCoreLayer, utils.registered_layers())
 
+    def test_profile_version(self):
+        setup = api.portal.get_tool("portal_setup")
+        self.assertEqual(
+            "1027", setup.getLastVersionForProfile("imio.events.core:default")[0]
+        )
+
+    def test_upgrade_to_1027_is_registered(self):
+        setup = api.portal.get_tool("portal_setup")
+        upgrades = setup.listUpgrades("imio.events.core:default", show_old=True)
+        destinations = []
+        for entry in upgrades:
+            steps = entry if isinstance(entry, list) else [entry]
+            destinations.extend(step["sdest"] for step in steps)
+        self.assertIn("1027", destinations)
+
 
 class TestUninstall(unittest.TestCase):
     layer = IMIO_EVENTS_CORE_INTEGRATION_TESTING

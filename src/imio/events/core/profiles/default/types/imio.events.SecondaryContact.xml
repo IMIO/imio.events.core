@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    name="imio.events.SecondaryContact"
+    meta_type="Dexterity FTI"
+    i18n:domain="imio.smartweb">
+
+  <!-- Basic properties -->
+  <property
+      i18n:translate=""
+      name="title">Secondary contact</property>
+  <property
+      i18n:translate=""
+      name="description">Secondary contact for an event</property>
+
+  <property name="icon_expr">string:person-plus</property>
+
+  <!-- Hierarchy control: leaf type, only inside an Event -->
+  <property name="global_allow">False</property>
+  <property name="filter_content_types">True</property>
+  <property name="allowed_content_types"/>
+
+  <!-- Schema, class and security -->
+  <!-- if we can add an event, we can add its secondary contacts -->
+  <property name="add_permission">imio.events.core.AddEvent</property>
+  <property name="klass">imio.events.core.contents.SecondaryContact</property>
+  <property name="schema">imio.events.core.contents.ISecondaryContact</property>
+
+  <!-- Enabled behaviors -->
+  <!-- plone.basic is deliberately absent: it would make the title required
+       and expose a description field. The optional title lives on the schema. -->
+  <property name="behaviors" purge="false">
+    <element value="plone.namefromtitle"/>
+    <element value="plone.shortname"/>
+    <element value="plone.excludefromnavigation"/>
+    <element value="plone.locking"/>
+  </property>
+
+</object>

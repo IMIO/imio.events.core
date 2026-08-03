@@ -431,4 +431,26 @@
         />
   </genericsetup:upgradeSteps>
 
+  <genericsetup:registerProfile
+      name="upgrade_1026_to_1027"
+      title="Upgrade core from 1026 to 1027"
+      directory="profiles/1026_to_1027"
+      description="Add the imio.events.SecondaryContact type, allow it inside an Event, bind its workflow and add its catalog metadata column"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:upgradeSteps
+      source="1026"
+      destination="1027"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Add the imio.events.SecondaryContact type and its catalog metadata column"
+        import_profile="imio.events.core.upgrades:upgrade_1026_to_1027"
+        />
+    <genericsetup:upgradeStep
+        title="Add secondary_contacts metadata column"
+        handler=".upgrades.add_secondary_contacts_metadata"
+        />
+  </genericsetup:upgradeSteps>
+
 </configure>

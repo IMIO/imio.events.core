@@ -5,7 +5,16 @@ Changelog
 1.2.53 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEBBDC-2835 : Add the ``imio.events.SecondaryContact`` content type
+  ("Secondary contact"), addable several times inside an ``imio.events.Event``.
+  Each object references one directory contact and keeps a curated snapshot of
+  its phones, e-mails and urls, loaded from the directory with a dedicated
+  button and filtered per row by a checkbox column. The snapshot is published
+  through ``@events`` as ``secondary_contacts``, on both paths: the full
+  serializer and a new catalog metadata column (the ordinary listing path builds
+  summaries from catalog metadata). Row ``type`` is emitted as the raw token so
+  the consuming site translates it itself. Profile 1026 -> 1027.
+  [boulch]
 
 
 1.2.52 (2026-07-07)

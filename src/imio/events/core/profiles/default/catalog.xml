@@ -79,5 +79,6 @@
   <column value="first_start"/>
   <column value="first_end"/>
   <column value="event_sponsors"/>
+  <column value="secondary_contacts"/>
 
 </object>

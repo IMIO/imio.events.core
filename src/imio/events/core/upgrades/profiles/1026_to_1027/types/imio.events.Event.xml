@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<object name="imio.events.Event" meta_type="Dexterity FTI">
+
+  <!-- Only allowed_content_types, so the reimport touches nothing else. -->
+  <property name="allowed_content_types">
+    <element value="File" />
+    <element value="Image" />
+    <element value="imio.events.SecondaryContact" />
+  </property>
+
+</object>

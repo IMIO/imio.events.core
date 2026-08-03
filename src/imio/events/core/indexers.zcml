@@ -97,6 +97,11 @@
       />
 
   <adapter
+      name="secondary_contacts"
+      factory=".indexers.secondary_contacts"
+      />
+
+  <adapter
       name="first_start"
       factory=".indexers.first_start"
       />

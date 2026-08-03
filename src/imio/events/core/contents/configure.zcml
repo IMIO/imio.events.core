@@ -5,5 +5,6 @@
   <include package=".entity" />
   <include package=".event" />
   <include package=".folder" />
+  <include package=".secondary_contact" />
 
 </configure>

@@ -104,6 +104,9 @@ class EventsEndpointHandler(SearchHandler):
             "first_end",
             "open_end",
             "event_sponsors",
+            # Unlike event_sponsors, this needs no resolution step in
+            # expand_occurences: the stored snapshot is already complete.
+            "secondary_contacts",
         ]
         self.request.form["b_size"] = max(total, 100)
         self.request.form["b_start"] = 0

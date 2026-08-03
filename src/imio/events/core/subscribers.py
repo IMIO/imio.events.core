@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from Acquisition import aq_parent
+from imio.events.core.contents import IEvent
 from imio.events.core.rest.odwb_endpoint import OdwbEndpointGet
 from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_entity_for_obj
@@ -284,3 +286,25 @@ def set_uid_of_referrer_agendas(obj, container_agenda):
         obj.selected_agendas.append(rel.from_object.UID())
         obj._p_changed = 1
     obj.reindexObject(idxs=["selected_agendas"])
+
+
+def reindex_event_secondary_contacts(obj, event):
+    """Refresh the parent Event's `secondary_contacts` catalog metadata.
+
+    The column is computed from the Event's children, so a change to a child is
+    invisible to the catalog until the Event itself is reindexed. Without this,
+    downstream sites keep serving a stale snapshot.
+
+    As it happens, adding or removing a child already reindexes the Event as a
+    side effect of the ContainerModifiedEvent that OFS notifies on the
+    container. That is an incidental guarantee from another layer: this handler
+    makes the dependency deliberate and covers the plain modification case,
+    where no container event fires at all.
+
+    On IObjectRemovedEvent the child is already out of the container, so
+    recomputing yields the post-removal value, which is what we want.
+    """
+    parent = aq_parent(obj)
+    if parent is None or not IEvent.providedBy(parent):
+        return
+    parent.reindexObject(idxs=["secondary_contacts"])

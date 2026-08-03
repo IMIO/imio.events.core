@@ -3,6 +3,9 @@
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEvent
 from imio.events.core.contents import IFolder
+from imio.events.core.contents.secondary_contact.serializer import (
+    get_secondary_contacts,
+)
 from imio.events.core.interfaces import IImioEventsCoreLayer
 from imio.events.core.utils import get_agenda_for_event
 from imio.smartweb.common.rest.utils import get_restapi_query_lang
@@ -46,6 +49,10 @@ class SerializeEventToJson(SerializeFolderToJson):
         lang = get_restapi_query_lang(query)
         result["first_start"] = json_compatible(self.context.start)
         result["first_end"] = json_compatible(self.context.end)
+        # Always present, even empty: a consumer never has to tell "absent"
+        # from "empty". The summary path gets it from catalog metadata instead
+        # (see indexers.secondary_contacts).
+        result["secondary_contacts"] = get_secondary_contacts(self.context)
         title = result["title"]
         text = result["text"]
         desc = result["description"]

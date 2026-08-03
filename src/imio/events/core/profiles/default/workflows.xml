@@ -7,5 +7,13 @@
     <type type_id="imio.events.Folder">
       <bound-workflow workflow_id="one_state_workflow" />
     </type>
+    <!-- A Secondary contact is not independently publishable: it lives and
+         dies with its Event. Without this binding it would fall on the site's
+         default chain, be created private, and listFolderContents would hide it
+         from the anonymous downstream site, so @events would publish an empty
+         secondary_contacts list while every Manager-run test passed. -->
+    <type type_id="imio.events.SecondaryContact">
+      <bound-workflow workflow_id="one_state_workflow" />
+    </type>
   </bindings>
 </object>

@@ -37,4 +37,18 @@
                    Products.DCWorkflow.interfaces.IAfterTransitionEvent"
               handler=".subscribers.published_event_transition" />
 
+  <!-- The parent Event's secondary_contacts metadata is computed from these
+       children, so it has to be refreshed whenever one of them changes. -->
+  <subscriber for="imio.events.core.contents.ISecondaryContact
+                   zope.lifecycleevent.interfaces.IObjectAddedEvent"
+              handler=".subscribers.reindex_event_secondary_contacts" />
+
+  <subscriber for="imio.events.core.contents.ISecondaryContact
+                   zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+              handler=".subscribers.reindex_event_secondary_contacts" />
+
+  <subscriber for="imio.events.core.contents.ISecondaryContact
+                   zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+              handler=".subscribers.reindex_event_secondary_contacts" />
+
 </configure>
