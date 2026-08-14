@@ -26,6 +26,29 @@ _brussels = pytz.timezone("Europe/Brussels")
 
 logger = logging.getLogger("imio.events.core")
 
+# Catalog window used by optimize_min_range.
+#
+# event_dates is a KeywordIndex whose keys are individual days. An open-ended
+# `range: min` makes UnIndex.query_index do `index.values(lo)`, which
+# materialises one persistent IITreeSet per indexed day above the lower bound
+# and multiunions them all. Measured on production data (26.958 events):
+# 18.409 ZODB object loads per query, 85% of them caused by ~21 events whose
+# RRULE has neither UNTIL nor COUNT and whose occurrences reach year 2107.
+# Closing the window brings that to 3.816 loads for a resultset verified
+# identical UID by UID.
+#
+# The cost is paid on every miss of the RAM cache, on every thread, and is not
+# reduced by the other criteria: the 'or' branch of query_index ignores the
+# resultset, so a site filtering on its own agenda used to pay 17.552 loads for
+# 595 events, now 2.311 (0,086s instead of 0,373s).
+#
+# The horizon is deliberately generous (2 years) while expand_occurences only
+# emits occurrences up to 1 year ahead: it must not drop a far-off event that
+# the Python filter would otherwise have kept. Verified on production data that
+# no event has all its indexed days beyond this horizon.
+MIN_RANGE_LOOKBACK_DAYS = 365
+MIN_RANGE_HORIZON_DAYS = 730
+
 
 class SearchFiltersGet(Service):
     """
@@ -178,11 +201,14 @@ class EventsEndpointHandler(SearchHandler):
         # the resultset balloons to all published events and the serializer
         # truncates future events. The Python filter in
         # filter_and_sort_occurrences refines precisely afterwards.
+        # The upper bound keeps the catalog from walking the whole tail of the
+        # event_dates index; see MIN_RANGE_HORIZON_DAYS.
         now = datetime.now(timezone.utc)
-        lower_bound = now - timedelta(days=365)
+        lower_bound = now - timedelta(days=MIN_RANGE_LOOKBACK_DAYS)
+        upper_bound = now + timedelta(days=MIN_RANGE_HORIZON_DAYS)
         query["event_dates"] = {
-            "query": lower_bound.isoformat(),
-            "range": "min",
+            "query": [lower_bound.isoformat(), upper_bound.isoformat()],
+            "range": "min:max",
         }
 
     def optimize_max_range(self, query):

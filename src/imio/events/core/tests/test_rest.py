@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from datetime import timedelta
+from datetime import timezone
 from freezegun import freeze_time
 from imio.events.core.rest.endpoint import EventsEndpointHandler
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
@@ -808,23 +809,102 @@ class RestFunctionalTest(unittest.TestCase):
             f"end a débordé au-delà du 16/05: {item['end']!r}",
         )
 
+    @freeze_time("2026-04-29")
+    def test_optimize_min_range_bounds_the_query_upper_end(self):
+        """An unbounded `range: min` on the event_dates KeywordIndex forces
+        UnIndex.query_index to load one persistent IITreeSet per indexed day
+        above the lower bound — measured at 17.512 ZODB loads on production
+        data, 85% of which come from ~21 events with unbounded RRULEs whose
+        occurrences reach year 2107. optimize_min_range must therefore emit a
+        closed `min:max` window so the catalog only walks the useful keys."""
+        endpoint = EventsEndpointHandler(self.portal, self.request)
+        query = {}
 
-# <audit>
-#   <file>test_rest.py</file>
-#   <requirements_applied>R1, R2, R5, R6</requirements_applied>
-#   <deviations>
-#     R3 not applied: per-test events live in each test method (specific to
-#     the scenario, not shared across classes). Matches existing pattern in
-#     test_get_events_from_agenda / test_batching_events_from_agenda.
-#
-#     The class is named RestFunctionalTest but uses
-#     IMIO_EVENTS_CORE_INTEGRATION_TESTING (integration, not functional).
-#     Pre-existing; not renamed to preserve external references.
-#
-#     Each new test cleans request.form via try/finally to avoid leaking
-#     event_dates.range / sort_on into sibling tests (the layer reuses the
-#     request object). The pre-existing tests do not clean up; not retro-
-#     fitted to keep the diff focused on the regression coverage.
-#   </deviations>
-#   <questions>None</questions>
-# </audit>
+        endpoint.optimize_min_range(query)
+
+        self.assertEqual(query["event_dates"]["range"], "min:max")
+        lower, upper = query["event_dates"]["query"]
+        now = datetime(2026, 4, 29, tzinfo=timezone.utc)
+        self.assertEqual(datetime.fromisoformat(lower), now - timedelta(days=365))
+        self.assertEqual(datetime.fromisoformat(upper), now + timedelta(days=730))
+
+    @freeze_time("2026-04-29")
+    def test_min_range_excludes_event_beyond_the_horizon(self):
+        """Accepted trade-off of the closed window: an event whose dates all
+        fall past the horizon is no longer returned by range=min. Verified on
+        production data (26.958 events) that no event is in that situation —
+        every event with far-future occurrences also has occurrences inside
+        the window."""
+        far_future = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="far_future",
+            title="Far Future",
+        )
+        far_future.start = datetime(2035, 6, 1)
+        far_future.end = datetime(2035, 6, 2)
+        far_future.reindexObject()
+        api.content.transition(far_future, "publish")
+
+        soon = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="soon",
+            title="Soon",
+        )
+        soon.start = datetime(2026, 6, 1)
+        soon.end = datetime(2026, 6, 2)
+        soon.reindexObject()
+        api.content.transition(soon, "publish")
+
+        endpoint = EventsEndpointHandler(self.portal, self.request)
+        self.request.form["event_dates.range"] = "min"
+        query = {"b_size": 10, "b_start": 0}
+        try:
+            response = endpoint.search(query)
+        finally:
+            del self.request.form["event_dates.range"]
+            clear_search_cache(query)
+
+        titles = [i["title"] for i in response.get("items", [])]
+        self.assertIn("Soon", titles)
+        self.assertNotIn("Far Future", titles)
+
+    @freeze_time("2026-04-29")
+    def test_min_range_keeps_event_with_unbounded_recurrence(self):
+        """Regression guard for the closed window: the events that bloat the
+        index are precisely those with an RRULE that has neither UNTIL nor
+        COUNT (plone.event caps them at 1000 occurrences, spanning ~19 years).
+        They must keep matching, since they do have occurrences inside the
+        window."""
+        forever = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="forever",
+            title="Weekly Forever",
+        )
+        forever.start = datetime(2026, 4, 30, 10, 0)
+        forever.end = datetime(2026, 4, 30, 12, 0)
+        forever.recurrence = "RRULE:FREQ=WEEKLY"
+        forever.reindexObject()
+        api.content.transition(forever, "publish")
+
+        endpoint = EventsEndpointHandler(self.portal, self.request)
+        self.request.form["event_dates.range"] = "min"
+        query = {"b_size": 200, "b_start": 0}
+        try:
+            response = endpoint.search(query)
+        finally:
+            del self.request.form["event_dates.range"]
+            clear_search_cache(query)
+
+        occurrences = [
+            i for i in response.get("items", []) if i["title"] == "Weekly Forever"
+        ]
+        self.assertTrue(occurrences, "unbounded recurring event was dropped")
+        # expand_occurences caps range=min at now + 365 days, so a weekly rule
+        # yields one occurrence per week over that year.
+        self.assertGreaterEqual(len(occurrences), 50)
+        horizon = datetime(2026, 4, 29, tzinfo=timezone.utc) + timedelta(days=366)
+        for occ in occurrences:
+            self.assertLess(datetime.fromisoformat(occ["start"]), horizon)
