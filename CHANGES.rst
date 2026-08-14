@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.53 (unreleased)
+1.2.53 (2026-08-14)
 -------------------
 
 - WEB-4468 : Perf @events : close the upper end of the ``event_dates`` catalog window for
