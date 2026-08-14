@@ -5,7 +5,18 @@ Changelog
 1.2.54 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEBBDC-2831 : Contact autofill : always show the "Refresh" button when a contact is
+  selected. It is no longer hidden by the ``SHOW_DIRECTORY_LINKS`` kill-switch (which
+  now only covers the links going to the remote directory), because it was the only way
+  to (re)pull data for an already-linked contact : re-picking the same option in a
+  native ``<select>`` fires no ``change`` event and the edit form does not autofill on
+  load.
+  [boulch]
+
+- Contact autofill : drop the dead NBSP-stripping logic on ``zipcode``. It assumed
+  z3c.form's ``IntegerDataConverter`` inserted a thousand separator, but
+  ``IAddress.zipcode`` is a ``TextLine`` (it used to be an ``Int``).
+  [boulch]
 
 
 1.2.53 (2026-08-14)

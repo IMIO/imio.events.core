@@ -11,12 +11,14 @@
  *    entry; deselecting simply clears them. A "Open in directory" link is
  *    shown next to the select, pointing at the contact's own directory URL
  *    (its ``@id``) plus ``/edit`` so editors can jump straight to the contact
- *    in the remote directory (within its entity). A "Refresh" button next to
- *    it re-queries that contact (cache-busted) and overwrites the fields, to
- *    pull back data just edited in the directory. Alongside these, one "Add a new
+ *    in the remote directory (within its entity). Alongside it, one "Add a new
  *    contact" link per directory entity linked on the parent Entity opens that
  *    entity's ``++add++imio.directory.Contact`` form, to create a contact that
- *    does not exist yet.
+ *    does not exist yet. A "Refresh" button re-queries the selected contact
+ *    (cache-busted) and overwrites the fields; it is shown whenever a contact
+ *    is selected and is the only way to (re)pull data for an already-linked
+ *    contact, since re-picking the same option in a native ``<select>`` fires
+ *    no ``change`` event and the edit form does not autofill on load.
  *
  *  - **Address-based geocoding**: a "Géolocaliser depuis l'adresse" button
  *    inserted at the top of the geolocation widget. On click, we build a
@@ -34,9 +36,11 @@
 (function () {
     "use strict";
 
-    // Temporary kill-switch: the directory links/buttons ("Open in directory",
-    // "Refresh", "Add a new contact") are hidden until the feature is tested
-    // and validated. Flip to true to re-enable them. Autofill still works.
+    // Temporary kill-switch: the links that send the editor to the remote
+    // directory ("Open in directory", "Add a new contact") are hidden until the
+    // feature is tested and validated. Flip to true to re-enable them. Autofill
+    // and the "Refresh" button (which only calls this site's own proxy view)
+    // are NOT affected by this flag.
     var SHOW_DIRECTORY_LINKS = false;
 
     // IDs produced by z3c.form for the IEvent schema and the IEventContact
@@ -157,11 +161,8 @@
         var streetLine = [street, number].filter(Boolean).join(" ").trim();
         if (streetLine) bits.push(streetLine);
         pushTextField("complement");
-        // Strip all whitespace (including the NBSP that IntegerDataConverter
-        // inserts as a thousand separator, e.g. "5 300") so the zipcode lands
-        // in Nominatim's query as a clean numeric token.
         var zip = addressFields.zipcode && addressFields.zipcode.value
-            ? addressFields.zipcode.value.replace(/\s+/g, "")
+            ? addressFields.zipcode.value.trim()
             : "";
         var city = addressFields.city && addressFields.city.value
             ? addressFields.city.value.trim()
@@ -180,30 +181,10 @@
         return bits.join(", ");
     }
 
-    function stripZipcodeWhitespace(zipField) {
-        // IntegerDataConverter inserts an NBSP thousand-separator on render,
-        // turning "5300" into "5 300". Strip whitespace in place so the value
-        // displayed in the form matches what gets submitted (and what we
-        // send to Nominatim).
-        if (!zipField || !zipField.value) return;
-        var cleaned = zipField.value.replace(/\s+/g, "");
-        if (cleaned !== zipField.value) {
-            zipField.value = cleaned;
-        }
-    }
-
     function initGeocodeButton(addressFields) {
         var latField = document.getElementById(GEO_LAT_ID);
         var lngField = document.getElementById(GEO_LNG_ID);
         if (!latField || !lngField) return;
-        // Auto-clean the zipcode field whenever the user leaves it, so they
-        // don't have to delete the NBSP separator by hand before saving or
-        // geocoding.
-        if (addressFields.zipcode) {
-            addressFields.zipcode.addEventListener("blur", function () {
-                stripZipcodeWhitespace(addressFields.zipcode);
-            });
-        }
         // Insert the button at the top of the geolocation wrapper so it sits
         // right above the leaflet map; fall back to the field wrapper if the
         // expected DOM structure is missing.
@@ -225,7 +206,6 @@
         status.style.marginLeft = "0.5em";
 
         btn.addEventListener("click", function () {
-            stripZipcodeWhitespace(addressFields.zipcode);
             var query = buildAddressQuery(addressFields);
             if (!query) {
                 status.textContent = "Adresse vide.";
@@ -301,9 +281,10 @@
         contactLink.textContent = "Ouvrir le contact dans l'annuaire";
         (select.closest(".field") || select.parentNode).appendChild(contactLink);
 
-        // "Refresh" button next to the open link: re-queries the directory for
-        // the selected contact and overwrites the fields, to pull back data
-        // just edited in the directory. Shown whenever a contact is selected.
+        // "Refresh" button: re-queries the directory for the selected contact
+        // and overwrites the fields, to pull back data just edited in the
+        // directory. Shown whenever a contact is selected (see
+        // updateRefreshButton for why it is not optional).
         var refreshBtn = document.createElement("button");
         refreshBtn.type = "button";
         refreshBtn.className = "btn btn-secondary btn-sm";
@@ -314,26 +295,38 @@
         (select.closest(".field") || select.parentNode).appendChild(refreshBtn);
 
         function setContactLink(baseUrl) {
-            // Feature hidden for now: keep the open link and refresh button out
-            // of the DOM's visible flow regardless of selection.
+            // Feature hidden for now: keep the open link out of the DOM's
+            // visible flow regardless of selection.
             if (!SHOW_DIRECTORY_LINKS) {
                 contactLink.style.display = "none";
-                refreshBtn.style.display = "none";
                 return;
             }
             // baseUrl is the contact's @id (canonical directory URL). Strip any
-            // trailing slash before appending "/edit". Show/hide the open link
-            // and the refresh button together: both are meaningful only while a
-            // contact is selected.
+            // trailing slash before appending "/edit". The link is meaningful
+            // only while a contact is selected.
             if (baseUrl) {
                 contactLink.href = baseUrl.replace(/\/+$/, "") + "/edit";
                 contactLink.style.display = "";
-                refreshBtn.style.display = "";
             } else {
                 contactLink.removeAttribute("href");
                 contactLink.style.display = "none";
-                refreshBtn.style.display = "none";
             }
+        }
+
+        function updateRefreshButton() {
+            // Visibility follows the select's own value, NOT the outcome of a
+            // fetch: a failed lookup must still leave the editor a way to retry.
+            //
+            // Deliberately NOT gated by SHOW_DIRECTORY_LINKS. Unlike the links
+            // above, this button stays on this site (it calls the
+            // @@directory_contact_info proxy view), and without it a contact
+            // that is already linked can never be (re)pulled: re-picking the
+            // same option in a native <select> fires no "change" event, and the
+            // edit form intentionally skips autofill on load so it cannot wipe
+            // values the editor typed by hand.
+            var uid = select.value;
+            refreshBtn.style.display =
+                uid && uid !== "--NOVALUE--" ? "" : "none";
         }
 
         // "Add a new contact" link(s), independent from the selected contact:
@@ -415,14 +408,7 @@
             fillIfEmpty(addressFields.street, data.street);
             fillIfEmpty(addressFields.number, data.number);
             fillIfEmpty(addressFields.complement, data.complement);
-            // ``zipcode`` is rendered by z3c.form's IntegerDataConverter which
-            // inserts a locale thousand separator (NBSP in fr_BE), turning
-            // "5300" into "5 300". Inject a whitespace-free value so the field
-            // stays clean until the next save.
-            fillIfEmpty(
-                addressFields.zipcode,
-                (data.zipcode || "").replace(/\s+/g, "")
-            );
+            fillIfEmpty(addressFields.zipcode, data.zipcode);
             fillIfEmpty(addressFields.city, data.city);
             fillIfEmpty(addressFields.country, data.country);
         }
@@ -462,6 +448,7 @@
             // from the previous one. fillIfEmpty then populates the now-blank
             // fields from the fetched data.
             clearFields();
+            updateRefreshButton();
             var uid = select.value;
             // "--NOVALUE--" is z3c.form's placeholder for "nothing selected".
             if (!uid || uid === "--NOVALUE--") {
@@ -516,9 +503,13 @@
                 /* no-op: no add links shown */
             });
 
-        // On an edit form a contact may already be linked. Show the directory
-        // link on load WITHOUT running fetchAndFill (which would clear/refill
-        // the fields and wipe existing values): just look up the contact URL.
+        // On an edit form a contact may already be linked: offer the refresh
+        // button right away so its data can be pulled on demand.
+        updateRefreshButton();
+
+        // Show the directory link on load WITHOUT running fetchAndFill (which
+        // would clear/refill the fields and wipe existing values): just look up
+        // the contact URL.
         if (select.value && select.value !== "--NOVALUE--") {
             fetch(
                 getPortalUrl() +

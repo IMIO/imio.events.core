@@ -40,10 +40,12 @@ class DirectoryContactInfoView(BrowserView):
             contact_name = f"{contact_title}: {contact_subtitle}"
         else:
             contact_name = contact_title
-        # IAddress fields are identical on Event and Contact; the country
-        # field comes back as a token (e.g. "be") matching the Event select
-        # options, and zipcode is an int so we coerce it to a string for the
-        # text input.
+        # IAddress fields are identical on Event and Contact. ``country`` comes
+        # back as a {"title": ..., "token": ...} dict whose token (e.g. "be")
+        # matches the option values of the Event's country select (built from
+        # imio.smartweb.vocabulary.Countries, lowercase ISO codes). ``zipcode``
+        # is a TextLine on both sides today, but old records may still hold the
+        # int it used to be, so coerce it for the text input.
         country = contact.get("country") or ""
         if isinstance(country, dict):
             country = country.get("token") or country.get("title") or ""
