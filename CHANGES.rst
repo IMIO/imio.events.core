@@ -5,6 +5,9 @@ Changelog
 1.2.54 (unreleased)
 -------------------
 
+- Contacts vocabulary : search directory contacts on demand, limited to 20 results.
+  [boulch]
+
 - ODWB : reduce push/delete endpoint logs while keeping warnings.
   [boulch]
 
@@ -14,7 +17,6 @@ Changelog
   to (re)pull data for an already-linked contact : re-picking the same option in a
   native ``<select>`` fires no ``change`` event and the edit form does not autofill on
   load.
-  [boulch]
 
 - Contact autofill : drop the dead NBSP-stripping logic on ``zipcode``. It assumed
   z3c.form's ``IntegerDataConverter`` inserted a thousand separator, but

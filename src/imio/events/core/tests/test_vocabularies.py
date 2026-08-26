@@ -4,9 +4,12 @@ from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
+from unittest.mock import patch
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
+from urllib.parse import parse_qs
+from urllib.parse import urlparse
 import unittest
 
 
@@ -153,3 +156,85 @@ class TestVocabularies(unittest.TestCase):
         factory = getUtility(IVocabularyFactory, "imio.events.vocabulary.EventTypes")
         vocabulary = factory(self.portal)
         self.assertEqual(len(vocabulary), 2)
+
+
+class TestRemoteDirectoryContactVocabulary(unittest.TestCase):
+    layer = IMIO_EVENTS_CORE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer["portal"]
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        self.entity = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            id="directory-entity",
+            title="Entity",
+        )
+        self.agenda = api.content.create(
+            container=self.entity,
+            type="imio.events.Agenda",
+            id="directory-agenda",
+            title="Agenda",
+        )
+        self.event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="directory-event",
+            title="Event",
+        )
+        self.entity.directory_linked_entities = ["entity one", "entity-two"]
+        self.factory = getUtility(
+            IVocabularyFactory,
+            "imio.events.vocabulary.RemoteDirectoryContact",
+        )
+
+    def payload(self, uid="contact-uid", title="Entity / Contact"):
+        return {"items": [{"UID": uid, "breadcrumb": title}]}
+
+    @patch("imio.events.core.vocabularies.get_json")
+    def test_search_is_remote_and_bounded(self, get_json):
+        get_json.return_value = self.payload()
+
+        terms = self.factory(self.event).search("Jean + Jeanne")
+
+        self.assertEqual(
+            [(term.value, term.title) for term in terms],
+            [("contact-uid", "Entity / Contact")],
+        )
+        query = parse_qs(urlparse(get_json.call_args[0][0]).query)
+        self.assertEqual(query["b_size"], ["20"])
+        self.assertEqual(query["SearchableText"], ["Jean* AND Jeanne*"])
+        self.assertEqual(query["selected_entities"], ["entity one", "entity-two"])
+
+    @patch("imio.events.core.vocabularies.get_json")
+    def test_existing_value_is_resolved_by_uid(self, get_json):
+        get_json.return_value = self.payload()
+
+        term = self.factory(self.event).getTermByToken("contact-uid")
+
+        self.assertEqual(term.title, "Entity / Contact")
+        query = parse_qs(urlparse(get_json.call_args[0][0]).query)
+        self.assertEqual(query["UID"], ["contact-uid"])
+        self.assertEqual(query["b_size"], ["20"])
+
+    @patch("imio.events.core.vocabularies.get_json")
+    def test_opening_vocabulary_fetches_a_bounded_first_page(self, get_json):
+        get_json.return_value = self.payload()
+        vocabulary = self.factory(self.event)
+
+        self.assertEqual([term.value for term in vocabulary], ["contact-uid"])
+        query = parse_qs(urlparse(get_json.call_args[0][0]).query)
+        self.assertEqual(query["b_size"], ["20"])
+        self.assertNotIn("SearchableText", query)
+        self.assertNotIn("UID", query)
+
+    @patch("imio.events.core.vocabularies.get_json")
+    def test_empty_search_fetches_the_same_bounded_first_page(self, get_json):
+        get_json.return_value = self.payload()
+
+        terms = self.factory(self.event).search("")
+
+        self.assertEqual([term.value for term in terms], ["contact-uid"])
+        query = parse_qs(urlparse(get_json.call_args[0][0]).query)
+        self.assertEqual(query["b_size"], ["20"])
+        self.assertNotIn("SearchableText", query)

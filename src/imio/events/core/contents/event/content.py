@@ -186,8 +186,9 @@ class IEvent(IAddress, ITranslations):
     directives.order_before(directory_linked_contact="IEventContact.contact_name")
     directives.widget(
         "directory_linked_contact",
-        SelectFieldWidget,
+        TranslatedAjaxSelectWidget,
         vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
+        pattern_options={"minimumInputLength": 0},
     )
     directory_linked_contact = schema.Choice(
         title=_("Main contact"),
@@ -217,7 +218,7 @@ class IEvent(IAddress, ITranslations):
         "event_sponsors",
         TranslatedAjaxSelectWidget,
         vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
-        pattern_options={"multiple": True},
+        pattern_options={"multiple": True, "minimumInputLength": 0},
     )
     event_sponsors = schema.List(
         title=_("Organisateurs et partenaires"),

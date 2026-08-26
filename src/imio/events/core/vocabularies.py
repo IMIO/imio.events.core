@@ -21,6 +21,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 from zope.interface import provider
 
 import time
+from urllib.parse import urlencode
 
 ENABLE_CACHE = True
 
@@ -270,38 +271,76 @@ class EventPublicDeVocabularyFactory:
 EventPublicDeVocabulary = EventPublicDeVocabularyFactory()
 
 
-class RemoteDirectoryContactVocabularyFactory:
-    # Cache key MUST depend on the entity: a single global (time-only) key let
-    # one call's result be served to every other event's form. In particular a
-    # call without an IEntity ancestor (RESTAPI @types/@vocabularies, an add
-    # form, a widget resolved at the site root) computed an empty vocabulary and
-    # poisoned the cache for everyone for up to 60s, so sponsors/contacts came
-    # up empty intermittently even while editing. The None/empty cases are now
-    # handled in __call__ and are never cached.
-    @ram.cache(
-        lambda method, self, entity_uid, directory_entities: "{}-{}-{}".format(
-            entity_uid, directory_entities, time.time() // 60
-        )
-    )
-    def _fetch(self, entity_uid, directory_entities):
+class SearchableRemoteDirectoryContactVocabulary(SimpleVocabulary):
+    """Search directory contacts without loading the whole directory."""
+
+    search_size = 20
+
+    def __init__(self, directory_entities):
+        super().__init__([])
+        self.directory_entities = tuple(directory_entities)
+
+    def _fetch(self, **criteria):
         params = [
-            "portal_type=imio.directory.Contact",
-            "sort_on=breadcrumb",
-            "b_size=100000",
-            "metadata_fields=UID",
-            "metadata_fields=breadcrumb",
+            ("portal_type", "imio.directory.Contact"),
+            ("sort_on", "breadcrumb"),
+            ("b_size", self.search_size),
+            ("metadata_fields", "UID"),
+            ("metadata_fields", "breadcrumb"),
         ]
-        params.extend("selected_entities={}".format(uid) for uid in directory_entities)
-        url = "{}/@search?{}".format(DIRECTORY_URL, "&".join(params))
+        params.extend(("selected_entities", uid) for uid in self.directory_entities)
+        params.extend(criteria.items())
+        url = "{}/@search?{}".format(DIRECTORY_URL, urlencode(params))
         json_contacts = get_json(url, None, 12)
-        if json_contacts is None or len(json_contacts.get("items", [])) == 0:
-            return SimpleVocabulary([])
-        return SimpleVocabulary(
-            [
-                SimpleTerm(value=elem["UID"], title=elem["breadcrumb"])
-                for elem in json_contacts.get("items")
-            ]
-        )
+        if not json_contacts:
+            return []
+        return [
+            SimpleTerm(
+                value=contact["UID"],
+                token=contact["UID"],
+                title=contact["breadcrumb"],
+            )
+            for contact in json_contacts.get("items") or []
+        ]
+
+    def search(self, query):
+        if not query:
+            return self._fetch()
+        # Match Plone's catalog autocomplete semantics: every typed word is a
+        # prefix, and all words must occur. Without the trailing wildcard a
+        # partial name such as "Jea" would not find "Jean".
+        text = query
+        for char in "?-+*()":
+            text = text.replace(char, " ")
+        searchable_text = " AND ".join("{}*".format(word) for word in text.split())
+        if not searchable_text:
+            return []
+        return self._fetch(SearchableText=searchable_text)
+
+    def __iter__(self):
+        # @@getVocabulary iterates over the vocabulary when Select2 opens with
+        # an empty search. Return the first bounded page so the dropdown is
+        # useful immediately, without loading every directory contact.
+        return iter(self._fetch())
+
+    def getTerm(self, value):
+        terms = self._fetch(UID=value)
+        if not terms:
+            raise LookupError(value)
+        return terms[0]
+
+    def getTermByToken(self, token):
+        return self.getTerm(token)
+
+    def __contains__(self, value):
+        try:
+            self.getTerm(value)
+        except LookupError:
+            return False
+        return True
+
+
+class RemoteDirectoryContactVocabularyFactory:
 
     def __call__(self, context=None):
         parent_entity = get_parent_providing(context, IEntity)
@@ -315,8 +354,7 @@ class RemoteDirectoryContactVocabularyFactory:
         directory_entities = parent_entity.directory_linked_entities or []
         if not directory_entities:
             return SimpleVocabulary([])
-        # tuple(sorted(...)) → stable, hashable component for the cache key.
-        return self._fetch(parent_entity.UID(), tuple(sorted(directory_entities)))
+        return SearchableRemoteDirectoryContactVocabulary(directory_entities)
 
 
 RemoteDirectoryContactVocabulary = RemoteDirectoryContactVocabularyFactory()
