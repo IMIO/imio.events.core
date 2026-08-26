@@ -12,7 +12,6 @@ from zope.component import getMultiAdapter
 import json
 import unittest
 
-
 # The two views proxy the remote directory through
 # imio.smartweb.common.utils.get_json, so ``requests.get`` is the only thing
 # mocked: get_json itself (status handling, JSON parsing) and the URLs the views
