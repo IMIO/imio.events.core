@@ -12,6 +12,7 @@ from plone.memoize.interfaces import ICacheChooser
 from plone import api
 from unittest.mock import patch
 from z3c.relationfield.relation import RelationValue
+from zExceptions import BadRequest
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 
@@ -908,3 +909,21 @@ class RestFunctionalTest(unittest.TestCase):
         horizon = datetime(2026, 4, 29, tzinfo=timezone.utc) + timedelta(days=366)
         for occ in occurrences:
             self.assertLess(datetime.fromisoformat(occ["start"]), horizon)
+
+    def test_search_with_duplicated_batch_params(self):
+        """A duplicated query parameter (``?b_size=20&b_size=50``) is turned
+        into a list by ZPublisher (HTTPRequest.processInputs). Batch params
+        must be validated instead of being fed to a bare ``int()``, which used
+        to raise TypeError and log a 500 in the SiteErrorLog."""
+        endpoint = EventsEndpointHandler(self.portal, self.request)
+        with self.assertRaises(BadRequest):
+            endpoint.search({"b_size": ["20", "50"], "b_start": 0})
+        with self.assertRaises(BadRequest):
+            endpoint.search({"b_size": 10, "b_start": ["0", "10"]})
+
+    def test_search_with_non_integer_batch_params(self):
+        endpoint = EventsEndpointHandler(self.portal, self.request)
+        with self.assertRaises(BadRequest):
+            endpoint.search({"b_size": "abc", "b_start": 0})
+        with self.assertRaises(BadRequest):
+            endpoint.search({"b_size": 10, "b_start": "abc"})

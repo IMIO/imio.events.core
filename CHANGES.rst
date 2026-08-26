@@ -5,6 +5,9 @@ Changelog
 1.2.54 (unreleased)
 -------------------
 
+- ``@events`` : return a 400 for invalid ``b_size``/``b_start`` parameters.
+  [boulch]
+
 - Contacts vocabulary : search directory contacts on demand, limited to 20 results.
   [boulch]
 

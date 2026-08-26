@@ -10,6 +10,7 @@ from imio.smartweb.common.utils import is_log_active
 from plone import api
 from plone.memoize import ram
 from plone.restapi.batching import HypermediaBatch
+from plone.restapi.deserializer import parse_int
 from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.search.handler import SearchHandler
 from plone.restapi.search.utils import unflatten_dotted_dict
@@ -142,8 +143,15 @@ class EventsEndpointHandler(SearchHandler):
         if not query:
             return {"items": []}
 
-        b_size = query.pop("b_size", 20)
-        b_start = query.pop("b_start", 0)
+        # parse_int raises BadRequest (400) instead of letting a bare int()
+        # blow up with a 500: ZPublisher turns a duplicated query parameter
+        # (?b_size=20&b_size=50) into a list, and a bogus one (?b_size=abc)
+        # into an unconvertible string. This mirrors what plone.restapi does
+        # for the same parameters.
+        b_size = parse_int(query, "b_size", 20)
+        b_start = parse_int(query, "b_start", 0)
+        query.pop("b_size", None)
+        query.pop("b_start", None)
         # Appel à la nouvelle méthode pour obtenir les résultats de la recherche avant le tri et l'expansion
         # expanded_occurrences, range_type, b_size, b_start = self._perform_search(query)
         expanded_occurrences, range_type = self._perform_search(query)
@@ -153,7 +161,7 @@ class EventsEndpointHandler(SearchHandler):
 
         self.request.form["b_start"] = b_start
         self.request.form["b_size"] = b_size
-        if len(expanded_occurrences) < int(b_size):
+        if len(expanded_occurrences) < b_size:
             self.request.form["b_size"] = str(len(expanded_occurrences))
 
         batch = HypermediaBatch(self.request, sorted_occurrences)
