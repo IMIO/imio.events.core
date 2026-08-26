@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.54 (unreleased)
+1.2.54 (2026-08-26)
 -------------------
 
 - ``@events`` : return a 400 for invalid ``b_size``/``b_start`` parameters.
