@@ -5,6 +5,9 @@ Changelog
 1.2.54 (unreleased)
 -------------------
 
+- ODWB : reduce push/delete endpoint logs while keeping warnings.
+  [boulch]
+
 - WEBBDC-2831 : Contact autofill : always show the "Refresh" button when a contact is
   selected. It is no longer hidden by the ``SHOW_DIRECTORY_LINKS`` kill-switch (which
   now only covers the links going to the remote directory), because it was the only way

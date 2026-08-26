@@ -217,23 +217,14 @@ class RestFunctionalTest(unittest.TestCase):
         "imio.smartweb.common.rest.odwb.api.portal.get_registry_record",
         return_value="KAMOULOX_KEY",
     )
-    def test_log_odwb_response_success_ok_field(self, m_reg):
-        """_log_odwb_response logs INFO with 'sent/updated' verb for {"ok": true}."""
+    def test_log_odwb_response_success_is_silent(self, m_reg):
+        """A successful push/delete logs nothing : the per-batch INFO line is
+        commented out. Both success shapes ({"ok": true} and {"status": "ok"})
+        must stay silent."""
         endpoint = OdwbEndpointGet(self.entity, self.request)
-        with self.assertLogs("imio.events.core", level="INFO") as cm:
+        with self.assertNoLogs("imio.events.core", level="INFO"):
             endpoint._log_odwb_response("push", 3, '{"ok": true}')
-        self.assertTrue(any("sent/updated" in line for line in cm.output))
-
-    @patch(
-        "imio.smartweb.common.rest.odwb.api.portal.get_registry_record",
-        return_value="KAMOULOX_KEY",
-    )
-    def test_log_odwb_response_success_status_ok(self, m_reg):
-        """_log_odwb_response logs INFO with 'deleted' verb for delete action."""
-        endpoint = OdwbEndpointGet(self.entity, self.request)
-        with self.assertLogs("imio.events.core", level="INFO") as cm:
             endpoint._log_odwb_response("delete", 2, '{"status": "ok"}')
-        self.assertTrue(any("deleted" in line for line in cm.output))
 
     @patch(
         "imio.smartweb.common.rest.odwb.api.portal.get_registry_record",

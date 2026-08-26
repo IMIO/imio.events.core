@@ -43,30 +43,31 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
         self.__datas_count__ = 0
 
     def _log_odwb_response(self, action, count, response_text):
-        """Log the ODWB response at INFO (success) or WARNING (error).
+        """Log the ODWB response at WARNING (error).
 
         action  : "push" or "delete"
         count   : number of items in the batch
+
         """
-        verb = "sent/updated" if action == "push" else "deleted"
+        # verb = "sent/updated" if action == "push" else "deleted"
         try:
             data = json.loads(response_text)
             success = data.get("ok") or data.get("status") == "ok"
-            if success:
-                logger.info(
-                    "ODWB %s: %d events item(s) %s — ODWB response: %s",
-                    action,
-                    count,
-                    verb,
-                    response_text,
-                )
-            else:
+            if not success:
                 logger.warning(
                     "ODWB %s: %d events item(s) — ODWB returned an error: %s",
                     action,
                     count,
                     response_text,
                 )
+            # else:
+            #     logger.info(
+            #         "ODWB %s: %d events item(s) %s — ODWB response: %s",
+            #         action,
+            #         count,
+            #         verb,
+            #         response_text,
+            #     )
         except (json.JSONDecodeError, AttributeError):
             # odwb_query returns a plain error string on network/HTTP exceptions
             logger.warning(
@@ -78,10 +79,10 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
 
     def reply(self):
         if not super(OdwbEndpointGet, self).available():
-            logger.info(
-                "ODWB push skipped (not available) for %s",
-                self.context.absolute_url(),
-            )
+            # logger.info(
+            #     "ODWB push skipped (not available) for %s",
+            #     self.context.absolute_url(),
+            # )
             return
         url = f"{self.odwb_api_push_url}/{self.odwb_imio_service}/temps_reel/push/?pushkey={self.odwb_pushkey}"
         if is_log_active():
@@ -94,11 +95,11 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
             response_text = self.odwb_query(url, payload)
             self._log_odwb_response("push", len(batch), response_text)
             responses.append(response_text)
-        logger.info(
-            "ODWB push complete: %d events item(s) sent from %s",
-            self.__datas_count__,
-            self.context.absolute_url(),
-        )
+        # logger.info(
+        #     "ODWB push complete: %d events item(s) sent from %s",
+        #     self.__datas_count__,
+        #     self.context.absolute_url(),
+        # )
         if not responses:
             return None
         unique = set(responses)
@@ -129,10 +130,10 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
 
     def remove(self):
         if not super(OdwbEndpointGet, self).available():
-            logger.info(
-                "ODWB delete skipped (not available) for %s",
-                self.context.absolute_url(),
-            )
+            # logger.info(
+            #     "ODWB delete skipped (not available) for %s",
+            #     self.context.absolute_url(),
+            # )
             return
         url = f"{self.odwb_api_push_url}/{self.odwb_imio_service}/temps_reel/delete/?pushkey={self.odwb_pushkey}"
         if is_log_active():
@@ -145,11 +146,12 @@ class OdwbEndpointGet(OdwbBaseEndpointGet):
             response_text = self.odwb_query(url, payload)
             self._log_odwb_response("delete", len(batch), response_text)
             responses.append(response_text)
-        logger.info(
-            "ODWB delete complete: %d events item(s) sent to ODWB delete endpoint from %s",
-            deleted_count,
-            self.context.absolute_url(),
-        )
+        # logger.info(
+        #     "ODWB delete complete: %d events item(s) sent to ODWB delete endpoint "
+        #     "from %s",
+        #     deleted_count,
+        #     self.context.absolute_url(),
+        # )
         if not responses:
             return None
         unique = set(responses)
