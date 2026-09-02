@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.55 (unreleased)
+1.2.55 (2026-09-02)
 -------------------
 
 - Contact autofill : fix the fields never being filled for non-Manager editors.
