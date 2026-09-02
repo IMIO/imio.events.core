@@ -87,6 +87,28 @@
         );
     }
 
+    function readContactJson(response) {
+        // @@directory_contact_info answers JSON. Anything else means the
+        // request never reached the view -- most likely Plone served the
+        // insufficient-privileges page, which comes back as HTTP 200 + HTML
+        // and would otherwise fail silently in the caller's .catch(). Say so in
+        // the console so the next occurrence is diagnosable, and return an
+        // empty payload so the user can still type the fields by hand.
+        var contentType = response.headers.get("Content-Type") || "";
+        if (!response.ok || contentType.indexOf("json") === -1) {
+            console.warn(
+                "directory_contact_info: unexpected response (" +
+                    response.status +
+                    " " +
+                    contentType +
+                    ") for " +
+                    response.url
+            );
+            return {};
+        }
+        return response.json();
+    }
+
     function markAutofilled(field) {
         if (!field) return;
         field.classList.add("autofilled-contact");
@@ -430,9 +452,7 @@
                 "&_=" +
                 Date.now();
             fetch(url, { credentials: "same-origin", cache: "no-store" })
-                .then(function (r) {
-                    return r.ok ? r.json() : {};
-                })
+                .then(readContactJson)
                 .then(function (data) {
                     fillFromData(data);
                     setContactLink(data.url);
@@ -464,9 +484,7 @@
                 "/@@directory_contact_info?uid=" +
                 encodeURIComponent(uid);
             fetch(url, { credentials: "same-origin" })
-                .then(function (r) {
-                    return r.ok ? r.json() : {};
-                })
+                .then(readContactJson)
                 .then(function (data) {
                     fillFromData(data);
                     setContactLink(data.url);
@@ -517,9 +535,7 @@
                     encodeURIComponent(select.value),
                 { credentials: "same-origin" }
             )
-                .then(function (r) {
-                    return r.ok ? r.json() : {};
-                })
+                .then(readContactJson)
                 .then(function (data) {
                     setContactLink(data.url);
                 })

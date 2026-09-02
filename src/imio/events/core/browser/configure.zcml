@@ -35,11 +35,19 @@
     layer="imio.events.core.interfaces.IImioEventsCoreLayer"
     />
 
+  <!-- Both views are called from the Event add/edit form JS, and
+       @@directory_contact_info is called on the PORTAL ROOT (it needs no
+       context, just a contact uid). Requiring cmf.ModifyPortalContent there
+       restricted them to Managers: an editor holding local roles on an Entity
+       has no modify right on the site root, so Plone answered the fetch with
+       the insufficient-privileges page (HTTP 200 + HTML) and the autofill
+       silently did nothing. Hence zope2.View plus the explicit anonymous check
+       the views do themselves. -->
   <browser:page
     name="directory_contact_info"
     for="*"
     class=".contact_info.DirectoryContactInfoView"
-    permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
     layer="imio.events.core.interfaces.IImioEventsCoreLayer"
     />
 
@@ -47,7 +55,7 @@
     name="directory_entities_info"
     for="*"
     class=".contact_info.DirectoryLinkedEntitiesInfoView"
-    permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
     layer="imio.events.core.interfaces.IImioEventsCoreLayer"
     />
 

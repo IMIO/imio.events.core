@@ -1,11 +1,25 @@
 # -*- coding: utf-8 -*-
 import json
 
+from AccessControl import Unauthorized
 from imio.events.core.contents import IEntity
 from imio.smartweb.common.config import DIRECTORY_URL
 from imio.smartweb.common.utils import get_json
 from imio.smartweb.common.utils import get_parent_providing
+from plone import api
 from Products.Five.browser import BrowserView
+
+
+def guard_anonymous():
+    """Both views proxy the remote directory for the Event add/edit form.
+
+    They are registered with ``zope2.View`` so that an editor holding only
+    local roles on an Entity can call them on the portal root (see
+    browser/configure.zcml), which means the anonymous case has to be refused
+    here rather than by the ZCML permission.
+    """
+    if api.user.is_anonymous():
+        raise Unauthorized
 
 
 class DirectoryContactInfoView(BrowserView):
@@ -16,6 +30,7 @@ class DirectoryContactInfoView(BrowserView):
     """
 
     def __call__(self):
+        guard_anonymous()
         self.request.response.setHeader("Content-Type", "application/json")
         uid = self.request.form.get("uid")
         if not uid:
@@ -79,6 +94,7 @@ class DirectoryLinkedEntitiesInfoView(BrowserView):
     """
 
     def __call__(self):
+        guard_anonymous()
         self.request.response.setHeader("Content-Type", "application/json")
         entity = get_parent_providing(self.context, IEntity)
         if entity is None:

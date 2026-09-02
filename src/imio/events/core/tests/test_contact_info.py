@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
+from imio.events.core.testing import IMIO_EVENTS_CORE_FUNCTIONAL_TESTING
 from imio.events.core.testing import IMIO_EVENTS_CORE_INTEGRATION_TESTING
 from imio.smartweb.common.config import DIRECTORY_URL
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
+from plone.testing.zope import Browser
 from unittest.mock import MagicMock
 from unittest.mock import patch
 from zope.component import getMultiAdapter
 
 import json
+import transaction
 import unittest
 
 # The two views proxy the remote directory through
@@ -348,15 +351,75 @@ class TestDirectoryLinkedEntitiesInfoView(DirectoryInfoTestCase):
             )
 
 
-# <audit>
-#   <file>test_contact_info.py</file>
-#   <requirements_applied>R1, R2, R4, R5, R6</requirements_applied>
-#   <deviations>
-#     R1: the skill prescribes requests_mock, but no test in imio.events.core
-#     depends on it (it is not in test-requirements either). Followed R6 and used
-#     unittest.mock.patch on requests.get, as test_odwb.py and test_rest.py do.
-#     R3: no content added to testing.py — the entity/agenda/event fixture is
-#     specific to this file, matching test_odwb.py and test_actions.py.
-#   </deviations>
-#   <questions>None</questions>
-# </audit>
+class TestDirectoryInfoViewsAccess(unittest.TestCase):
+    """Both proxy views must be reachable by the editors that use the edit form.
+
+    The edit-form JS calls ``@@directory_contact_info`` on the *portal root*
+    (``<body data-portal-url>``), so the view's permission has to be one a plain
+    editor holds there -- not only a Manager.
+    """
+
+    layer = IMIO_EVENTS_CORE_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        self.app = self.layer["app"]
+        self.portal = self.layer["portal"]
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        self.entity = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            id="entity",
+            title="Entity",
+        )
+        self.agenda = api.content.create(
+            container=self.entity,
+            type="imio.events.Agenda",
+            id="agenda",
+            title="Agenda",
+        )
+        self.event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="event",
+            title="Event",
+        )
+        # A real editor of this entity: no global role, only local roles on the
+        # entity -- exactly what a communal editor gets on this platform.
+        api.user.create(
+            username="editor", email="editor@example.com", password="secret123"
+        )
+        api.user.grant_roles(
+            username="editor",
+            obj=self.entity,
+            roles=["Reader", "Contributor", "Editor"],
+        )
+        self.entity.reindexObjectSecurity()
+        transaction.commit()
+
+    def browser(self, username=None, password=None):
+        browser = Browser(self.app)
+        if username:
+            browser.addHeader("Authorization", "Basic {}:{}".format(username, password))
+        return browser
+
+    def test_editor_can_read_contact_info_on_the_portal_root(self):
+        browser = self.browser("editor", "secret123")
+        browser.open("{}/@@directory_contact_info".format(self.portal.absolute_url()))
+        self.assertEqual(json.loads(browser.contents), {})
+
+    def test_editor_can_read_entities_info_on_the_event(self):
+        browser = self.browser("editor", "secret123")
+        browser.open("{}/@@directory_entities_info".format(self.event.absolute_url()))
+        self.assertEqual(json.loads(browser.contents), [])
+
+    def test_anonymous_cannot_read_contact_info(self):
+        # The view is a proxy to the remote directory: keep it out of reach of
+        # anonymous visitors, who have no edit form to fill in anyway.
+        browser = self.browser()
+        browser.open("{}/@@directory_contact_info".format(self.portal.absolute_url()))
+        self.assertIn("/login", browser.url)
+
+    def test_anonymous_cannot_read_entities_info(self):
+        browser = self.browser()
+        browser.open("{}/@@directory_entities_info".format(self.event.absolute_url()))
+        self.assertIn("/login", browser.url)
