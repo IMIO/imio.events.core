@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.56 (unreleased)
+1.2.56 (2026-09-03)
 -------------------
 
 - Main contact : fix "Constraint not satisfied" when saving an Event with a
