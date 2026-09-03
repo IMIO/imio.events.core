@@ -24,6 +24,7 @@
   <include package=".upgrades" />
   <include package=".viewlets" />
 
+  <include file="converters.zcml" />
   <include file="indexers.zcml" />
   <include file="permissions.zcml" />
   <include file="profiles.zcml" />

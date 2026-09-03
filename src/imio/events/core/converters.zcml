@@ -1,0 +1,10 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+  <!-- More specific than z3c.form's fallback FieldDataConverter, so a
+       single-valued Choice on a TranslatedAjaxSelectWidget (today:
+       imio.events.Event/directory_linked_contact) is converted through the
+       vocabulary of the content being edited. See converters.py. -->
+  <adapter factory=".converters.AjaxSelectChoiceDataConverter" />
+
+</configure>
