@@ -5,7 +5,14 @@ Changelog
 1.2.57 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEBBDC-2790 : Consume the remote directory contact vocabulary, the ``Choice``/ajax-select
+  converter, the two proxy views (``@@directory_contact_info`` and
+  ``@@directory_entities_info``) and the contact autofill script now shared in
+  ``imio.smartweb.common`` (also consumed by ``imio.news.core``), instead of this
+  package's own copies. No functional change for this package. Bumps the
+  ``imio.events.core:default`` profile from 1026 to 1027 -- run the upgrade step,
+  otherwise the autofill silently stops working.
+  [boulch]
 
 
 1.2.56 (2026-09-03)
