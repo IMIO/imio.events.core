@@ -17,8 +17,9 @@ import json
 import transaction
 import unittest
 
-# Only the remote directory is mocked (see test_contact_info.py): the vocabulary,
-# the widget, the converter and the form are exercised for real.
+# Only the remote directory is mocked: the vocabulary, the widget, the
+# converter and the form are exercised for real (the vocabulary and the
+# converter now live in imio.smartweb.common).
 REQUESTS_GET = "imio.smartweb.common.utils.requests.get"
 
 LINKED_ENTITY_UID = "11111111111111111111111111111111"
