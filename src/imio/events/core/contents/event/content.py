@@ -187,7 +187,7 @@ class IEvent(IAddress, ITranslations):
     directives.widget(
         "directory_linked_contact",
         TranslatedAjaxSelectWidget,
-        vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
+        vocabulary="imio.smartweb.vocabulary.RemoteDirectoryContact",
         pattern_options={"minimumInputLength": 0},
     )
     directory_linked_contact = schema.Choice(
@@ -195,7 +195,7 @@ class IEvent(IAddress, ITranslations):
         description=_(
             "You can retrieve information from a contact record that already exists in your directory"
         ),
-        source="imio.events.vocabulary.RemoteDirectoryContact",
+        source="imio.smartweb.vocabulary.RemoteDirectoryContact",
         required=False,
     )
 
@@ -217,14 +217,14 @@ class IEvent(IAddress, ITranslations):
     directives.widget(
         "event_sponsors",
         TranslatedAjaxSelectWidget,
-        vocabulary="imio.events.vocabulary.RemoteDirectoryContact",
+        vocabulary="imio.smartweb.vocabulary.RemoteDirectoryContact",
         pattern_options={"multiple": True, "minimumInputLength": 0},
     )
     event_sponsors = schema.List(
         title=_("Organisateurs et partenaires"),
         description=_("Select organizers, partners or sponsors for this event"),
         value_type=schema.Choice(
-            source="imio.events.vocabulary.RemoteDirectoryContact"
+            source="imio.smartweb.vocabulary.RemoteDirectoryContact"
         ),
         required=False,
     )

@@ -185,13 +185,13 @@ class TestRemoteDirectoryContactVocabulary(unittest.TestCase):
         self.entity.directory_linked_entities = ["entity one", "entity-two"]
         self.factory = getUtility(
             IVocabularyFactory,
-            "imio.events.vocabulary.RemoteDirectoryContact",
+            "imio.smartweb.vocabulary.RemoteDirectoryContact",
         )
 
     def payload(self, uid="contact-uid", title="Entity / Contact"):
         return {"items": [{"UID": uid, "breadcrumb": title}]}
 
-    @patch("imio.events.core.vocabularies.get_json")
+    @patch("imio.smartweb.common.vocabularies.get_json")
     def test_search_is_remote_and_bounded(self, get_json):
         get_json.return_value = self.payload()
 
@@ -206,7 +206,7 @@ class TestRemoteDirectoryContactVocabulary(unittest.TestCase):
         self.assertEqual(query["SearchableText"], ["Jean* AND Jeanne*"])
         self.assertEqual(query["selected_entities"], ["entity one", "entity-two"])
 
-    @patch("imio.events.core.vocabularies.get_json")
+    @patch("imio.smartweb.common.vocabularies.get_json")
     def test_existing_value_is_resolved_by_uid(self, get_json):
         get_json.return_value = self.payload()
 
@@ -217,7 +217,7 @@ class TestRemoteDirectoryContactVocabulary(unittest.TestCase):
         self.assertEqual(query["UID"], ["contact-uid"])
         self.assertEqual(query["b_size"], ["20"])
 
-    @patch("imio.events.core.vocabularies.get_json")
+    @patch("imio.smartweb.common.vocabularies.get_json")
     def test_opening_vocabulary_fetches_a_bounded_first_page(self, get_json):
         get_json.return_value = self.payload()
         vocabulary = self.factory(self.event)
@@ -228,7 +228,7 @@ class TestRemoteDirectoryContactVocabulary(unittest.TestCase):
         self.assertNotIn("SearchableText", query)
         self.assertNotIn("UID", query)
 
-    @patch("imio.events.core.vocabularies.get_json")
+    @patch("imio.smartweb.common.vocabularies.get_json")
     def test_empty_search_fetches_the_same_bounded_first_page(self, get_json):
         get_json.return_value = self.payload()
 
@@ -238,3 +238,4 @@ class TestRemoteDirectoryContactVocabulary(unittest.TestCase):
         query = parse_qs(urlparse(get_json.call_args[0][0]).query)
         self.assertEqual(query["b_size"], ["20"])
         self.assertNotIn("SearchableText", query)
+        self.assertNotIn("UID", query)

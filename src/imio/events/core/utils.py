@@ -5,8 +5,8 @@ from datetime import timedelta
 from eea.facetednavigation.settings.interfaces import IHidePloneLeftColumn
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
-from imio.smartweb.common.config import DIRECTORY_URL
 from imio.smartweb.common.faceted.utils import configure_faceted
+from imio.smartweb.common.utils import get_directory_url
 from imio.smartweb.common.utils import get_json
 from imio.smartweb.common.utils import is_log_active
 from plone import api
@@ -77,7 +77,7 @@ def _resolve_sponsors(uids):
     if not uids:
         return {}
     params = "&".join(f"UID={uid}" for uid in uids)
-    url = f"{DIRECTORY_URL}/@search?{params}&fullobjects=true"
+    url = f"{get_directory_url()}/@search?{params}&fullobjects=true"
     data = get_json(url, None, 12) or {}
     result = {}
     for contact in data.get("items", []):

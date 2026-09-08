@@ -4,9 +4,6 @@ from collective.taxonomy.interfaces import ITaxonomy
 from AccessControl import Unauthorized
 from imio.events.core.contents import IAgenda
 from imio.events.core.contents import IEntity
-from imio.smartweb.common.config import DIRECTORY_URL
-from imio.smartweb.common.utils import get_json
-from imio.smartweb.common.utils import get_parent_providing
 from imio.smartweb.locales import SmartwebMessageFactory as _
 from plone import api
 from plone.memoize import ram
@@ -21,7 +18,6 @@ from zope.schema.vocabulary import SimpleVocabulary
 from zope.interface import provider
 
 import time
-from urllib.parse import urlencode
 
 ENABLE_CACHE = True
 
@@ -269,92 +265,3 @@ class EventPublicDeVocabularyFactory:
 
 
 EventPublicDeVocabulary = EventPublicDeVocabularyFactory()
-
-
-class SearchableRemoteDirectoryContactVocabulary(SimpleVocabulary):
-    """Search directory contacts without loading the whole directory."""
-
-    search_size = 20
-
-    def __init__(self, directory_entities):
-        super().__init__([])
-        self.directory_entities = tuple(directory_entities)
-
-    def _fetch(self, **criteria):
-        params = [
-            ("portal_type", "imio.directory.Contact"),
-            ("sort_on", "breadcrumb"),
-            ("b_size", self.search_size),
-            ("metadata_fields", "UID"),
-            ("metadata_fields", "breadcrumb"),
-        ]
-        params.extend(("selected_entities", uid) for uid in self.directory_entities)
-        params.extend(criteria.items())
-        url = "{}/@search?{}".format(DIRECTORY_URL, urlencode(params))
-        json_contacts = get_json(url, None, 12)
-        if not json_contacts:
-            return []
-        return [
-            SimpleTerm(
-                value=contact["UID"],
-                token=contact["UID"],
-                title=contact["breadcrumb"],
-            )
-            for contact in json_contacts.get("items") or []
-        ]
-
-    def search(self, query):
-        if not query:
-            return self._fetch()
-        # Match Plone's catalog autocomplete semantics: every typed word is a
-        # prefix, and all words must occur. Without the trailing wildcard a
-        # partial name such as "Jea" would not find "Jean".
-        text = query
-        for char in "?-+*()":
-            text = text.replace(char, " ")
-        searchable_text = " AND ".join("{}*".format(word) for word in text.split())
-        if not searchable_text:
-            return []
-        return self._fetch(SearchableText=searchable_text)
-
-    def __iter__(self):
-        # @@getVocabulary iterates over the vocabulary when Select2 opens with
-        # an empty search. Return the first bounded page so the dropdown is
-        # useful immediately, without loading every directory contact.
-        return iter(self._fetch())
-
-    def getTerm(self, value):
-        terms = self._fetch(UID=value)
-        if not terms:
-            raise LookupError(value)
-        return terms[0]
-
-    def getTermByToken(self, token):
-        return self.getTerm(token)
-
-    def __contains__(self, value):
-        try:
-            self.getTerm(value)
-        except LookupError:
-            return False
-        return True
-
-
-class RemoteDirectoryContactVocabularyFactory:
-
-    def __call__(self, context=None):
-        parent_entity = get_parent_providing(context, IEntity)
-        if parent_entity is None:
-            # No IEntity ancestor: e.g. RESTAPI @types/@vocabularies
-            # introspection, an add form before the object exists, or a widget
-            # whose vocabulary is resolved at the site root. Return empty
-            # WITHOUT caching so a later call with a real context still builds
-            # the actual vocabulary.
-            return SimpleVocabulary([])
-        directory_entities = parent_entity.directory_linked_entities or []
-        if not directory_entities:
-            return SimpleVocabulary([])
-        return SearchableRemoteDirectoryContactVocabulary(directory_entities)
-
-
-RemoteDirectoryContactVocabulary = RemoteDirectoryContactVocabularyFactory()
