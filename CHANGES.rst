@@ -5,6 +5,11 @@ Changelog
 1.2.57 (unreleased)
 -------------------
 
+- Geolocation : stop blanking ``geolocation`` in the ``@events`` endpoint when a
+  ``UID`` is queried. That switches the endpoint to ``fullobjects``, where the
+  catalog columns ``latitude``/``longitude`` are absent.
+  [boulch]
+
 - WEBBDC-2790 : Consume the remote directory contact vocabulary, the ``Choice``/ajax-select
   converter, the two proxy views (``@@directory_contact_info`` and
   ``@@directory_entities_info``) and the contact autofill script now shared in

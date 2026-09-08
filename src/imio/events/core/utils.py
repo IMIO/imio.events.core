@@ -159,9 +159,13 @@ def expand_occurences(events, range="min"):
         first_end = event.get("first_end") or event.get("end")
         start_date = dateutil.parser.parse(first_start).astimezone(brussels)
         end_date = dateutil.parser.parse(first_end).astimezone(brussels)
+        # A UID query switches the endpoint to fullobjects, where the catalog
+        # columns latitude/longitude are absent: keep the geolocation the full
+        # serializer already produced instead of blanking it.
+        geo = event.get("geolocation") or {}
         event["geolocation"] = {
-            "latitude": event.get("latitude", ""),
-            "longitude": event.get("longitude", ""),
+            "latitude": event.get("latitude") or geo.get("latitude") or "",
+            "longitude": event.get("longitude") or geo.get("longitude") or "",
         }
         # without fullobjects
         # event["iam"] = hydrate_ids_for("iam", event, iam_vocabulary)
