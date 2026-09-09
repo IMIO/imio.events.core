@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.57 (unreleased)
+1.2.57 (2026-09-09)
 -------------------
 
 - Geolocation : stop blanking ``geolocation`` in the ``@events`` endpoint when a
