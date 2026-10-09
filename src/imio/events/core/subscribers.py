@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from imio.events.core.eguichet import send_eguichet_notification
 from imio.events.core.rest.odwb_endpoint import OdwbEndpointGet
 from imio.events.core.utils import get_agenda_for_event
 from imio.events.core.utils import get_entity_for_obj
@@ -170,6 +171,10 @@ def published_event_transition(obj, event):
     if event.new_state.id == "published":
         kwargs = dict(obj=obj)
         transaction.get().addAfterCommitHook(send_to_odwb, kws=kwargs)
+        if event.old_state.id != "published":
+            # Notify only when the event becomes published. Run after commit:
+            # the event must exist when the user opens the link.
+            transaction.get().addAfterCommitHook(notify_eguichet, kws=kwargs)
     if event.new_state.id == "private" and event.old_state.id != event.new_state.id:
         request = getRequest()
         endpoint = OdwbEndpointGet(obj, request)
@@ -180,6 +185,13 @@ def send_to_odwb(trans, obj=None):
     request = getRequest()
     endpoint = OdwbEndpointGet(obj, request)
     endpoint.reply()
+
+
+def notify_eguichet(trans, obj=None):
+    if not trans:
+        # transaction was aborted
+        return
+    send_eguichet_notification(obj)
 
 
 def mark_current_agenda_in_events_from_other_agendas__NEW(obj, event):

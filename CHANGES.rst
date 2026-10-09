@@ -5,6 +5,10 @@ Changelog
 1.2.58 (unreleased)
 -------------------
 
+- CITIBDC-602 : When an event becomes published, create a ``notifications-depuis-sw`` card in the
+  e-guichet of the Smartweb site linked to its entity.
+  [boulch]
+
 - CITIBDC-602 : Add an optional ``smartweb_site_url`` field on ``imio.events.Entity`` to store the
   URL of the Smartweb site that displays the entity's events.
   [boulch]
