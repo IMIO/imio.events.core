@@ -5,7 +5,9 @@ Changelog
 1.2.58 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- CITIBDC-602 : Add an optional ``smartweb_site_url`` field on ``imio.events.Entity`` to store the
+  URL of the Smartweb site that displays the entity's events.
+  [boulch]
 
 
 1.2.57 (2026-09-09)

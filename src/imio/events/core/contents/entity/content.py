@@ -48,6 +48,14 @@ class IEntity(model.Schema):
         value_type=schema.Choice(vocabulary="imio.smartweb.vocabulary.Cities"),
     )
 
+    smartweb_site_url = schema.URI(
+        title=_("Smartweb site URL"),
+        description=_(
+            "Address of the Smartweb site that displays the events of this entity (e.g. https://www.commune.be)"
+        ),
+        required=False,
+    )
+
     model.fieldset("categorization", fields=["local_categories"])
     local_categories = schema.List(
         title=_("Specific events categories"),

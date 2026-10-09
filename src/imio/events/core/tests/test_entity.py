@@ -79,6 +79,17 @@ class TestEntity(unittest.TestCase):
         api.content.delete(obj=obj)
         self.assertNotIn("imio.events.Entity", parent.objectIds())
 
+    def test_ct_entity_smartweb_site_url(self):
+        obj = api.content.create(
+            container=self.portal,
+            type="imio.events.Entity",
+            id="entity",
+        )
+        self.assertIsNone(obj.smartweb_site_url)
+        self.assertFalse(IEntity["smartweb_site_url"].required)
+        obj.smartweb_site_url = "https://belleville.staging.imio.be"
+        IEntity["smartweb_site_url"].validate(obj.smartweb_site_url)
+
     def test_ct_entity_globally_addable(self):
         fti = queryUtility(IDexterityFTI, name="imio.events.Entity")
         self.assertTrue(fti.global_allow, "{0} is not globally addable!".format(fti.id))
