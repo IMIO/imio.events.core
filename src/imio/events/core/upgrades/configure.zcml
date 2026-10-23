@@ -425,6 +425,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="upgrade_1027_to_1028"
+      title="Upgrade core from 1027 to 1028"
+      directory="profiles/1027_to_1028"
+      description="Add whole_day, open_end and recurrence catalog metadata columns"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <genericsetup:upgradeSteps
       source="1025"
       destination="1026"
@@ -446,6 +454,20 @@
     <genericsetup:upgradeDepends
         title="Serve the contact autofill script from imio.smartweb.common"
         import_profile="imio.events.core.upgrades:upgrade_1026_to_1027"
+        />
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+      source="1027"
+      destination="1028"
+      profile="imio.events.core:default">
+    <genericsetup:upgradeDepends
+        title="Add whole_day, open_end and recurrence catalog metadata columns"
+        import_profile="imio.events.core.upgrades:upgrade_1027_to_1028"
+        />
+    <genericsetup:upgradeStep
+        title="Update catalog metadata of events"
+        handler=".upgrades.update_events_metadata"
         />
   </genericsetup:upgradeSteps>
 

@@ -5,7 +5,11 @@ Changelog
 1.2.58 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add the ``whole_day``, ``open_end`` and ``recurrence`` catalog metadata columns.
+  plone.restapi 9.15.7 removes from the summaries the ``metadata_fields`` that are not
+  catalog columns. Because of this, ``@events`` failed with ``KeyError: 'whole_day'``.
+  An upgrade step adds the columns and updates the metadata of all the events.
+  [boulch]
 
 
 1.2.57 (2026-09-09)

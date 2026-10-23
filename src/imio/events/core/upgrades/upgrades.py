@@ -196,6 +196,14 @@ def add_event_sponsors_metadata(context):
     logger.info("Reindexed catalog for event_sponsors")
 
 
+def update_events_metadata(context):
+    brains = api.content.find(object_provides=IEvent.__identifier__)
+    for brain in brains:
+        # idxs limits the reindexed indexes, metadata columns are all updated
+        brain.getObject().reindexObject(idxs=["UID"])
+    logger.info(f"Updated catalog metadata of {len(brains)} events")
+
+
 def migrate_members_timezone_to_brussels(context):
     """Reset member timezone preferences that are set to UTC.
 

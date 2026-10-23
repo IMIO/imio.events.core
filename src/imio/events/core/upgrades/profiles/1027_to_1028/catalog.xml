@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<object name="portal_catalog">
+  <column value="whole_day"/>
+  <column value="open_end"/>
+  <column value="recurrence"/>
+</object>

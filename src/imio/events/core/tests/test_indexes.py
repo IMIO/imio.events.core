@@ -289,3 +289,21 @@ class TestIndexes(unittest.TestCase):
         indexes = catalog.getIndexDataForRID(brain.getRID())
         self.assertEqual(indexes.get("first_start"), datetime(2022, 2, 13, 12, 30))
         self.assertEqual(indexes.get("first_end"), datetime(2022, 2, 13, 14, 30))
+
+    def test_occurrence_metadata_columns(self):
+        # plone.restapi >= 9.15.7 drops metadata_fields that are not catalog
+        # columns, and expand_occurences needs these three on every brain
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="My event",
+        )
+        event.whole_day = True
+        event.open_end = True
+        event.recurrence = "RRULE:FREQ=WEEKLY;COUNT=5"
+        event.reindexObject()
+
+        brain = api.content.find(UID=event.UID())[0]
+        self.assertTrue(brain.whole_day)
+        self.assertTrue(brain.open_end)
+        self.assertEqual(brain.recurrence, "RRULE:FREQ=WEEKLY;COUNT=5")
