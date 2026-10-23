@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.58 (unreleased)
+1.2.58 (2026-10-23)
 -------------------
 
 - Add the ``whole_day``, ``open_end`` and ``recurrence`` catalog metadata columns.
