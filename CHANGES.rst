@@ -5,7 +5,10 @@ Changelog
 1.2.59 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix the period filters of ``@events`` ("This weekend", "This week", "This month"
+  and custom period). A recurring event that started more than one year ago is now
+  in the results. Before, its occurrences stopped one year after its first date.
+  [boulch]
 
 
 1.2.58 (2026-10-23)

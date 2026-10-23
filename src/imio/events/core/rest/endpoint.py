@@ -134,7 +134,11 @@ class EventsEndpointHandler(SearchHandler):
         results = getMultiAdapter((lazy_resultset, self.request), ISerializeToJson)(
             fullobjects=fullobjects
         )
-        expanded_occurrences = expand_occurences(results.get("items"), range_type)
+        expanded_occurrences = expand_occurences(
+            results.get("items"),
+            range_type,
+            self.request.form.get("event_dates.query"),
+        )
         return expanded_occurrences, range_type
 
     def search(self, query=None):

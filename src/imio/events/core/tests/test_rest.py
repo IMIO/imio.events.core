@@ -910,6 +910,44 @@ class RestFunctionalTest(unittest.TestCase):
         for occ in occurrences:
             self.assertLess(datetime.fromisoformat(occ["start"]), horizon)
 
+    @freeze_time("2026-10-23 10:00:00")
+    def test_min_max_range_keeps_recurring_event_started_over_a_year_ago(self):
+        """range=min:max (the "this weekend" filter) must expand the
+        occurrences inside the asked window, not inside the year that follows
+        the first date of the event."""
+        daily = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            id="daily",
+            title="Daily Since Last Year",
+        )
+        daily.start = datetime(2025, 10, 20, 10, 0)
+        daily.end = datetime(2025, 10, 20, 12, 0)
+        daily.recurrence = "RRULE:FREQ=DAILY;UNTIL=20261231T000000"
+        daily.reindexObject()
+        api.content.transition(daily, "publish")
+
+        endpoint = EventsEndpointHandler(self.portal, self.request)
+        self.request.form["event_dates.range"] = "min:max"
+        self.request.form["event_dates.query"] = ["2026-10-24", "2026-10-25"]
+        query = {
+            "b_size": 10,
+            "b_start": 0,
+            "event_dates": {
+                "query": ["2026-10-24", "2026-10-25"],
+                "range": "min:max",
+            },
+        }
+        try:
+            response = endpoint.search(query)
+        finally:
+            del self.request.form["event_dates.range"]
+            del self.request.form["event_dates.query"]
+            clear_search_cache(query)
+
+        starts = [i["start"][:10] for i in response.get("items", [])]
+        self.assertEqual(starts, ["2026-10-24", "2026-10-25"])
+
     def test_search_with_duplicated_batch_params(self):
         """A duplicated query parameter (``?b_size=20&b_size=50``) is turned
         into a list by ZPublisher (HTTPRequest.processInputs). Batch params

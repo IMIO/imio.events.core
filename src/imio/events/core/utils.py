@@ -137,9 +137,24 @@ def _uid_from_sponsor_item(item):
     return item
 
 
+def _brussels_datetime(value):
+    parsed = datetime.fromisoformat(value)
+    if parsed.tzinfo:
+        return parsed.astimezone(brussels)
+    return brussels.localize(parsed)
+
+
 # just expand occurences. No filtering here
-def expand_occurences(events, range="min"):
+def expand_occurences(events, range="min", dates=None):
     expanded_events = []
+    # range=min:max asks for a window (ex: "this weekend"): occurrences must be
+    # expanded inside it, not inside the year after the first date of the event
+    window = None
+    if range == "min:max" and isinstance(dates, list) and len(dates) == 2:
+        window = (
+            _brussels_datetime(dates[0]),
+            _brussels_datetime(dates[1]).replace(hour=23, minute=59, second=59),
+        )
     all_sponsor_uids = list(
         {
             _uid_from_sponsor_item(item)
@@ -228,6 +243,8 @@ def expand_occurences(events, range="min"):
             until = from_ + timedelta(days=365)
         if range == "min:max":
             from_ = datetime.now(brussels)
+            if window:
+                from_, until = window
         elif range == "max":
             from_ = start_date - timedelta(days=365)
             until = datetime.now(brussels)
