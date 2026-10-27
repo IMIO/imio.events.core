@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.59 (unreleased)
+1.2.59 (2026-10-27)
 -------------------
 
 - Fix the period filters of ``@events`` ("This weekend", "This week", "This month"
