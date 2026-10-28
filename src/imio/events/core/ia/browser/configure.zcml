@@ -12,6 +12,21 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <!-- Event add form (++add++imio.events.Event) posts to its container -->
+  <browser:page
+      name="ProcessCategorizeContent"
+      for="imio.events.core.contents.IAgenda"
+      class=".views.ProcessCategorizeContentView"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <browser:page
+      name="ProcessCategorizeContent"
+      for="imio.events.core.contents.IFolder"
+      class=".views.ProcessCategorizeContentView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <!-- No zcml needed for edit here because of inheritage 
        in imio.events.core.browser.forms.EventCustomEditForm --> 
 

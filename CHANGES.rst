@@ -5,7 +5,8 @@ Changelog
 1.2.60 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- WEB-4520 : Fix HTTP 500 when you click "Categorize with AI" on a new event.
+  [boulch]
 
 
 1.2.59 (2026-10-27)

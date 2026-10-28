@@ -37,10 +37,8 @@ class ProcessCategorizeContentView(BaseProcessCategorizeContentView):
         return results
 
     def _process_public_cible(self, all_text, results):
-        if (
-            self.context.taxonomy_event_public is None
-            or self.context.taxonomy_event_public == []
-        ):
+        # context is the container (agenda/folder) on the add form
+        if not getattr(self.context, "taxonomy_event_public", None):
             sm = getSiteManager()
             public_cible_taxo = sm.queryUtility(
                 ITaxonomy, name="collective.taxonomy.event_public"
