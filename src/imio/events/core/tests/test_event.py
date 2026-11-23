@@ -39,6 +39,8 @@ from zope.lifecycleevent import modified
 from zope.publisher.browser import TestRequest
 from zope.schema.interfaces import IVocabularyFactory
 
+import base64
+import json
 import pytz
 import unittest
 
@@ -505,3 +507,50 @@ class TestEvent(unittest.TestCase):
         event.recurrence = "RRULE:FREQ=WEEKLY;INTERVAL=0"
         modified(event)
         self.assertEqual(event.recurrence, "RRULE:FREQ=WEEKLY")
+
+    def _post_event_with_gallery(self, gallery):
+        image = make_named_image()
+        self.request.environ["REQUEST_METHOD"] = "POST"
+        self.request["BODY"] = json.dumps(
+            {
+                "fields": {
+                    "galerie_raw": [
+                        {
+                            "fichier": {
+                                "filename": f"image-{i}.png",
+                                "content_type": "image/png",
+                                "content": base64.b64encode(image["data"]).decode(),
+                            }
+                        }
+                        for i in range(gallery)
+                    ]
+                }
+            }
+        )
+        return api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="My event item",
+        )
+
+    def test_gallery_images_created_from_post_body(self):
+        event = self._post_event_with_gallery(2)
+        images = event.listFolderContents(contentFilter={"portal_type": "Image"})
+        self.assertEqual(len(images), 2)
+        self.assertEqual(images[0].image.filename, "image-0.png")
+        self.assertEqual(images[0].image.contentType, "image/png")
+        self.assertEqual(images[0].image.data, make_named_image()["data"])
+
+    def test_gallery_images_limited_to_five(self):
+        event = self._post_event_with_gallery(7)
+        images = event.listFolderContents(contentFilter={"portal_type": "Image"})
+        self.assertEqual(len(images), 5)
+
+    def test_no_gallery_images_without_post(self):
+        event = api.content.create(
+            container=self.agenda,
+            type="imio.events.Event",
+            title="My event item",
+        )
+        images = event.listFolderContents(contentFilter={"portal_type": "Image"})
+        self.assertEqual(len(images), 0)

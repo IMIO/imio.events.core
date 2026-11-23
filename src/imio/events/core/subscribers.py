@@ -10,6 +10,8 @@ from imio.smartweb.common.utils import is_log_active
 from imio.smartweb.common.utils import remove_cropping
 from plone import api
 from plone.api.content import get_state
+from plone.namedfile.file import NamedBlobImage
+from plone.restapi.deserializer import json_body
 from Products.DCWorkflow.interfaces import IAfterTransitionEvent
 from z3c.relationfield import RelationValue
 from z3c.relationfield.interfaces import IRelationList
@@ -21,12 +23,15 @@ from zope.lifecycleevent import modified
 from zope.lifecycleevent import ObjectRemovedEvent
 from zope.lifecycleevent.interfaces import IAttributes
 
+import base64
 import logging
 import time
 import transaction
 
 logger = logging.getLogger("imio.events.core")
 logger.setLevel(logging.INFO)
+
+MAX_GALLERY_IMAGES = 5
 
 
 def set_default_agenda_uid(event):
@@ -113,6 +118,37 @@ def added_event(obj, event):
     if not obj.is_geolocated:
         # geocode only if the user has not already changed geolocation
         geocode_object(obj)
+    create_gallery_images(obj)
+
+
+def create_gallery_images(event_obj):
+    """Create Image children from "fields.galerie_raw" of a REST POST body.
+
+    The e-guichet (WCS) form sends its "galerie_raw" block under "fields",
+    as a list of {"fichier": {"filename", "content_type", "content" (base64)}}.
+    """
+    request = getRequest()
+    if request is None or request.get("REQUEST_METHOD") != "POST":
+        return
+    try:
+        body = json_body(request)
+    except Exception:
+        return
+    if not isinstance(body, dict):
+        return
+    gallery = (body.get("fields") or {}).get("galerie_raw") or []
+    for item in gallery[:MAX_GALLERY_IMAGES]:
+        file_data = item["fichier"]
+        api.content.create(
+            container=event_obj,
+            type="Image",
+            title=file_data["filename"],
+            image=NamedBlobImage(
+                data=base64.b64decode(file_data["content"]),
+                contentType=file_data["content_type"],
+                filename=file_data["filename"],
+            ),
+        )
 
 
 def modified_event(obj, event):

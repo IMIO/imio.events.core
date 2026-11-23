@@ -5,7 +5,10 @@ Changelog
 2.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- CITI-35 : Create the gallery images of an event sent by the e-guichet (WCS) form.
+  When a REST ``POST`` creates an event with a ``galerie_raw`` key, an ``Image`` is created in 
+  the event for each file (5 maximum).
+  [boulch]
 
 
 2.0.0 (2026-11-23)
