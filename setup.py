@@ -14,7 +14,7 @@ long_description = "\n\n".join(
 
 setup(
     name="imio.events.core",
-    version="1.2.61.dev0",
+    version="2.0.0",
     description="Core product for iMio events website",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
