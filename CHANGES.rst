@@ -5,6 +5,11 @@ Changelog
 2.0.1 (unreleased)
 ------------------
 
+- WEB-4543 : Add an optional ``smartweb_site_url`` field on entities: the URL of the public
+  SmartWeb site of the entity (http or https). Only a Manager changes it (``cmf.ManagePortal``);
+  everyone reads it, the REST API included, so that mcp-omnia links its answers to that website.
+  [boulch]
+
 - CITI-35 : Create the gallery images of an event sent by the e-guichet (WCS) form.
   When a REST ``POST`` creates an event with a ``galerie_raw`` key, an ``Image`` is created in 
   the event for each file (5 maximum).

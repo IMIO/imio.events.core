@@ -11,8 +11,28 @@ from plone.app.z3cform.widgets.select import AjaxSelectWidget
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
+from urllib.parse import urlsplit
 from zope.interface import implementer
 from zope.interface import Interface
+from zope.interface import Invalid
+
+
+def is_website_url(value):
+    """An http(s) URL with a host, no credentials, query nor fragment: the base URL of a website."""
+    parts = urlsplit(value)
+    if (
+        parts.scheme not in ("http", "https")
+        or not parts.hostname
+        or parts.username
+        or parts.password
+        or parts.query
+        or parts.fragment
+        or any(char.isspace() for char in value)
+    ):
+        raise Invalid(
+            _("Enter the address of a website, starting with https:// or http://")
+        )
+    return True
 
 
 class ILocalCategoryRowSchema(Interface):
@@ -91,6 +111,15 @@ class IEntity(model.Schema):
             source="imio.smartweb.vocabulary.RemoteDirectoryEntities"
         ),
         required=False,
+    )
+
+    # Technical configuration, which only a Manager changes; everyone reads it (mcp-omnia, anonymously).
+    directives.write_permission(smartweb_site_url="cmf.ManagePortal")
+    smartweb_site_url = schema.TextLine(
+        title=_("SmartWeb site URL"),
+        description=_("URL of the public SmartWeb site of this entity."),
+        required=False,
+        constraint=is_website_url,
     )
 
 
